@@ -22,7 +22,7 @@ Help Bernolákovo voters find accurate election logistics, the complete official
 
 ## Design direction
 
-Distinctive editorial design, not a campaign aesthetic. React + TypeScript on Cloudflare Pages; GSAP for purposeful motion, Lenis for long-form navigation if it improves usability, and selected React Bits components. Reading, navigation, and source access must work with motion disabled and on mobile.
+Distinctive editorial design, not a campaign aesthetic. React + TypeScript on Cloudflare Workers with static assets; GSAP for purposeful motion, Lenis for long-form navigation if it improves usability, and selected React Bits components. Reading, navigation, and source access must work with motion disabled and on mobile.
 
 ## First deliverables
 
