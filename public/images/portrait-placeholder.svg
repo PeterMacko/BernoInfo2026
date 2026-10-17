@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" role="img" aria-label="Grafická výplň bez podobizne">
-  <rect width="640" height="760" fill="#d8ded8"/>
-  <path d="M0 0h640v760H0z" fill="none" stroke="#b8c5bc" stroke-width="2"/>
-  <g fill="none" stroke="#aebeb2" stroke-width="1" opacity=".62">
+  <rect width="640" height="760" fill="#dce7f3"/>
+  <path d="M0 0h640v760H0z" fill="none" stroke="#a9bfd8" stroke-width="2"/>
+  <g fill="none" stroke="#aac0da" stroke-width="1" opacity=".62">
     <path d="M0 152h640M0 304h640M0 456h640M0 608h640M128 0v760M256 0v760M384 0v760M512 0v760"/>
   </g>
-  <circle cx="320" cy="380" r="176" fill="none" stroke="#7e9a89" stroke-width="2"/>
-  <circle cx="320" cy="380" r="117" fill="none" stroke="#7e9a89" stroke-width="2"/>
-  <path d="M144 380h352M320 204v352" stroke="#7e9a89" stroke-width="2"/>
-  <path d="M244 304l152 152M396 304L244 456" stroke="#7e9a89" stroke-width="2"/>
-  <rect x="27" y="27" width="42" height="42" fill="none" stroke="#789283" stroke-width="2"/>
-  <path d="M27 48h42M48 27v42" stroke="#789283" stroke-width="2"/>
-  <text x="32" y="719" fill="#607c6b" font-family="Arial,sans-serif" font-size="16" letter-spacing="4">OBRAZOVÝ ZÁSTUPNÝ PRVOK</text>
+  <circle cx="320" cy="380" r="176" fill="none" stroke="#5278aa" stroke-width="2"/>
+  <circle cx="320" cy="380" r="117" fill="none" stroke="#5278aa" stroke-width="2"/>
+  <path d="M144 380h352M320 204v352" stroke="#5278aa" stroke-width="2"/>
+  <path d="M244 304l152 152M396 304L244 456" stroke="#5278aa" stroke-width="2"/>
+  <rect x="27" y="27" width="42" height="42" fill="none" stroke="#c99e2e" stroke-width="2"/>
+  <path d="M27 48h42M48 27v42" stroke="#c99e2e" stroke-width="2"/>
+  <text x="32" y="719" fill="#315986" font-family="Arial,sans-serif" font-size="16" letter-spacing="4">OBRAZOVÝ ZÁSTUPNÝ PRVOK</text>
 </svg>

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage } from './candidates'
 import './style.css'
 
+const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 
@@ -11,7 +12,7 @@ function App() {
     <main className="page">
       <header className="masthead">
         <div className="brand" aria-label="BernoInfo 2026">BERNO<span>INFO</span><i>2026</i></div>
-        <span className="masthead-note">Nezávislý prehľad · Bernolákovo</span>
+        <span className="masthead-note">Nezávislý projekt · nie je stránkou obce</span>
       </header>
 
       <section className="intro" aria-labelledby="page-title">
@@ -22,8 +23,11 @@ function App() {
             <h1 id="page-title">Kandidáti na<br /><em>starostu obce.</em></h1>
           </div>
           <div className="intro-aside">
-            <span className="count">08<span aria-hidden="true"> / 08</span></span>
-            <p>Osem mien v poradí opraveného zoznamu obce.</p>
+            <div className="intro-count"><span className="count">08<span aria-hidden="true"> / 08</span></span><p>Osem mien v poradí opraveného zoznamu obce.</p></div>
+            <figure className="municipal-arms">
+              <a href={municipalityHome} aria-label="Erb obce Bernolákovo — oficiálna stránka obce"><img src="/images/bernolakovo-coat-of-arms.webp" alt="" width="180" height="209" /></a>
+              <figcaption>Erb obce · zdroj: obec Bernolákovo</figcaption>
+            </figure>
           </div>
         </div>
       </section>
@@ -77,6 +81,7 @@ function App() {
         <div className="source-mark" aria-hidden="true">↗</div>
         <div>
           <h2>Zdroj a stav údajov</h2>
+          <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
           <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
           {approvedPortraits ? (
             <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>

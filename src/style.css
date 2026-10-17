@@ -2,8 +2,8 @@
 
 :root {
   font-family: 'DM Sans', Arial, sans-serif;
-  color: #17372e;
-  background: #eeeae1;
+  color: #183a64;
+  background: #eef2f7;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -13,50 +13,56 @@ html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; }
 a { color: inherit; text-underline-offset: 3px; }
 a:hover { text-decoration-thickness: 2px; }
-a:focus-visible { outline: 3px solid #e6b76f; outline-offset: 4px; border-radius: 2px; }
-.page { max-width: 1720px; margin: auto; background: #f7f5ee; box-shadow: 0 0 0 1px #ddd8cb; }
-.masthead { min-height: 83px; padding: 0 clamp(24px, 5vw, 76px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d4d8ce; }
+a:focus-visible { outline: 3px solid #f2c94c; outline-offset: 4px; border-radius: 2px; }
+.page { max-width: 1720px; margin: auto; background: #f8f9fc; box-shadow: 0 0 0 1px #c9d5e5; }
+.masthead { min-height: 83px; padding: 0 clamp(24px, 5vw, 76px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #cad5e3; }
 .brand { font-family: Manrope, Arial, sans-serif; font-size: 17px; font-weight: 800; letter-spacing: -.055em; white-space: nowrap; }
-.brand span { color: #496b58; }
+.brand span { color: #3564a7; }
 .brand i { display: inline-block; margin-left: 7px; font-size: 11px; font-style: normal; letter-spacing: 0; vertical-align: top; transform: translateY(-3px); }
-.masthead-note { color: #4e675c; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
-.intro { background: #17372e; color: #f7f5ee; padding: 28px clamp(24px, 5vw, 76px) 63px; }
-.intro-topline { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #5b7569; color: #d6ddd5; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 700; }
+.masthead-note { color: #355674; font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.intro { background: #183a64; color: #f8f9fc; padding: 28px clamp(24px, 5vw, 76px) 63px; }
+.intro-topline { display: flex; justify-content: space-between; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #829dbc; color: #e4ecf7; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 700; }
 .intro-main { display: flex; align-items: end; justify-content: space-between; gap: 42px; padding-top: clamp(45px, 6vw, 97px); }
-.section-kicker { margin: 0 0 23px; color: #d7b579; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.section-kicker { margin: 0 0 23px; color: #f5d66b; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 0; font-family: Manrope, Arial, sans-serif; font-weight: 700; font-size: clamp(3.15rem, 6.5vw, 6.75rem); line-height: 1.04; letter-spacing: -.075em; }
-h1 em { color: #c7d9c8; font-weight: 400; font-style: normal; }
-.intro-aside { width: min(250px, 100%); flex: none; border-top: 1px solid #789084; padding-top: 22px; }
-.count { display: block; margin-bottom: 23px; font-family: Manrope, Arial, sans-serif; font-size: clamp(3.4rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -.08em; }
-.count span { color: #94aa99; font-size: .25em; font-weight: 500; letter-spacing: -.04em; vertical-align: middle; }
-.intro-aside p { margin: 0; color: #d9e1d9; font-size: 13px; line-height: 1.6; }
+h1 em { color: #f4d56a; font-weight: 400; font-style: normal; }
+.intro-aside { width: min(250px, 100%); flex: none; border-top: 1px solid #9bb2cf; padding-top: 22px; }
+.intro-count { margin-bottom: 27px; }
+.municipal-arms { display: flex; align-items: center; gap: 14px; margin: 0; padding-top: 16px; border-top: 1px solid #9bb2cf; }
+.municipal-arms > a { display: block; flex: none; }
+.municipal-arms img { display: block; width: 55px; height: auto; flex: none; }
+.municipal-arms figcaption { color: #e5edf7; font-size: 11px; line-height: 1.45; }
+.municipal-arms a:focus-visible { outline-color: #f4d56a; }
+.count { display: block; margin-bottom: 12px; font-family: Manrope, Arial, sans-serif; font-size: clamp(3.4rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -.08em; }
+.count span { color: #bbcee4; font-size: .25em; font-weight: 500; letter-spacing: -.04em; vertical-align: middle; }
+.intro-aside p { margin: 0; color: #e5edf7; font-size: 13px; line-height: 1.6; }
 .candidate-section { padding: clamp(42px, 5.5vw, 83px) clamp(24px, 5vw, 76px) clamp(55px, 7vw, 105px); }
-.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 21px; border-bottom: 1px solid #bfc8bd; margin-bottom: 24px; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 21px; border-bottom: 1px solid #b7c7db; margin-bottom: 24px; }
 .section-heading h2 { margin: 0; font-family: Manrope, Arial, sans-serif; font-size: clamp(1.4rem, 2vw, 2rem); letter-spacing: -.055em; }
-.section-heading p { margin: 0; color: #4c6558; font-size: 11px; font-weight: 600; text-align: right; text-transform: uppercase; letter-spacing: .09em; }
+.section-heading p { margin: 0; color: #425f7e; font-size: 11px; font-weight: 600; text-align: right; text-transform: uppercase; letter-spacing: .09em; }
 .candidate-grid { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; padding: 0; margin: 0; counter-reset: none; }
-.candidate-card { min-width: 0; background: #eeeae1; border: 1px solid #d6dbd0; }
-.portrait-wrap { aspect-ratio: 640 / 760; background: #d8ded8; overflow: hidden; }
+.candidate-card { min-width: 0; background: #eef2f7; border: 1px solid #cad6e5; }
+.portrait-wrap { aspect-ratio: 640 / 760; background: #d9e5f2; overflow: hidden; }
 .portrait-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; }
-.card-footer { min-height: 128px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 15px; align-items: end; padding: 20px 18px 21px; border-top: 1px solid #c6d0c2; }
-.number-block { display: flex; flex-direction: column; align-self: stretch; justify-content: space-between; border-right: 1px solid #c6d0c2; padding-right: 12px; }
-.number-block span { width: 45px; color: #536e5d; font-size: 9px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: .045em; }
+.card-footer { min-height: 128px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 15px; align-items: end; padding: 20px 18px 21px; border-top: 1px solid #bdcde0; }
+.number-block { display: flex; flex-direction: column; align-self: stretch; justify-content: space-between; border-right: 1px solid #bdcde0; padding-right: 12px; }
+.number-block span { width: 45px; color: #3b5e86; font-size: 9px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: .045em; }
 .number-block strong { font-family: Manrope, Arial, sans-serif; font-size: 2.1rem; font-weight: 600; line-height: 1; letter-spacing: -.08em; font-variant-numeric: tabular-nums; }
 .card-footer h3 { margin: 0; font-family: Manrope, Arial, sans-serif; font-size: clamp(1.03rem, 1.4vw, 1.43rem); line-height: 1.17; font-weight: 700; letter-spacing: -.055em; overflow-wrap: anywhere; }
 .portrait-sources { padding: 0 clamp(24px, 5vw, 76px) 50px; }
 .portrait-sources h2 { margin: 0 0 8px; font-family: Manrope, Arial, sans-serif; font-size: 1.15rem; letter-spacing: -.04em; }
-.portrait-sources p { margin: 0 0 18px; color: #364f42; font-size: 13px; line-height: 1.65; }
+.portrait-sources p { margin: 0 0 18px; color: #35516f; font-size: 13px; line-height: 1.65; }
 .portrait-sources ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 30px; padding: 0; margin: 0; list-style: none; }
-.portrait-sources li { display: flex; flex-wrap: wrap; gap: 4px 15px; padding: 10px 0; border-top: 1px solid #c4ccc0; font-size: 13px; }
+.portrait-sources li { display: flex; flex-wrap: wrap; gap: 4px 15px; padding: 10px 0; border-top: 1px solid #bccde0; font-size: 13px; }
 .portrait-sources li span:first-child { flex-basis: 100%; font-weight: 700; }
-.portrait-sources li span:last-child { color: #364f42; }
-.source-note { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 25px; padding: 39px clamp(24px, 5vw, 76px) 43px; border-top: 1px solid #c4ccc0; }
-.source-mark { display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #82998b; border-radius: 50%; font-size: 25px; }
+.portrait-sources li span:last-child { color: #35516f; }
+.source-note { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 25px; padding: 39px clamp(24px, 5vw, 76px) 43px; border-top: 1px solid #bccde0; }
+.source-mark { display: grid; place-items: center; width: 52px; height: 52px; border: 1px solid #6e8caf; border-radius: 50%; font-size: 25px; }
 .source-note h2 { margin: 0 0 12px; font-family: Manrope, Arial, sans-serif; font-size: 1.15rem; letter-spacing: -.04em; }
-.source-note p { max-width: 850px; margin: 0 0 8px; color: #364f42; font-size: 13px; line-height: 1.65; }
-.colophon { display: flex; justify-content: space-between; gap: 15px; padding: 22px clamp(24px, 5vw, 76px); background: #e8e8dd; color: #526858; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.source-note p { max-width: 850px; margin: 0 0 8px; color: #35516f; font-size: 13px; line-height: 1.65; }
+.colophon { display: flex; justify-content: space-between; gap: 15px; padding: 22px clamp(24px, 5vw, 76px); background: #dfe8f3; color: #365a82; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 @media (max-width: 1100px) { .candidate-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card-footer h3 { font-size: clamp(1.18rem, 2vw, 1.5rem); } }
-@media (max-width: 700px) { .intro-main { align-items: start; flex-direction: column; gap: 40px; } .intro-aside { width: 100%; display: flex; align-items: center; gap: 30px; } .count { margin: 0; } .intro-aside p { max-width: 350px; } .intro { padding-bottom: 50px; } }
-@media (max-width: 560px) { .intro { padding-top: 20px; padding-bottom: 28px; } .intro-topline { padding-bottom: 15px; } .intro-main { padding-top: 27px; gap: 20px; } .section-kicker { margin-bottom: 12px; } .intro-aside { gap: 18px; padding-top: 12px; } .count { font-size: 2.8rem; } .intro-aside p { line-height: 1.45; } .candidate-section { padding-top: 30px; } .masthead { min-height: 69px; } .masthead-note { max-width: 120px; text-align: right; font-size: 9px; line-height: 1.4; } .intro-topline { font-size: 9px; letter-spacing: .09em; } h1 { font-size: clamp(2.65rem, 10vw, 4rem); } .candidate-grid { grid-template-columns: 1fr; gap: 20px; } .candidate-card { display: flex; flex-direction: column-reverse; } .card-footer { min-height: 112px; border-top: 0; border-bottom: 1px solid #c6d0c2; } .section-heading { align-items: start; flex-direction: column; } .section-heading p { text-align: left; } .portrait-sources ol { grid-template-columns: 1fr; } .source-note { grid-template-columns: 1fr; gap: 18px; } .colophon { flex-direction: column; } }
+@media (max-width: 700px) { .intro-main { align-items: start; flex-direction: column; gap: 40px; } .intro-aside { width: 100%; display: flex; align-items: center; gap: 22px; } .intro-count { flex: 1; margin: 0; } .municipal-arms { flex: none; padding: 0 0 0 18px; border-top: 0; border-left: 1px solid #9bb2cf; } .municipal-arms img { width: 43px; } .municipal-arms figcaption { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; } .count { margin: 0; } .intro-aside p { max-width: 350px; } .intro { padding-bottom: 50px; } }
+@media (max-width: 560px) { .intro { padding-top: 20px; padding-bottom: 28px; } .intro-topline { padding-bottom: 15px; } .intro-main { padding-top: 27px; gap: 20px; } .section-kicker { margin-bottom: 12px; } .intro-aside { gap: 12px; padding-top: 12px; } .count { font-size: 2.8rem; } .intro-aside p { line-height: 1.45; } .candidate-section { padding-top: 30px; } .masthead { min-height: 69px; } .masthead-note { max-width: 160px; text-align: right; font-size: 9px; line-height: 1.4; } .intro-topline { font-size: 9px; letter-spacing: .09em; } h1 { font-size: clamp(2.65rem, 10vw, 4rem); } .candidate-grid { grid-template-columns: 1fr; gap: 20px; } .candidate-card { display: flex; flex-direction: column-reverse; } .card-footer { min-height: 112px; border-top: 0; border-bottom: 1px solid #bdcde0; } .section-heading { align-items: start; flex-direction: column; } .section-heading p { text-align: left; } .portrait-sources ol { grid-template-columns: 1fr; } .source-note { grid-template-columns: 1fr; gap: 18px; } .colophon { flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
