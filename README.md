@@ -1,11 +1,15 @@
 # BernoInfo 2026
 
-A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovakia.
+A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovakia. This branch is a **private homepage prototype**, not a publication approval.
 
-The repository is private during research and development. The initial product direction is a Slovak-language, mobile-first React/TypeScript site on Cloudflare Workers, with selective GSAP, Lenis, and React Bits use that respects reduced-motion settings. Election content still requires independent review and Peter's approval before public release.
+## Local preview
 
-The current app is a content-free Cloudflare Git-integration smoke test. To build locally with Node.js, run `npm ci` and `npm run build`. The `wrangler.jsonc` configuration serves the generated `dist` directory as Worker static assets; no Worker script is needed for this smoke test. The smoke test has no client-side routes; unknown paths return 404. If a future app needs deep-link navigation, configure and verify a fallback separately.
+Run `npm ci`, then `npm run dev` for a local browser preview or `npm run build` and `npm run preview` to inspect the production build. The app is a single page and includes `noindex, nofollow` while under review. No Cloudflare deploy is needed for review.
 
-For Cloudflare Workers Builds, use Worker name `bernoinfo2026` (matching `wrangler.jsonc`), production branch `main`, root directory `/`, build command `npm run build`, deploy command `npx wrangler deploy`, and preview command `npx wrangler preview`. Preview builds must be enabled for the draft PR branch. A preview URL can be publicly reachable; no research notes or candidate content belong in this smoke test. Do not merge the smoke-test PR or deploy election content without the project's review and release gates.
+## Content and image handoff
 
-Start with [the project charter](docs/PROJECT_CHARTER.md), [research protocol](docs/RESEARCH_PROTOCOL.md), and [agent workflow](docs/AGENT_TEAM.md).
+`src/candidates.ts` contains the eight registered names and the *corrected municipality list numbers* in source order. The numbers are not labelled ballot-paper numbers. The page links the [corrected official list](https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf) and [municipal notice](https://www.bernolakovo.sk/novinka/139303/n), both checked 17 October 2026.
+
+All eight cards currently render the same local, non-likeness placeholder at `public/images/portrait-placeholder.svg`. To replace it, first complete independent rights and identity review **for all eight portraits**: original URL, photographer/rightsholder, explicit reuse and crop authority, attribution requirement and placement, and quality/identity approval. Put the approved, optimized assets under `public/images/portraits/`. Then populate the `approvedPortraits` manifest in `src/candidates.ts` with one local path for each candidate ID, and add any required photo credits outside the cards. Do not switch to real portraits until the complete manifest and credits are ready. Do not hotlink or copy Facebook photos.
+
+Independent factual, fairness, accessibility, responsive, and source-link review is still required before release. Merge or deployment requires separate approval.
