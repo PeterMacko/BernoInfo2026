@@ -47,6 +47,7 @@ function App() {
                 <div className="portrait-wrap">
                   <img
                     src={portrait?.src ?? placeholderImage}
+                    className={privatePreviewPortraits && !approvedPortraits ? `preview-portrait preview-portrait--${candidate.id}` : undefined}
                     alt={portrait ? `Portrét: ${candidate.registeredName}` : ''}
                     aria-hidden={portrait ? undefined : true}
                     width="640"
