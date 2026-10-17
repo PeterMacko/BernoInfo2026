@@ -46,14 +46,14 @@ h1 em { color: #f4d56a; font-weight: 400; font-style: normal; }
 .candidate-card { min-width: 0; background: #eef2f7; border: 1px solid #cad6e5; }
 .portrait-wrap { aspect-ratio: 640 / 760; background: #d9e5f2; overflow: hidden; }
 .portrait-wrap img { display: block; width: 100%; height: 100%; object-fit: cover; }
-/* Private preview only: preserve headroom in tall sources and show the complete
-   owner-supplied landscape setting. Original files remain untouched. */
-.preview-portrait--bartok { object-position: 50% 18%; }
-.portrait-wrap .preview-portrait--kandrac { object-fit: contain; }
-.preview-portrait--lakota { object-position: 50% 12%; }
-.preview-portrait--rajter { object-position: 50% 12%; }
-.portrait-wrap .preview-portrait--cirbus { object-fit: contain; }
-.preview-portrait--sutka { transform: scale(1.17); transform-origin: 50% 36%; }
+/* Use the same framing for private previews and approved portraits. Preserve
+   headroom in tall sources and show the complete landscape setting. */
+.candidate-portrait--bartok { object-position: 50% 18%; }
+.portrait-wrap .candidate-portrait--kandrac { object-fit: contain; }
+.candidate-portrait--lakota { object-position: 50% 12%; }
+.candidate-portrait--rajter { object-position: 50% 12%; }
+.portrait-wrap .candidate-portrait--cirbus { object-fit: contain; }
+.candidate-portrait--sutka { transform: scale(1.17); transform-origin: 50% 36%; }
 .card-footer { min-height: 128px; display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 15px; align-items: end; padding: 20px 18px 21px; border-top: 1px solid #bdcde0; }
 .number-block { display: flex; flex-direction: column; align-self: stretch; justify-content: space-between; border-right: 1px solid #bdcde0; padding-right: 12px; }
 .number-block span { width: 45px; color: #3b5e86; font-size: 9px; line-height: 1.2; font-weight: 700; text-transform: uppercase; letter-spacing: .045em; }
