@@ -1,11 +1,12 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { approvedPortraits, candidates, placeholderImage } from './candidates'
+import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
+const portraits = approvedPortraits ?? privatePreviewPortraits
 
 function App() {
   return (
@@ -33,13 +34,14 @@ function App() {
       </section>
 
       <section className="candidate-section" aria-labelledby="candidates-title">
+        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Súkromný náhľad portrétov · nie na zverejnenie</p>}
         <div className="section-heading">
           <h2 id="candidates-title">Zoznam kandidátov</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
         <ol className="candidate-grid">
           {candidates.map((candidate) => {
-            const portrait = approvedPortraits?.[candidate.id]
+            const portrait = portraits?.[candidate.id]
             return (
               <li className="candidate-card" key={candidate.id}>
                 <div className="portrait-wrap">
@@ -61,16 +63,16 @@ function App() {
         </ol>
       </section>
 
-      {approvedPortraits && (
+      {portraits && (
         <section className="portrait-sources" aria-labelledby="portrait-sources-title">
           <h2 id="portrait-sources-title">Zdroje portrétov</h2>
-          <p>Rovnaký obrazový formát pre všetkých osem kandidátov. Odkazy vedú na pôvodné zdroje fotografií.</p>
+          <p>Rovnaký obrazový formát pre všetkých osem kandidátov. Odkazy vedú na dostupné pôvodné zdroje fotografií.</p>
           <ol>
             {candidates.map((candidate) => (
               <li key={candidate.id}>
                 <span>{candidate.registeredName}</span>
-                <a href={approvedPortraits![candidate.id].sourceUrl}>Zdroj fotografie</a>
-                <span>{approvedPortraits![candidate.id].credit}</span>
+                {portraits[candidate.id].sourceUrl && <a href={portraits[candidate.id].sourceUrl}>Zdroj fotografie</a>}
+                <span>{portraits[candidate.id].credit}</span>
               </li>
             ))}
           </ol>
@@ -83,7 +85,7 @@ function App() {
           <h2>Zdroj a stav údajov</h2>
           <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
           <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
-          {approvedPortraits ? (
+          {portraits ? (
             <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
           ) : (
             <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>

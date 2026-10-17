@@ -1,0 +1,26 @@
+# Private portrait-asset staging — 17 October 2026
+
+This records a **local, unpublished acquisition**, not release approval. Peter Macko asserted permission to reproduce and crop Facebook portraits for all eight candidates; do not ask again for that permission. Seven files below were saved from the Facebook photo viewers identified in the [researcher source matrix](/home/pmacko/projects/BernoInfo2026-researcher/docs/research/PORTRAIT_SOURCE_MATRIX_2026-10-17.md); the eighth was supplied by Peter. Original Facebook CDN links are signed/ephemeral; stable photo-page URLs below are provenance locators where available. The eight JPEGs are under `.private/portrait-originals/`, ignored by Git and mode 600. They have **not** been pushed or published.
+
+| Candidate | Photo page | Local original (relative to lead worktree) | Pixels | SHA-256 |
+| --- | --- | --- | --- | --- |
+| Michal Bartók | https://www.facebook.com/photo/?fbid=122101064715406989&set=a.122101064019406989 | `.private/portrait-originals/michal-bartok-original.jpg` | 1366 × 2048 | `c370d6e1ec2298d3036e0c0723d36e20d02f8ad7833f1e99f3883c31837c17ba` |
+| Filip Kandráč | https://www.facebook.com/photo/?fbid=122105035221374324&set=a.122099129853374324 | `.private/portrait-originals/filip-kandrac-original.jpg` | 1365 × 1364 | `4ce31e4b45860c3376d87b12790ee6f97feb90beb2464d405aff0cea00d9b652` |
+| Jaroslav Koštial | https://www.facebook.com/photo/?fbid=2717977855365231&set=a.1665486813947679 | `.private/portrait-originals/jaroslav-kostial-original.jpg` | 1254 × 1254 | `caf837f29544967ae5e647be05224693c2d966408d02e0d63b304196dd3d6752` |
+| Peter Lakota | https://www.facebook.com/photo/?fbid=122104136715339077&set=a.122103409755339077 | `.private/portrait-originals/peter-lakota-original.jpg` | 1536 × 2048 | `e3f8ac74bf0fb79903d0af2fff5a6f8e542818684b224b0b9eab9c45d0d20694` |
+| Milan Rajter | https://www.facebook.com/photo/?fbid=122102269641340128&set=a.122101506195340128 | `.private/portrait-originals/milan-rajter-original.jpg` | 1085 × 1450 | `9854ab34911dcbad14826175d4257bf9f8fe578fec29971c43649e9e25408105` |
+| Roman Šutka | https://www.facebook.com/photo/?fbid=122093696823395107&set=a.122093695749395107 | `.private/portrait-originals/roman-sutka-original.jpg` | 1003 × 1042 | `73c1feddbee8b8d5f2dc2ff105f7070f1069e145b402f0f92514f5bc2d2c70c0` |
+| Miroslav Turenič | https://www.facebook.com/photo/?fbid=1645206470950417&set=a.235317941939284 | `.private/portrait-originals/miroslav-turenic-original.jpg` | 1066 × 1600 | `32ccc3856f16c75275e982d3a2fdfacb46558a61495a989da6c064d0cb55be21` |
+| Martin Cirbus | Owner-supplied Facebook image; source post unavailable | `.private/portrait-originals/martin-cirbus-owner-confirmed.jpg` | 720 × 487 | `39d8d265c42daf170dd242611737d9642355456dc0281f08ef6a6c32545347d5` |
+
+The source matrix describes the visual contents and the remaining photographer-credit gaps. The Cirbus gold-C profile image is a logo, not a portrait. The municipality's corrected PDF supplies list order, not independently verified ballot-paper numbers. Facebook/source coverage remains partial, not a completed July–October sweep.
+
+## Later owner-supplied image lead, 17 October
+
+Peter supplied a direct Facebook CDN JPEG in response to the Cirbus identity question. The 720 × 487 image shows a seated man in a dark suit and red tie, with a Slovak flag, coat of arms, candles, and Christmas tree. It contains no visible candidate name. An inferred Facebook photo-page URL from the CDN filename (`https://www.facebook.com/photo.php?fbid=1184825290419994`) returned “Sorry, this content isn't available right now” in the research browser, so its publisher, caption, pictured-person identity, and stable provenance could not be checked. The CDN URL is signed/ephemeral and is not a durable source link.
+
+Peter subsequently answered **“agree”** to the specific question whether the man in this newly supplied image is Martin Cirbus. Treat that as owner identification for the **private preview only**, not as identification of the man in the earlier campaign poster. The copy is now held at `.private/portrait-originals/martin-cirbus-owner-confirmed.jpg` (same SHA-256, mode 600). The photographer and stable source-post URL remain unknown; do not invent either. The direct CDN URL is not used as a public link.
+
+## Private equal-treatment preview
+
+Eight files are mirrored into ignored `.private/portrait-preview-images/` for the local preview. They retain their original pixels; the cards use the same CSS aspect ratio and `object-fit: cover`, without file modification. Run `bash scripts/private-portrait-preview.sh` to build with `VITE_PRIVATE_PORTRAIT_PREVIEW=1`, copy the images into ignored `dist/`, and serve on localhost. An ordinary `npm run build` contains none of the images. The flag is off by default, `approvedPortraits` stays null, and no image is part of a Git push. This is a reviewable local layout, not a release artifact. Independent editorial/visual review, final credit/source decisions, and Peter's concrete public-release approval remain outstanding.

@@ -38,6 +38,7 @@ h1 em { color: #f4d56a; font-weight: 400; font-style: normal; }
 .count span { color: #bbcee4; font-size: .25em; font-weight: 500; letter-spacing: -.04em; vertical-align: middle; }
 .intro-aside p { margin: 0; color: #e5edf7; font-size: 13px; line-height: 1.6; }
 .candidate-section { padding: clamp(42px, 5.5vw, 83px) clamp(24px, 5vw, 76px) clamp(55px, 7vw, 105px); }
+.preview-notice { display: inline-block; margin: 0 0 18px; padding: 7px 10px; background: #e3edf9; border: 1px solid #9eb8d9; color: #183a64; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 21px; border-bottom: 1px solid #b7c7db; margin-bottom: 24px; }
 .section-heading h2 { margin: 0; font-family: Manrope, Arial, sans-serif; font-size: clamp(1.4rem, 2vw, 2rem); letter-spacing: -.055em; }
 .section-heading p { margin: 0; color: #425f7e; font-size: 11px; font-weight: 600; text-align: right; text-transform: uppercase; letter-spacing: .09em; }

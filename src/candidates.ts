@@ -20,7 +20,7 @@ export type CandidateId = (typeof candidates)[number]['id']
 export type ApprovedPortrait = {
   // Keep reviewed images on this site's own origin; never use signed CDN URLs.
   src: `/images/candidates/${string}`
-  sourceUrl: string
+  sourceUrl?: string
   credit: string
 }
 
@@ -29,4 +29,17 @@ export type ApprovedPortrait = {
 // the page never mixes approved portraits with unresolved placeholders.
 // When enabling, update the no-JS fallback copy in index.html as well.
 export const approvedPortraits: Record<CandidateId, ApprovedPortrait> | null = null
+// Ignored local working files only; this switch is off in release builds and
+// does not confer editorial or publication approval.
+export const privatePreviewPortraits: Record<CandidateId, ApprovedPortrait> | null =
+  import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW === '1' ? {
+    bartok: { src: '/images/candidates/michal-bartok-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122101064715406989&set=a.122101064019406989', credit: 'Autor fotografie neuvedený' },
+    cirbus: { src: '/images/candidates/martin-cirbus-original.jpg', credit: 'Fotografia dodaná prevádzkovateľom projektu; autor neuvedený' },
+    kandrac: { src: '/images/candidates/filip-kandrac-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122105035221374324&set=a.122099129853374324', credit: 'Autor fotografie neuvedený' },
+    kostial: { src: '/images/candidates/jaroslav-kostial-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=2717977855365231&set=a.1665486813947679', credit: 'Autor fotografie neuvedený' },
+    lakota: { src: '/images/candidates/peter-lakota-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122104136715339077&set=a.122103409755339077', credit: 'Autor fotografie neuvedený' },
+    rajter: { src: '/images/candidates/milan-rajter-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122102269641340128&set=a.122101506195340128', credit: 'Autor fotografie neuvedený' },
+    sutka: { src: '/images/candidates/roman-sutka-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122093696823395107&set=a.122093695749395107', credit: 'Autor fotografie neuvedený' },
+    turenic: { src: '/images/candidates/miroslav-turenic-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=1645206470950417&set=a.235317941939284', credit: 'Autor fotografie neuvedený' },
+  } : null
 export const placeholderImage = '/images/portrait-placeholder.svg'
