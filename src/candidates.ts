@@ -34,7 +34,7 @@ export const approvedPortraits: Record<CandidateId, ApprovedPortrait> | null = n
 export const privatePreviewPortraits: Record<CandidateId, ApprovedPortrait> | null =
   import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW === '1' ? {
     bartok: { src: '/images/candidates/michal-bartok-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122101064715406989&set=a.122101064019406989', credit: 'Autor fotografie neuvedený' },
-    cirbus: { src: '/images/candidates/martin-cirbus-original.jpg', credit: 'Fotografia dodaná prevádzkovateľom projektu; autor neuvedený' },
+    cirbus: { src: '/images/candidates/martin-cirbus-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=1184825287086661&set=a.108861341349733', credit: 'Fotografia dodaná prevádzkovateľom projektu; autor neuvedený' },
     kandrac: { src: '/images/candidates/filip-kandrac-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122105035221374324&set=a.122099129853374324', credit: 'Autor fotografie neuvedený' },
     kostial: { src: '/images/candidates/jaroslav-kostial-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=2717977855365231&set=a.1665486813947679', credit: 'Autor fotografie neuvedený' },
     lakota: { src: '/images/candidates/peter-lakota-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122104136715339077&set=a.122103409755339077', credit: 'Autor fotografie neuvedený' },
