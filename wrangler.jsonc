@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "bernoinfo2026",
+  "compatibility_date": "2026-10-17",
+  "previews": {},
+  "assets": {
+    "directory": "./dist"
+  }
+}
