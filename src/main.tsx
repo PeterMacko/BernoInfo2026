@@ -23,7 +23,7 @@ function App() {
           </div>
           <div className="intro-aside">
             <span className="count">08<span aria-hidden="true"> / 08</span></span>
-            <p>Osem zaregistrovaných kandidátov. Jeden spoločný prehľad podľa poradia v oficiálnom zozname obce.</p>
+            <p>Osem mien v poradí opraveného zoznamu obce.</p>
           </div>
         </div>
       </section>
