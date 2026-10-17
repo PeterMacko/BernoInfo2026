@@ -40,7 +40,7 @@ function App() {
               <li className="candidate-card" key={candidate.id}>
                 <div className="portrait-wrap">
                   <img
-                    src={portrait ?? placeholderImage}
+                    src={portrait?.src ?? placeholderImage}
                     alt={portrait ? `Portrét: ${candidate.registeredName}` : ''}
                     aria-hidden={portrait ? undefined : true}
                     width="640"
@@ -57,12 +57,32 @@ function App() {
         </ol>
       </section>
 
+      {approvedPortraits && (
+        <section className="portrait-sources" aria-labelledby="portrait-sources-title">
+          <h2 id="portrait-sources-title">Zdroje portrétov</h2>
+          <p>Rovnaký obrazový formát pre všetkých osem kandidátov. Odkazy vedú na pôvodné zdroje fotografií.</p>
+          <ol>
+            {candidates.map((candidate) => (
+              <li key={candidate.id}>
+                <span>{candidate.registeredName}</span>
+                <a href={approvedPortraits![candidate.id].sourceUrl}>Zdroj fotografie</a>
+                <span>{approvedPortraits![candidate.id].credit}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       <footer className="source-note">
         <div className="source-mark" aria-hidden="true">↗</div>
         <div>
           <h2>Zdroj a stav údajov</h2>
           <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
-          <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>
+          {approvedPortraits ? (
+            <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
+          ) : (
+            <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>
+          )}
         </div>
       </footer>
       <div className="colophon"><span>BERNOINFO 2026</span><span>Informácie bez poradia dôležitosti.</span></div>

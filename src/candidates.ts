@@ -17,8 +17,16 @@ export const candidates = [
 
 export type CandidateId = (typeof candidates)[number]['id']
 
-// Switch only after all eight local portraits have passed rights, identity,
-// crop/quality, credit, and editorial review. Keep this null otherwise so the
-// public view never mixes approved portraits with unresolved placeholders.
-export const approvedPortraits: Record<CandidateId, string> | null = null
+export type ApprovedPortrait = {
+  // Keep reviewed images on this site's own origin; never use signed CDN URLs.
+  src: `/images/candidates/${string}`
+  sourceUrl: string
+  credit: string
+}
+
+// Populate and switch only after all eight local portraits have passed rights,
+// identity, crop/quality, credit, and editorial review. Keep null otherwise so
+// the page never mixes approved portraits with unresolved placeholders.
+// When enabling, update the no-JS fallback copy in index.html as well.
+export const approvedPortraits: Record<CandidateId, ApprovedPortrait> | null = null
 export const placeholderImage = '/images/portrait-placeholder.svg'
