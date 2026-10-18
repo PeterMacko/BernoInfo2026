@@ -1,11 +1,15 @@
 # BernoInfo 2026
 
-A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovakia.
+A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovakia. This branch is a **development homepage and photo-review preview**, not a final publication approval. Its Cloudflare preview URL is publicly reachable.
 
-The repository is private during research and development. The initial product direction is a Slovak-language, mobile-first React/TypeScript site on Cloudflare Workers, with selective GSAP, Lenis, and React Bits use that respects reduced-motion settings. Election content still requires independent review and Peter's approval before public release.
+## Local preview
 
-The current app is a content-free Cloudflare Git-integration smoke test. To build locally with Node.js, run `npm ci` and `npm run build`. The `wrangler.jsonc` configuration serves the generated `dist` directory as Worker static assets; no Worker script is needed for this smoke test. The smoke test has no client-side routes; unknown paths return 404. If a future app needs deep-link navigation, configure and verify a fallback separately.
+Run `npm ci`, then `npm run dev` for a local browser preview. On this development branch, `npm run build` creates the eight-photo review build used by Cloudflare; `npm run build:placeholder` creates the all-placeholder build. The app includes `noindex, nofollow` while under review, but that does not restrict access.
 
-For Cloudflare Workers Builds, use Worker name `bernoinfo2026` (matching `wrangler.jsonc`), production branch `main`, root directory `/`, build command `npm run build`, deploy command `npx wrangler deploy`, and preview command `npx wrangler preview`. Preview builds must be enabled for the draft PR branch. A preview URL can be publicly reachable; no research notes or candidate content belong in this smoke test. Do not merge the smoke-test PR or deploy election content without the project's review and release gates.
+## Content and image handoff
 
-Start with [the project charter](docs/PROJECT_CHARTER.md), [research protocol](docs/RESEARCH_PROTOCOL.md), and [agent workflow](docs/AGENT_TEAM.md).
+`src/candidates.ts` contains the eight registered names and the *corrected municipality list numbers* in source order. The numbers are not labelled ballot-paper numbers. The page links the [corrected official list](https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf) and [municipal notice](https://www.bernolakovo.sk/novinka/139303/n), both checked 17 October 2026.
+
+The development preview now shows all eight candidate photos solely for source and crop review, as Peter requested on 18 October. These review copies live under `preview-assets/candidates/` on this branch and are copied into the Cloudflare preview build; they are **not** in the approved-portrait manifest. The all-placeholder build still renders the same non-likeness placeholder for all eight. Before final release, complete identity, photographer/rightsholder and credit, quality, and equal-treatment review for every photo; then populate `approvedPortraits` in `src/candidates.ts` with a reviewed local asset for each candidate. Do not merge this preview-only build configuration into production unchanged.
+
+Independent factual, fairness, accessibility, responsive, and source-link review is still required before release. Merge or deployment requires separate approval.
