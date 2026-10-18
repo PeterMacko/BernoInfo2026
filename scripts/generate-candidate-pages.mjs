@@ -1,57 +1,245 @@
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
 const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
 const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
-const root = new URL('../public/kandidati/', import.meta.url)
-const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
-const link = (url, label) => `<a href="${esc(url)}">${esc(label)}</a>`
-const source = (url, publisher, date = 'dátum zverejnenia neuvedený') => `<small class="source">Zdroj: ${link(url, publisher)} · ${esc(date)} · naposledy overené ${esc(data.checked)}</small>`
-const empty = '<p class="empty">V preskúmaných zdrojoch sa tento údaj nepodarilo doložiť. Neznamená to, že neexistuje alebo že kandidát odmietol odpovedať.</p>'
-const section = (title, body, id) => `<section class="detail-section" aria-labelledby="${id}"><h2 id="${id}">${title}</h2>${body}</section>`
-const wordCount = (value) => String(value).trim().split(/\s+/u).filter(Boolean).length
-const correction = `<a href="mailto:${esc(data.correctionEmail)}">Nahlásiť opravu: ${esc(data.correctionEmail)}</a>`
+const outputRoot = fileURLToPath(new URL('../public/kandidati/', import.meta.url))
 
-if (data.candidates.length !== 8 || new Set(data.candidates.map(c => c.id)).size !== 8) throw new Error('Expected eight distinct candidate routes')
-for (const c of data.candidates) {
-  const portrait = reviewPortraits[c.id]
-  if (!portrait) throw new Error(`Missing portrait-review record for ${c.id}`)
-  if ((c.experience || []).length > 2 || (c.experience || []).some((item) => wordCount(item) > 70) || (c.proposals && wordCount(c.proposals) > 70)) throw new Error(`Equal-treatment copy cap exceeded for ${c.id}`)
-  const n = String(c.position).padStart(2, '0')
-  const registration = `<p><strong>${esc(c.name)}</strong> · číslo ${n} v opravenom zozname kandidátov. Registrovaná príslušnosť: ${esc(c.affiliation)}. Číslo v zozname nie je overeným číslom na hlasovacom lístku.</p>${source(data.officialUrl, 'Obec Bernolákovo — opravený zoznam (PDF)', `zverejnené ${data.officialDate}`)}`
-  const occupation = `<p>Povolanie uvedené v oficiálnom zozname: <strong>${esc(c.occupation)}</strong>. Zápis nedokladá konkrétneho zamestnávateľa ani súčasný pracovný pomer.</p>${source(data.officialUrl, 'Obec Bernolákovo — opravený zoznam (PDF)', `zverejnené ${data.officialDate}`)}`
-  const experience = (c.experience || []).length ? `<ul class="evidence-list">${c.experience.map(item => `<li><p><strong>Kandidát uvádza:</strong> ${esc(item)}</p>${source(c.experienceSource, 'Web kandidáta')}</li>`).join('')}</ul>` : empty
-  const programme = c.proposals ? `<p><strong>Kandidát uvádza:</strong> ${esc(c.proposals)}</p>${source(c.proposalSource || c.website, c.proposalPublisher || 'Web kandidáta', c.proposalDate)}` : empty
-  const functions = (c.priorTermFunctions || []).length ? `<ul class="evidence-list">${c.priorTermFunctions.map(item => `<li><p>${esc(item.text)}</p>${source(item.url, 'Obec Bernolákovo', item.sourceDate)}</li>`).join('')}</ul>` : empty
-  const channel = (url, note) => url ? `<p>${link(url, 'Otvoriť zdroj')}${note ? ` — ${esc(note)}` : ''}</p>${source(url, url.includes('facebook.com') ? 'Facebook — kandidátsky označená alebo prepojená stránka' : 'Web kandidáta')}` : empty
-  const channels = `<div class="link-slots"><div><h3>Facebook</h3>${channel(c.facebook, c.facebookNote)}</div><div><h3>Web kandidáta</h3>${channel(c.website)}</div></div>`
-  const companies = `${empty}<p class="qualifier">Žiadna firemná funkcia nie je uvedená: priamy záznam, IČO, obdobie a spoľahlivé priradenie osoby neboli doložené. Priamy prístup k FinStat bol pri výskume nedostupný. Nejde o potvrdenie neexistencie funkcie.</p>`
-  const interview = c.interview ? `<p>${link(c.interview, `Rozhovor s ${c.name} — LanCast Studio`)}. Vydavateľ: LanCast Studio. Účasť kandidáta podporujú úvodné titulky; celé odpovede ani identita podľa obrazu alebo hlasu neboli overené. Z rozhovoru tu nevyvodzujeme stanoviská.</p>${source(c.interview, 'LanCast Studio — YouTube', 'zverejnené 8. októbra 2026')}` : '<p class="empty">V spoločnej preskúmanej sade sa priamy rozhovor nepodarilo doložiť. Neznamená to, že rozhovor neexistuje alebo že kandidát účasť odmietol.</p>'
-  const sources = `<p>Spoločná uzávierka podkladov: ${esc(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja.</p><p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correction}</p><p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>`
-  const body = [
-    section('Registrácia', registration, 'registration'),
-    section('Povolanie', occupation, 'occupation'),
-    section('Skúsenosti a projekty', experience, 'experience'),
-    section('Programové návrhy', programme, 'programme'),
-    section('Verejné funkcie v období 2022 – 2026', functions, 'functions'),
-    section('Kanály kandidáta', channels, 'channels'),
-    section('Firemné funkcie', companies, 'companies'),
-    section('Rozhovor', interview, 'interview'),
-    section('Zdroje, pokrytie a opravy', sources, 'sources'),
-  ].join('\n')
-  const nav = data.candidates.map(other => `<a ${other.id === c.id ? 'aria-current="page" ' : ''}href="/kandidati/${other.id}/">${String(other.position).padStart(2, '0')} ${esc(other.name)}</a>`).join('')
-  const portraitImage = photoReview
-    ? `<img class="candidate-portrait candidate-portrait--${esc(c.id)}" src="${esc(portrait.src)}" alt="Portrét: ${esc(c.name)}" width="640" height="760">`
+const empty = '<p class="empty">V preskúmaných zdrojoch sa tento údaj nepodarilo doložiť. Neznamená to, že neexistuje alebo že kandidát odmietol odpovedať.</p>'
+const officialPublisher = 'Obec Bernolákovo — opravený zoznam (PDF)'
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[character])
+}
+
+function link(url, label) {
+  return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`
+}
+
+function source(url, publisher, date = 'dátum zverejnenia neuvedený') {
+  return `<small class="source">Zdroj: ${link(url, publisher)} · ${escapeHtml(date)} · naposledy overené ${escapeHtml(data.checked)}</small>`
+}
+
+function indent(markup, depth = 1) {
+  return markup.split('\n').map((line) => `${'  '.repeat(depth)}${line}`).join('\n')
+}
+
+function block(tag, attributes, children) {
+  return `<${tag}${attributes}>\n${children.map((child) => indent(child)).join('\n')}\n</${tag}>`
+}
+
+function section(id, title, content) {
+  return block('section', ` class="detail-section" aria-labelledby="${id}"`, [
+    `<h2 id="${id}">${title}</h2>`,
+    ...content,
+  ])
+}
+
+function wordCount(value) {
+  return String(value).trim().split(/\s+/u).filter(Boolean).length
+}
+
+function validateInputs() {
+  if (!Array.isArray(data.candidates) || data.candidates.length !== 8) {
+    throw new Error('Expected eight candidate routes')
+  }
+
+  const ids = new Set()
+  const positions = new Set()
+  for (const candidate of data.candidates) {
+    if (typeof candidate.id !== 'string' || !/^[a-z0-9-]+$/.test(candidate.id)) {
+      throw new Error(`Invalid candidate route token: ${String(candidate.id)}`)
+    }
+    if (ids.has(candidate.id)) throw new Error(`Duplicate candidate route: ${candidate.id}`)
+    ids.add(candidate.id)
+    if (!Number.isInteger(candidate.position) || candidate.position < 1 || candidate.position > 8 || positions.has(candidate.position)) {
+      throw new Error(`Missing or duplicate list position for ${candidate.id}`)
+    }
+    positions.add(candidate.position)
+    for (const field of ['name', 'affiliation', 'occupation']) {
+      if (typeof candidate[field] !== 'string' || !candidate[field].trim()) {
+        throw new Error(`Missing ${field} for ${candidate.id}`)
+      }
+    }
+    if (!reviewPortraits[candidate.id] || typeof reviewPortraits[candidate.id].src !== 'string' ||
+        typeof reviewPortraits[candidate.id].sourceUrl !== 'string' || typeof reviewPortraits[candidate.id].credit !== 'string') {
+      throw new Error(`Missing portrait-review record for ${candidate.id}`)
+    }
+    if ((candidate.experience || []).length > 2 ||
+        (candidate.experience || []).some((item) => wordCount(item) > 70) ||
+        (candidate.proposals && wordCount(candidate.proposals) > 70)) {
+      throw new Error(`Equal-treatment copy cap exceeded for ${candidate.id}`)
+    }
+  }
+}
+
+function renderRegistration(candidate) {
+  const number = String(candidate.position).padStart(2, '0')
+  return [
+    `<p><strong>${escapeHtml(candidate.name)}</strong> · číslo ${number} v opravenom zozname kandidátov. Registrovaná príslušnosť: ${escapeHtml(candidate.affiliation)}. Číslo v zozname nie je overeným číslom na hlasovacom lístku.</p>`,
+    source(data.officialUrl, officialPublisher, `zverejnené ${data.officialDate}`),
+  ]
+}
+
+function renderOccupation(candidate) {
+  return [
+    `<p>Povolanie uvedené v oficiálnom zozname: <strong>${escapeHtml(candidate.occupation)}</strong>. Zápis nedokladá konkrétneho zamestnávateľa ani súčasný pracovný pomer.</p>`,
+    source(data.officialUrl, officialPublisher, `zverejnené ${data.officialDate}`),
+  ]
+}
+
+function renderEvidenceList(items, renderItem) {
+  return items.length ? [block('ul', ' class="evidence-list"', items.map(renderItem))] : [empty]
+}
+
+function renderExperience(candidate) {
+  return renderEvidenceList(candidate.experience || [], (item) => block('li', '', [
+    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(item)}</p>`,
+    source(candidate.experienceSource, 'Web kandidáta'),
+  ]))
+}
+
+function renderProgramme(candidate) {
+  return candidate.proposals ? [
+    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(candidate.proposals)}</p>`,
+    source(candidate.proposalSource || candidate.website, candidate.proposalPublisher || 'Web kandidáta', candidate.proposalDate),
+  ] : [empty]
+}
+
+function renderFunctions(candidate) {
+  return renderEvidenceList(candidate.priorTermFunctions || [], (item) => block('li', '', [
+    `<p>${escapeHtml(item.text)}</p>`,
+    source(item.url, 'Obec Bernolákovo', item.sourceDate),
+  ]))
+}
+
+function renderChannel(url, note) {
+  if (!url) return [empty]
+  return [
+    `<p>${link(url, 'Otvoriť zdroj')}${note ? ` — ${escapeHtml(note)}` : ''}</p>`,
+    source(url, url.includes('facebook.com') ? 'Facebook — kandidátsky označená alebo prepojená stránka' : 'Web kandidáta'),
+  ]
+}
+
+function renderChannels(candidate) {
+  return [block('div', ' class="link-slots"', [
+    block('div', '', ['<h3>Facebook</h3>', ...renderChannel(candidate.facebook, candidate.facebookNote)]),
+    block('div', '', ['<h3>Web kandidáta</h3>', ...renderChannel(candidate.website)]),
+  ])]
+}
+
+function renderCompanies() {
+  return [
+    empty,
+    '<p class="qualifier">Žiadna firemná funkcia nie je uvedená: priamy záznam, IČO, obdobie a spoľahlivé priradenie osoby neboli doložené. Priamy prístup k FinStat bol pri výskume nedostupný. Nejde o potvrdenie neexistencie funkcie.</p>',
+  ]
+}
+
+function renderInterview(candidate) {
+  return candidate.interview ? [
+    `<p>${link(candidate.interview, `Rozhovor s ${candidate.name} — LanCast Studio`)}. Vydavateľ: LanCast Studio. Účasť kandidáta podporujú úvodné titulky; celé odpovede ani identita podľa obrazu alebo hlasu neboli overené. Z rozhovoru tu nevyvodzujeme stanoviská.</p>`,
+    source(candidate.interview, 'LanCast Studio — YouTube', 'zverejnené 8. októbra 2026'),
+  ] : [
+    '<p class="empty">V spoločnej preskúmanej sade sa priamy rozhovor nepodarilo doložiť. Neznamená to, že rozhovor neexistuje alebo že kandidát účasť odmietol.</p>',
+  ]
+}
+
+function correctionLink() {
+  return `<a href="mailto:${escapeHtml(data.correctionEmail)}">Nahlásiť opravu: ${escapeHtml(data.correctionEmail)}</a>`
+}
+
+function renderSources() {
+  return [
+    `<p>Spoločná uzávierka podkladov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja.</p>`,
+    `<p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correctionLink()}</p>`,
+    '<p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>',
+  ]
+}
+
+function renderSections(candidate) {
+  return block('div', ' class="content"', [
+    section('registration', 'Registrácia', renderRegistration(candidate)),
+    section('occupation', 'Povolanie', renderOccupation(candidate)),
+    section('experience', 'Skúsenosti a projekty', renderExperience(candidate)),
+    section('programme', 'Programové návrhy', renderProgramme(candidate)),
+    section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
+    section('channels', 'Kanály kandidáta', renderChannels(candidate)),
+    section('companies', 'Firemné funkcie', renderCompanies()),
+    section('interview', 'Rozhovor', renderInterview(candidate)),
+    section('sources', 'Zdroje, pokrytie a opravy', renderSources()),
+  ])
+}
+
+function renderNavigation(candidate) {
+  return block('nav', ' class="candidate-nav" aria-label="Profily kandidátov"', data.candidates.map((other) =>
+    `<a ${other.id === candidate.id ? 'aria-current="page" ' : ''}href="/kandidati/${other.id}/">${String(other.position).padStart(2, '0')} ${escapeHtml(other.name)}</a>`))
+}
+
+function renderPortrait(candidate) {
+  const portrait = reviewPortraits[candidate.id]
+  const image = photoReview
+    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Portrét: ${escapeHtml(candidate.name)}" width="640" height="760">`
     : '<img src="/images/portrait-placeholder.svg" alt="" width="640" height="760">'
-  const portraitCaption = photoReview
-    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${esc(portrait.credit)}. Identita, kredit a použitie vo finálnej verzii ešte nie sú schválené.</figcaption>`
+  const caption = photoReview
+    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. Identita, kredit a použitie vo finálnej verzii ešte nie sú schválené.</figcaption>`
     : '<figcaption>Portrét zatiaľ nie je zverejnený; grafická výplň nie je podobizňou kandidáta.</figcaption>'
-  const portraitFigure = `<figure class="detail-portrait"><div class="portrait-wrap">${portraitImage}</div>${portraitCaption}</figure>`
-  const previewNotice = photoReview ? '<p class="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>' : ''
-  const html = `<!doctype html><html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#183a64"><title>${esc(c.name)} — BernoInfo 2026</title><meta name="description" content="Profil kandidáta ${esc(c.name)} vo voľbách starostu obce Bernolákovo 2026."><link rel="stylesheet" href="/candidate-detail.css"></head><body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main><div class="hero"><a class="back" href="/">← Všetci kandidáti</a>${previewNotice}<div class="hero-layout"><div class="hero-copy"><p class="kicker">Bernolákovo / voľby starostu / ${n} z 08</p><h1>${esc(c.name)}</h1><p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p></div>${portraitFigure}</div></div><nav class="candidate-nav" aria-label="Profily kandidátov">${nav}</nav><div class="content">${body}</div></main><footer><a href="/">← Späť na úplný zoznam</a><p>${correction}</p><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>`
-  const dir = join(root.pathname, c.id)
-  mkdirSync(dir, { recursive: true })
-  writeFileSync(join(dir, 'index.html'), html)
+  return block('figure', ' class="detail-portrait"', [
+    block('div', ' class="portrait-wrap"', [image]),
+    caption,
+  ])
+}
+
+function renderHero(candidate) {
+  const number = String(candidate.position).padStart(2, '0')
+  return block('div', ' class="hero"', [
+    '<a class="back" href="/">← Všetci kandidáti</a>',
+    ...(photoReview ? ['<p class="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>'] : []),
+    block('div', ' class="hero-layout"', [
+      block('div', ' class="hero-copy"', [
+        `<p class="kicker">Bernolákovo / voľby starostu / ${number} z 08</p>`,
+        `<h1>${escapeHtml(candidate.name)}</h1>`,
+        '<p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p>',
+      ]),
+      renderPortrait(candidate),
+    ]),
+  ])
+}
+
+function renderDocument(candidate) {
+  const head = block('head', '', [
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    '<meta name="robots" content="noindex, nofollow">',
+    '<meta name="theme-color" content="#183a64">',
+    `<title>${escapeHtml(candidate.name)} — BernoInfo 2026</title>`,
+    `<meta name="description" content="Profil kandidáta ${escapeHtml(candidate.name)} vo voľbách starostu obce Bernolákovo 2026.">`,
+    '<link rel="stylesheet" href="/candidate-detail.css">',
+  ])
+  const header = block('header', ' class="masthead"', [
+    '<a class="brand" href="/">BERNO<span>INFO</span> 2026</a>',
+    '<span>Nezávislý projekt · nie stránka obce</span>',
+  ])
+  const footer = block('footer', '', [
+    '<a href="/">← Späť na úplný zoznam</a>',
+    `<p>${correctionLink()}</p>`,
+    '<p>BernoInfo 2026 · nezávislý informačný projekt</p>',
+  ])
+  const page = block('div', ' class="page"', [
+    header,
+    block('main', '', [renderHero(candidate), renderNavigation(candidate), renderSections(candidate)]),
+    footer,
+  ])
+  return `<!doctype html>\n${block('html', ' lang="sk"', [head, block('body', '', [page])])}\n`
+}
+
+validateInputs()
+for (const candidate of data.candidates) {
+  const directory = join(outputRoot, candidate.id)
+  mkdirSync(directory, { recursive: true })
+  writeFileSync(join(directory, 'index.html'), renderDocument(candidate), 'utf8')
 }
 console.log(`Generated ${data.candidates.length} candidate detail pages.`)
