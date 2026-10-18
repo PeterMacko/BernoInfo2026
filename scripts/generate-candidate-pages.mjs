@@ -2,6 +2,8 @@ import { readFileSync, mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
+const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
+const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
 const root = new URL('../public/kandidati/', import.meta.url)
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 const link = (url, label) => `<a href="${esc(url)}">${esc(label)}</a>`
@@ -13,6 +15,8 @@ const correction = `<a href="mailto:${esc(data.correctionEmail)}">Nahlásiť opr
 
 if (data.candidates.length !== 8 || new Set(data.candidates.map(c => c.id)).size !== 8) throw new Error('Expected eight distinct candidate routes')
 for (const c of data.candidates) {
+  const portrait = reviewPortraits[c.id]
+  if (!portrait) throw new Error(`Missing portrait-review record for ${c.id}`)
   if ((c.experience || []).length > 2 || (c.experience || []).some((item) => wordCount(item) > 70) || (c.proposals && wordCount(c.proposals) > 70)) throw new Error(`Equal-treatment copy cap exceeded for ${c.id}`)
   const n = String(c.position).padStart(2, '0')
   const registration = `<p><strong>${esc(c.name)}</strong> · číslo ${n} v opravenom zozname kandidátov. Registrovaná príslušnosť: ${esc(c.affiliation)}. Číslo v zozname nie je overeným číslom na hlasovacom lístku.</p>${source(data.officialUrl, 'Obec Bernolákovo — opravený zoznam (PDF)', `zverejnené ${data.officialDate}`)}`
@@ -37,7 +41,15 @@ for (const c of data.candidates) {
     section('Zdroje, pokrytie a opravy', sources, 'sources'),
   ].join('\n')
   const nav = data.candidates.map(other => `<a ${other.id === c.id ? 'aria-current="page" ' : ''}href="/kandidati/${other.id}/">${String(other.position).padStart(2, '0')} ${esc(other.name)}</a>`).join('')
-  const html = `<!doctype html><html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#183a64"><title>${esc(c.name)} — BernoInfo 2026</title><meta name="description" content="Profil kandidáta ${esc(c.name)} vo voľbách starostu obce Bernolákovo 2026."><link rel="stylesheet" href="/candidate-detail.css"></head><body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main><div class="hero"><a class="back" href="/">← Všetci kandidáti</a><p class="kicker">Bernolákovo / voľby starostu / ${n} z 08</p><h1>${esc(c.name)}</h1><p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p></div><nav class="candidate-nav" aria-label="Profily kandidátov">${nav}</nav><div class="content">${body}</div></main><footer><a href="/">← Späť na úplný zoznam</a><p>${correction}</p><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>`
+  const portraitImage = photoReview
+    ? `<img class="candidate-portrait candidate-portrait--${esc(c.id)}" src="${esc(portrait.src)}" alt="Portrét: ${esc(c.name)}" width="640" height="760">`
+    : '<img src="/images/portrait-placeholder.svg" alt="" width="640" height="760">'
+  const portraitCaption = photoReview
+    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${esc(portrait.credit)}. Identita, kredit a použitie vo finálnej verzii ešte nie sú schválené.</figcaption>`
+    : '<figcaption>Portrét zatiaľ nie je zverejnený; grafická výplň nie je podobizňou kandidáta.</figcaption>'
+  const portraitFigure = `<figure class="detail-portrait"><div class="portrait-wrap">${portraitImage}</div>${portraitCaption}</figure>`
+  const previewNotice = photoReview ? '<p class="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>' : ''
+  const html = `<!doctype html><html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#183a64"><title>${esc(c.name)} — BernoInfo 2026</title><meta name="description" content="Profil kandidáta ${esc(c.name)} vo voľbách starostu obce Bernolákovo 2026."><link rel="stylesheet" href="/candidate-detail.css"></head><body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main><div class="hero"><a class="back" href="/">← Všetci kandidáti</a>${previewNotice}<div class="hero-layout"><div class="hero-copy"><p class="kicker">Bernolákovo / voľby starostu / ${n} z 08</p><h1>${esc(c.name)}</h1><p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p></div>${portraitFigure}</div></div><nav class="candidate-nav" aria-label="Profily kandidátov">${nav}</nav><div class="content">${body}</div></main><footer><a href="/">← Späť na úplný zoznam</a><p>${correction}</p><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>`
   const dir = join(root.pathname, c.id)
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, 'index.html'), html)
