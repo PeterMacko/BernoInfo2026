@@ -1,0 +1,69 @@
+# Private research: initial mayoral candidate cards
+
+> **Asset staging addendum, 17 October:** Seven Facebook JPEG originals are now saved privately and indexed in [PORTRAIT_ASSET_STAGING_2026-10-17.md](PORTRAIT_ASSET_STAGING_2026-10-17.md). Martin Cirbus has no identity-confirmed portrait file. Earlier “no files” and “rights unconfirmed” statements in this chronological note are superseded by this addendum and Peter’s permission assertion; the underlying partial coverage limits remain. No portrait has been placed on the site or published.
+
+> **Portrait update, 17 October:** Peter Macko states that he has permission to reproduce and crop Facebook portraits of all eight candidates for BernoInfo2026. Earlier blanket “rights unconfirmed” statements below predate that owner assertion; do not re-ask him for permission. The assertion does not identify the photographed person, establish a suitable photo for each candidate, supply image files, or specify photographer credit. The [eight-candidate portrait source matrix](/home/pmacko/projects/BernoInfo2026-researcher/docs/research/PORTRAIT_SOURCE_MATRIX_2026-10-17.md) reconciles the six photo-page leads below with later Koštial and Cirbus leads. **Cirbus's linked 3 February profile image was visually checked on 17 October and is a gold “C” logo, not a portrait.** His profile's visible cover image shows a person, but neither that person's identity nor its suitability as a candidate portrait is established. No candidate photos have been added to the site. This remains a partial source pass.
+
+Observed 17 October 2026 (Europe/Bratislava). Read-only, bounded pass. **Not publication approval.** Official candidate facts below come from the municipality; Facebook page labels and images establish only what those pages display. No Facebook post, comment, reaction, follow, message, or account setting was changed.
+
+## Official baseline
+
+Publisher: Obec Bernolákovo. Canonical notice: https://www.bernolakovo.sk/novinka/139303/n . Publication date was not exposed in the fetched article; observed 2026-10-17. The notice says eight mayoral candidates were registered for the 24 October 2026 election. These are the notice's numbered entries, preserving its order; **the notice does not explicitly label the numbers as ballot-paper numbers**, so confirm against the actual ballot or election authority before calling them “ballot numbers” in UI.
+
+| Notice no. | Registered name (display form) | Official detail for card if desired | Portrait lead |
+| --- | --- | --- | --- |
+| 1 | Michal BARTÓK | JUDr. Ing.; Starostovia a nezávislí kandidáti | Facebook candidate page/profile photo below |
+| 2 | Martin CIRBUS | Právo na pravdu | No verified candidate-owned portrait found in this pass |
+| 3 | Filip KANDRÁČ | Independent | Facebook candidate page/profile photo below |
+| 4 | Jaroslav KOŠTIAL | Ing.; independent | No verified candidate-owned portrait found in this pass |
+| 5 | Peter LAKOTA | JUDr.; independent | Facebook candidate page/profile photo below |
+| 6 | Milan RAJTER | Independent | Facebook candidate page/profile photo below |
+| 7 | Roman ŠUTKA | RNDr., PhD.; independent | Facebook candidate page/profile photo below |
+| 8 | Miroslav TURENIČ | Ing., MBA, LL.M.; independent | Facebook candidate page/profile photo below |
+
+The notice also links an election landing page, https://www.bernolakovo.sk/31412/volby-do-organov-samospravy-obci-a-volby-do-organov-samospravnych-krajov-24-10-2026 . It was reachable 2026-10-17, but its fetched body did not expose the linked ballot PDF/list, so no independent ballot-number verification was obtained. The notice, not any Facebook profile, is the registration source. No official portrait gallery was found in the notice.
+
+## Candidate-owned/self-identified portrait leads
+
+These are **stable Facebook photo-page URLs, not durable direct image-file URLs**. The page association is self-identification, not independent identity verification. Profile portraits may contain campaign graphics rather than clean headshots; framing/resolution has not been checked. Facebook CDN image URLs are signed/ephemeral and should not be hard-coded. Rights to reproduce, crop, redistribute, and attribute are **unconfirmed for every image**. Practical path: obtain each image from the linked candidate-owned page/site or candidate directly, record photographer/rights permission and credit, then host an approved local asset; use a uniform non-photo placeholder for any unresolved candidate. Do not presume that public Facebook visibility grants reuse rights.
+
+| Candidate | Self-identified page / source | Observed portrait/photo-page URL | Publication date | Verification / gap |
+| --- | --- | --- | --- | --- |
+| Michal Bartók | https://www.facebook.com/people/Michal-Bart%C3%B3k-pre-Bernol%C3%A1kovo/61592209696918/ | https://www.facebook.com/photo/?fbid=122101064715406989&set=a.122101064019406989 | Unknown | Candidate-labelled page; profile image visible 2026-10-17; image rights/photographer unknown. |
+| Martin Cirbus | None confirmed | None | — | Facebook Pages search for `Martin Cirbus Bernolákovo` returned no result; not proof no profile/photo exists. |
+| Filip Kandráč | https://www.facebook.com/profile.php?id=61591229739177 | https://www.facebook.com/photo/?fbid=122105035221374324&set=a.122099129853374324 | Unknown | Search result and page label “Filip Kandráč - Kandidát na starostu obce Bernolákovo”; profile image visible; rights unknown. |
+| Jaroslav Koštial | None confirmed | None | — | Facebook Pages search for `Jaroslav Koštial Bernolákovo` returned no result; not proof no profile/photo exists. |
+| Peter Lakota | https://www.facebook.com/peterlakotakandidat | https://www.facebook.com/photo/?fbid=122104136715339077&set=a.122103409755339077 | Unknown | Page label “Peter Lakota - kandidát na starostu Bernolákova”; profile-picture viewer URL observed; candidate page links https://www.peterlakota.sk/ (site returned HTTP 466 via direct request); rights unknown. |
+| Milan Rajter | https://www.facebook.com/profile.php?id=61590203864174 | https://www.facebook.com/photo/?fbid=122102269641340128&set=a.122101506195340128 | Unknown | Page label “Milan Rajter - Naše Bernolákovo 2026”; profile image visible; rights unknown. |
+| Roman Šutka | https://www.facebook.com/people/RNDr-Roman-%C5%A0utka-PhD-kandid%C3%A1t-na-starostu-obce-Bernol%C3%A1kovo/61591853211863/ | https://www.facebook.com/photo/?fbid=122093696823395107&set=a.122093695749395107 | Unknown | Candidate-labelled page; profile image visible; page links https://www.romansutka.sk/ (reachable 2026-10-17); rights unknown. |
+| Miroslav Turenič | https://www.facebook.com/profile.php?id=100063832401156 | https://www.facebook.com/photo/?fbid=1645206470950417&set=a.235317941939284 | Unknown | Page label “Miroslav Turenič - Nezávislý kandidát”; profile-picture viewer URL observed; page links https://turenic.sk/ (site returned HTTP 466 via direct request); rights unknown. |
+
+Facebook profile photos for Bartók, Kandráč, Rajter, and Šutka came from the profile-image link shown in the page header. Lakota and Turenič use the “See profile picture” viewer, which yielded the photo-page URL. The six images were **not** downloaded or inspected for portrait quality. A Facebook search result does not prove a page is operated by the named candidate; all six need manual identity/rightsholder verification before reuse.
+
+## Coverage ledger (bounded initial pass)
+
+Working lookback target: **2026-07-16 through 2026-10-16**. Dates actually reached are reported below. This was a landing-page/profile-photo pass, **not a post/video sweep**; every Facebook row is **partial**. Facebook feed loading and search ranking prevent a completeness claim. The browser's `user` profile initially reported unavailable, but the connected OpenClaw browser displayed Peter Macko's group account context; research remained read-only. No credentials or session tokens were inspected.
+
+| Source (exact URL) | Method / query | Dates actually reached; relevant items reviewed | Remaining gap |
+| --- | --- | --- | --- |
+| Obec notice: https://www.bernolakovo.sk/novinka/139303/n | Direct fetch, read full article 2026-10-17 | Publication date not exposed; one official notice reviewed | Check original linked candidate lists/ballot and corrections before release. |
+| Election landing page: https://www.bernolakovo.sk/31412/volby-do-organov-samospravy-obci-a-volby-do-organov-samospravnych-krajov-24-10-2026 | Direct fetch 2026-10-17 | Landing page reachable; no dated election attachment reached | PDF/attachment links and ballot numbers not independently checked. |
+| Bernolákovo group: https://www.facebook.com/groups/1407941542752262/ | Read landing snapshot and visible feed; looked for `voľby` in rendered snapshot 2026-10-17 | No dated election post reached; 0 post/video items reviewed | Target lookback not traversed; group search, sorting, video and hidden/removed posts unchecked. Group moderation may limit political posts; absence here proves nothing. |
+| Bernolákovo Online: https://www.facebook.com/BernolakovoOnline | Read landing/featured snapshot; looked for `voľby` 2026-10-17 | One featured election-related post visible as “4 days ago” (~2026-10-13): https://www.facebook.com/BernolakovoOnline/posts/pfbid02SSdN17K9LyuUWLCcgG8kfAUV13mDevEGTLj6xYXhHSzeG6Nzc2NeXipD3rJGqRael . Publisher describes its StrawPoll as unofficial/non-representative; no result is treated as a voter preference fact. | Post's exact timestamp not expanded; older feed, links and videos not traversed; target lookback incomplete. |
+| BERNOLÁKOVO NAHLAS !!!: https://www.facebook.com/groups/782471106155569/ | Read landing snapshot; looked for `voľby` 2026-10-17 | No dated election post reached; 0 post/video items reviewed | Target lookback, group search, videos and hidden/removed posts unchecked. |
+| Michal Bartók page: https://www.facebook.com/people/Michal-Bart%C3%B3k-pre-Bernol%C3%A1kovo/61592209696918/ | Read page header/photo link 2026-10-17 | Undated profile photo reached; 0 dated posts/videos reviewed | Target lookback and programme/interview posts unchecked. |
+| Roman Šutka page: https://www.facebook.com/people/RNDr-Roman-%C5%A0utka-PhD-kandid%C3%A1t-na-starostu-obce-Bernol%C3%A1kovo/61591853211863/ | Read page header/photo link and site link 2026-10-17 | Undated profile photo reached; 0 dated posts/videos reviewed | Target lookback and programme/interview posts unchecked. |
+| Filip Kandráč page: https://www.facebook.com/profile.php?id=61591229739177 | Facebook Pages search `Filip Kandráč Bernolákovo`, then page header 2026-10-17 | Undated profile photo reached; 0 dated posts/videos | Feed/lookback unchecked; page operator unverified. |
+| Peter Lakota page: https://www.facebook.com/peterlakotakandidat | Facebook Pages search `Peter Lakota Bernolákovo`, then page header/photo viewer 2026-10-17 | Undated profile photo reached; one visible page reference to a Lancast interview at https://youtu.be/sAmxt9MPJ10 (post date and video not checked) | Feed/lookback/interview content unchecked; page operator unverified. |
+| Milan Rajter page: https://www.facebook.com/profile.php?id=61590203864174 | Facebook Pages search `Milan Rajter Bernolákovo`, then page header 2026-10-17 | Undated profile photo reached; 0 dated posts/videos | Feed/lookback unchecked; page operator unverified. |
+| Miroslav Turenič page: https://www.facebook.com/profile.php?id=100063832401156 | Facebook Pages search `Miroslav Turenič Bernolákovo`, then page header/photo viewer 2026-10-17 | Undated profile photo reached; 0 dated posts/videos | Feed/lookback unchecked; page operator unverified. |
+| Martin Cirbus; Jaroslav Koštial | Facebook Pages searches `[name] Bernolákovo` 2026-10-17 | No candidate page confirmed | Search is incomplete; try spelling variants, People, external search, offline source/contact with approval. |
+| Candidate-owned sites: https://www.romansutka.sk/ ; https://www.peterlakota.sk/ ; https://turenic.sk/ | Followed candidate-page site leads; direct HTTP check 2026-10-17 | Roman site reached (HTML shell); other two returned HTTP 466 to direct request | Site content/image rights not reviewed; browser/manual follow-up needed. |
+
+## Editorial handoff
+
+### Official-source addendum, 17 October 2026
+
+The municipality's [corrected registered-mayor-candidate PDF](https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf), dated 2 September 2026, was located after the initial pass. It independently reproduces the eight numbered names above. The municipality's [correction explanation](https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204392_zdovodnenie-zverejnenia-novych-zoznamov-zaregistrovanych-kandidatov.pdf) says a registry sorting error affected generated candidate lists and ballot papers, and requested regenerated lists/ballots. The corrected PDF is stronger evidence for the published **list order**, but the final ballot paper itself was not inspected. Do not call these ballot-paper numbers in the UI without that check. This addendum does not change the Facebook coverage or image-rights gaps.
+
+The official notice supports **eight equally treated text cards in the order above**. It does not supply confirmed reusable portraits, nor does this pass establish ballot-paper numbering. For the initial homepage, either use a uniform placeholder for all eight or obtain/clear all eight candidate portraits to the same standard. Do not show six photos and two blanks as though it were a verified complete set. Subsequent research should confirm original ballot numbering, find Cirbus/Koštial portrait sources, verify all page operators and image permissions, and complete the dated 16 July–16 October Facebook/programme/interview sweep before factual comparison copy is drafted.

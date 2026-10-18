@@ -25,6 +25,8 @@
         .static-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; list-style: none; padding: 0; margin: 0 0 35px; }
         .static-list li { display: flex; gap: 20px; align-items: baseline; padding: 17px; border: 1px solid #cad6e5; background: #eef2f7; font-size: 1.08rem; font-weight: 700; }
         .static-list span { flex: none; color: #3564a7; font-size: 1.5rem; }
+        .static-list a { flex: 1; text-decoration: none; }
+        .static-list a:focus-visible { outline: 3px solid #a87800; outline-offset: 3px; }
         .static-sources { padding-top: 20px; border-top: 1px solid #b7c7db; font-size: .9rem; }
         .static-sources h2 { margin: 0 0 8px; font-size: 1.1rem; }
         .static-sources p { max-width: 760px; margin: 0 0 10px; }
@@ -46,19 +48,19 @@
           <p class="static-summary">Osem zaregistrovaných kandidátov v poradí opraveného oficiálneho zoznamu obce. Voľby sa konajú 24. októbra 2026.</p>
           <!-- Keep this static fallback in sync with src/candidates.ts. Numbers are list positions, not independently verified ballot-paper numbers. -->
           <ol class="static-list">
-            <li><span aria-label="Číslo v zozname 1">01</span>Michal BARTÓK</li>
-            <li><span aria-label="Číslo v zozname 2">02</span>Martin CIRBUS</li>
-            <li><span aria-label="Číslo v zozname 3">03</span>Filip KANDRÁČ</li>
-            <li><span aria-label="Číslo v zozname 4">04</span>Jaroslav KOŠTIAL</li>
-            <li><span aria-label="Číslo v zozname 5">05</span>Peter LAKOTA</li>
-            <li><span aria-label="Číslo v zozname 6">06</span>Milan RAJTER</li>
-            <li><span aria-label="Číslo v zozname 7">07</span>Roman ŠUTKA</li>
-            <li><span aria-label="Číslo v zozname 8">08</span>Miroslav TURENIČ</li>
+            <li><span aria-label="Číslo v zozname 1">01</span><a href="/kandidati/bartok/" aria-label="Profil kandidáta Michal BARTÓK">Michal BARTÓK</a></li>
+            <li><span aria-label="Číslo v zozname 2">02</span><a href="/kandidati/cirbus/" aria-label="Profil kandidáta Martin CIRBUS">Martin CIRBUS</a></li>
+            <li><span aria-label="Číslo v zozname 3">03</span><a href="/kandidati/kandrac/" aria-label="Profil kandidáta Filip KANDRÁČ">Filip KANDRÁČ</a></li>
+            <li><span aria-label="Číslo v zozname 4">04</span><a href="/kandidati/kostial/" aria-label="Profil kandidáta Jaroslav KOŠTIAL">Jaroslav KOŠTIAL</a></li>
+            <li><span aria-label="Číslo v zozname 5">05</span><a href="/kandidati/lakota/" aria-label="Profil kandidáta Peter LAKOTA">Peter LAKOTA</a></li>
+            <li><span aria-label="Číslo v zozname 6">06</span><a href="/kandidati/rajter/" aria-label="Profil kandidáta Milan RAJTER">Milan RAJTER</a></li>
+            <li><span aria-label="Číslo v zozname 7">07</span><a href="/kandidati/sutka/" aria-label="Profil kandidáta Roman ŠUTKA">Roman ŠUTKA</a></li>
+            <li><span aria-label="Číslo v zozname 8">08</span><a href="/kandidati/turenic/" aria-label="Profil kandidáta Miroslav TURENIČ">Miroslav TURENIČ</a></li>
           </ol>
           <section class="static-sources" aria-labelledby="static-sources-title">
             <h2 id="static-sources-title">Zdroj a stav údajov</h2>
             <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce pochádza z <a href="https://www.bernolakovo.sk/">oficiálnej stránky obce</a>.</p>
-            <p>Mená a poradie: <a href="https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf">opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href="https://www.bernolakovo.sk/novinka/139303/n">oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname, nie označením čísiel na hlasovacom lístku.</p>
+            <p>Mená a poradie: <a href="https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf">opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href="https://www.bernolakovo.sk/novinka/139303/n">oznámenie obce Bernolákovo</a>. Naposledy overené 18. októbra 2026. Uvedené čísla sú číslami v zozname, nie označením čísiel na hlasovacom lístku.</p>
             <p>Táto textová verzia stránky nezobrazuje portréty. Dostupnosť fotografií závisí od verzie stránky.</p>
           </section>
         </main>

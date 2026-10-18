@@ -7,6 +7,7 @@ const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 const portraits = approvedPortraits ?? privatePreviewPortraits
+const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
   return (
@@ -44,7 +45,7 @@ function App() {
             const portrait = portraits?.[candidate.id]
             return (
               <li className="candidate-card" key={candidate.id}>
-                <div className="portrait-wrap">
+                <a className="candidate-card-link" href={`/kandidati/${candidate.id}/`} aria-label={`Profil kandidáta ${candidate.registeredName}`}><div className="portrait-wrap">
                   <img
                     src={portrait?.src ?? placeholderImage}
                     className={portrait ? `candidate-portrait candidate-portrait--${candidate.id}` : undefined}
@@ -57,7 +58,7 @@ function App() {
                 <div className="card-footer">
                   <div className="number-block"><span>Číslo v zozname</span><strong>{String(candidate.listNumber).padStart(2, '0')}</strong></div>
                   <h3>{candidate.registeredName}</h3>
-                </div>
+                </div></a>
               </li>
             )
           })}
@@ -85,12 +86,13 @@ function App() {
         <div>
           <h2>Zdroj a stav údajov</h2>
           <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
-          <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
+          <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Naposledy overené 18. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
           {portraits ? (
             <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
           ) : (
             <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>
           )}
+          <p>Opravy údajov: <a href={`mailto:${correctionEmail}`}>{correctionEmail}</a>.</p>
         </div>
       </footer>
       <div className="colophon"><span>BERNOINFO 2026</span><span>Informácie bez poradia dôležitosti.</span></div>

@@ -2,7 +2,7 @@
  * Transcribed in the municipality's corrected registered-candidate list order.
  * These are list numbers, not independently verified ballot-paper numbers.
  * Source: https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf
- * Checked: 2026-10-17.
+ * Checked: 2026-10-18.
  */
 export const candidates = [
   { id: 'bartok', listNumber: 1, registeredName: 'Michal BARTÓK' },
