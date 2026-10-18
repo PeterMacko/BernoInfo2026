@@ -29,8 +29,9 @@ export type ApprovedPortrait = {
 // the page never mixes approved portraits with unresolved placeholders.
 // When enabling, update the no-JS fallback copy in index.html as well.
 export const approvedPortraits: Record<CandidateId, ApprovedPortrait> | null = null
-// Ignored local working files only; this switch is off in release builds and
-// does not confer editorial or publication approval.
+// Development photo-review mode only. The developer-branch build explicitly
+// enables this with unapproved review copies; the final release must not use it.
+// It does not confer identity, credit, crop, or publication approval.
 export const privatePreviewPortraits: Record<CandidateId, ApprovedPortrait> | null =
   import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW === '1' ? {
     bartok: { src: '/images/candidates/michal-bartok-original.jpg', sourceUrl: 'https://www.facebook.com/photo/?fbid=122101064715406989&set=a.122101064019406989', credit: 'Autor fotografie neuvedený' },

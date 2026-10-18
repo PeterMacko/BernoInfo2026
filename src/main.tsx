@@ -34,7 +34,7 @@ function App() {
       </section>
 
       <section className="candidate-section" aria-labelledby="candidates-title">
-        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Súkromný náhľad portrétov · nie na zverejnenie</p>}
+        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>}
         <div className="section-heading">
           <h2 id="candidates-title">Zoznam kandidátov</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
