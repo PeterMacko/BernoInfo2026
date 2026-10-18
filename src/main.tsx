@@ -92,7 +92,7 @@ function App() {
           ) : (
             <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>
           )}
-          <p>Opravy údajov: <a href={`mailto:${correctionEmail}`}>{correctionEmail}</a>.</p>
+          <p>Opravy údajov: <a href={`mailto:${correctionEmail}`}>{correctionEmail}</a>. Uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov a zmenu označíme dátumom pri príslušnej informácii.</p>
         </div>
       </footer>
       <div className="colophon"><span>BERNOINFO 2026</span><span>Informácie bez poradia dôležitosti.</span></div>
