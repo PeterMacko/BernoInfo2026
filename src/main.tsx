@@ -104,7 +104,6 @@ function App() {
           <p>44 registrácií · 13 mandátov</p>
         </div>
         <p className="council-intro">Kandidáti sú zoradení podľa <a href={officialNotice}>oznámenia obce</a> a opravených zoznamov jednotlivých volebných obvodov. Čísla označujú poradie v zverejnenom zozname obvodu, nie overené čísla na hlasovacom lístku. Údaje boli skontrolované {councilData.checked}; prípadné neskoršie zmeny či odstúpenia treba pred voľbami znovu preveriť.</p>
-        <p className="council-intro"><a href="/issue22-review/">Kontrolná ukážka štyroch neschválených zdrojových obrázkov kandidátov na poslancov ↗</a> · verejný vývojový náhľad, nie finálne portréty.</p>
         {councilData.districts.map((district) => (
           <section className="council-district" key={district.number} aria-labelledby={`district-${district.number}`}>
             <div className="council-district-heading">
