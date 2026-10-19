@@ -1,0 +1,42 @@
+# Issue #11 — independent QA, 19 October 2026
+
+**Scope:** local checkout `/home/pmacko/projects/BernoInfo2026-lead`, branch `lead/issue-9-11-closeout`, `HEAD 36e2cda54485860ee3f7a2bd3ade25e2293aa148` (merged main). This is usability/source-presentation QA of draft candidate pages, **not approval of candidate copy, photos, release, or deployment**. No implementation or researcher document was edited. Read `docs/PROJECT_CHARTER.md`, `docs/RESEARCH_PROTOCOL.md`, `docs/AGENT_TEAM.md` and GitHub issues #11/#10 before testing. Built the placeholder variant with `npm run build:placeholder`; restored the tracked generated files after testing.
+
+## Matrix
+
+| Check | Result | Reproducible evidence / limit |
+| --- | --- | --- |
+| Corrected official roster, order, occupation and affiliation | **PASS** | Fetched the municipality's corrected 2 September PDF on 19 October (`204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf`) and extracted its text with `pdftotext -layout`. Eight JSON records and eight rendered routes match its numbered entries; UI calls numbers list positions, not verified ballot numbers. |
+| Direct routes, refresh, headings and return navigation | **PASS** | `/kandidati/{bartok,cirbus,kandrac,kostial,lakota,rajter,sutka,turenic}/` each returned HTTP 200 on direct request and a second no-cache request. Headless Chrome loaded all eight with matching `title`/`h1`, nine identical section headings, eight profile-nav links, and three home links (brand, top back, footer back). Home links are native `/` anchors. |
+| Equal structure, caps, attribution and gap disclosure | **PASS (presentation only)** | Generated pages have the same nine-section order, channel slots, common 18 October evidence cutoff, source/checked-date treatment, and non-absence empty states. Generator enforces at most two experience items of 70 whitespace-delimited words each and a 70-word programme summary; inspected data is within caps. Candidate proposals/experience are prefixed `Kandidát uvádza`; official registration/occupation are sourced to the municipality; no FinStat role is asserted without direct record. Seven LanCast links share one format; Šutka has a qualified non-established state. Facebook coverage is explicitly partial. This does not independently validate candidate-facing prose against the full ledger (#10). |
+| Whole-card pointer and emulated touch | **PASS (sampled activation)** | In isolated headless Chrome, clicked the first card's visible list-number, portrait, and card background after scrolling each into view: all navigated to `/kandidati/bartok/`. CDP emulated touch on the list-number did the same. DOM inspection found one native anchor per card with eight distinct matching destinations. Physical-device touch remains **UNVERIFIED**. |
+| Keyboard and focus | **PASS** | Chrome Tab sequence reached each of the eight card links once in corrected-list order; each had computed solid focus outline. Focused first card + Enter navigated to its detail route. Other non-card links occur before/after the eight-card sequence. |
+| Homepage without JavaScript | **PASS** | With Chrome `Emulation.setScriptExecutionDisabled(true)`, `#root` stayed empty and the visible `<noscript>` fallback exposed eight native profile links in order. Emulated touch on the first fallback card's number navigated to its detail route. |
+| Mobile/responsive and motion | **PASS (headless sampled)** | Chrome device widths 320, 375, 390, 768 and 1440 px: home and Lakota detail had no document-level horizontal overflow; all eight detail routes also had no overflow at the initial desktop viewport. Inspected a 390×850 Lakota detail screenshot: heading, portrait placeholder, back link and profile nav remained readable. At 390 px with `prefers-reduced-motion: reduce`, nine sections remained present, no overflow, and computed root `scroll-behavior` was `auto`. Full manual visual inspection of every route, hardware mobile, and vestibular/assistive-technology reading remain **UNVERIFIED**. |
+| Contrast (sampled CSS colors) | **PASS (sampled)** | Calculated WCAG relative-luminance ratios: primary text `#183a64` on `#f8f9fc` 10.91:1; source text `#3e5d7d` 6.50:1; empty-state `#4d637c` 5.88:1; gold on navy 7.97:1; gold focus outline on light page 3.73:1. No comprehensive automated or human contrast audit of all image/hover states was done. |
+| Source and correction links | **PARTIAL / UNVERIFIED** | Internal back links and both `mailto:Mr.petermacko@gmail.com` links per detail route are present; mail delivery is not verifiable from a `mailto:`. All 25 unique external source URLs from generated detail pages were requested on 19 October. Municipality pages/PDF, Koštial and Šutka sites, seven YouTube URLs, and Facebook URLs returned HTTP 200 (Facebook 200 does not prove authenticated post visibility). Lakota home/program URLs and Turenič home returned **HTTP 466** to the direct client, so live browser accessibility and their underlying claims are **UNVERIFIED**, not declared broken. |
+
+## Route-by-route record
+
+| List | Route | Official name | Sections/title/return | Candidate-specific recheck |
+| --- | --- | --- | --- | --- |
+| 01 | `/kandidati/bartok/` | Michal BARTÓK | PASS | Official council/commission citations returned 200; exact term dates remain expressly qualified. |
+| 02 | `/kandidati/cirbus/` | Martin CIRBUS | PASS | Empty experience/programme/channel fields use common non-absence wording. |
+| 03 | `/kandidati/kandrac/` | Filip KANDRÁČ | PASS | Proposal is candidate-attributed; Facebook permalink returned 200, authenticated content not rechecked here. |
+| 04 | `/kandidati/kostial/` | Jaroslav KOŠTIAL | PASS | Candidate website returned 200; self-reported experience/programme remain attributed. |
+| 05 | `/kandidati/lakota/` | Peter LAKOTA | PASS | **Recheck access:** website and `/program.html` returned HTTP 466 to direct client. Verify in ordinary browser before #10 sign-off; do not present 466 as proof of a dead URL. |
+| 06 | `/kandidati/rajter/` | Milan RAJTER | PASS | Proposal is candidate-attributed; Facebook permalink returned 200, authenticated content not rechecked here. |
+| 07 | `/kandidati/sutka/` | Roman ŠUTKA | PASS | No interview is claimed; candidate website returned 200. |
+| 08 | `/kandidati/turenic/` | Miroslav TURENIČ | PASS | **Recheck access:** candidate website returned HTTP 466 to direct client. Official mayoral page returned 200; exact term dates remain qualified. |
+
+## Recheck needs and evidence boundary
+
+1. Browser-open Lakota's two cited pages and Turenič's site from the intended user environment; confirm the cited page content and working destination. Direct HTTP 466 may be anti-bot filtering.
+2. Complete #10 human, sentence-by-sentence editorial/source-ledger approval. HTTP 200, attribution labels and equal sections do **not** verify a candidate's claims, identity, or Facebook/YouTube content. Verify correction-mail delivery separately if release readiness requires it.
+3. If issue #11 requires physical-device evidence, repeat card tapping and mobile reading on hardware; the tests above used Chromium CDP touch/device emulation. Recheck photo-reviewed build separately; this run used the equal placeholder build.
+
+**Tool boundary:** OpenClaw browser was available but its navigation policy blocked `http://127.0.0.1:4175/`; the interactive checks used a separate actual headless Chrome instance through Chrome DevTools Protocol against that local Vite preview. No hosted preview was exposed, no GitHub write, commit, push, merge, or release was performed.
+
+## Lead follow-up: three external destinations (19 October 2026)
+
+After the independent QA, the lead opened [Lakota's homepage](https://www.peterlakota.sk/), [Lakota's programme](https://www.peterlakota.sk/program.html), and [Turenič's homepage](https://www.turenic.sk/) in the OpenClaw-managed Chromium browser. All three loaded with readable site content. The programme showed Lakota's candidate-written municipal proposals; Turenič's page showed his campaign introduction and priorities. Thus the direct client's HTTP 466 responses were not reproducible as broken links in this browser. This is a destination/access check, **not** independent verification of claims on those sites or Peter's #10 editorial approval. Physical-device, full assistive-technology, and photo-reviewed-build checks remain outside this QA pass.
