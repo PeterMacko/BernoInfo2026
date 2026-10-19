@@ -195,7 +195,7 @@ function renderNavigation(candidate) {
 function renderPortrait(candidate) {
   const portrait = reviewPortraits[candidate.id]
   const image = photoReview
-    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Portrét: ${escapeHtml(candidate.name)}" width="640" height="760">`
+    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Neschválený zdrojový obrázok na kontrolu pre ${escapeHtml(candidate.name)}; totožnosť zobrazenej osoby nie je nezávisle overená" width="640" height="760">`
     : '<img src="/images/portrait-placeholder.svg" alt="" width="640" height="760">'
   const caption = photoReview
     ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. Identita, kredit a použitie vo finálnej verzii ešte nie sú schválené.</figcaption>`

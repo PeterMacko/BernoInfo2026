@@ -78,7 +78,7 @@ function App() {
                     <img
                       src={portrait?.src ?? placeholderImage}
                       className={portrait ? `candidate-portrait candidate-portrait--${candidate.id}` : undefined}
-                      alt={portrait ? `Portrét: ${candidate.registeredName}` : ''}
+                      alt={portrait ? `Neschválený zdrojový obrázok na kontrolu pre ${candidate.registeredName}; totožnosť zobrazenej osoby nie je nezávisle overená` : ''}
                       aria-hidden={portrait ? undefined : true}
                       width="640"
                       height="760"
