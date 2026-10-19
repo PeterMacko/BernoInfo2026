@@ -215,6 +215,7 @@ function renderDocument(candidate) {
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
     '<meta name="robots" content="noindex, nofollow">',
     '<meta name="theme-color" content="#183a64">',
+    '<link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp">',
     `<title>${escapeHtml(candidate.name)} — BernoInfo 2026</title>`,
     `<meta name="description" content="Profil kandidáta ${escapeHtml(candidate.name)} vo voľbách starostu obce Bernolákovo 2026.">`,
     '<link rel="stylesheet" href="/candidate-detail.css">',
