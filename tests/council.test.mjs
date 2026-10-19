@@ -14,7 +14,7 @@ test('44 official rows retain district counts, order and exact identity fields',
   let index = 0
   for (const district of data.districts) for (const candidate of district.candidates) {
     const row = rows[index++]
-    assert.deepEqual([candidate.listNumber,candidate.name,candidate.age,candidate.occupation,candidate.designation],[row.number,row.name,row.age,row.occupation,row.designation])
+    assert.deepEqual([candidate.listNumber,candidate.name,candidate.age,candidate.occupation],[row.number,row.name,row.age,row.occupation])
   }
 })
 
@@ -41,7 +41,7 @@ test('mayoral routes remain intact and council list follows mayoral list', () =>
   assert.ok(readFileSync('src/main.tsx','utf8').indexOf('className="council-section"') > readFileSync('src/main.tsx','utf8').indexOf('className="candidate-section"'))
 })
 
-test('office naming, fallback card mapping, parity and not-found route', () => {
+test('office naming, fallback card mapping, parity and not-found page', () => {
   assert.ok(homepage.includes('<h1>Komunálne voľby v Bernolákove</h1>'))
   assert.ok(homepage.includes('<h2>Kandidáti na starostu obce</h2>'))
   assert.ok(homepage.includes('Kandidáti na poslancov obecného zastupiteľstva'))
@@ -58,4 +58,37 @@ test('office naming, fallback card mapping, parity and not-found route', () => {
   }
   assert.ok(existsSync('public/404.html'))
   assert.ok(readFileSync('public/404.html','utf8').includes('Stránka sa nenašla'))
+})
+
+// Independently transcribed from the three revised primary municipal PDFs on 19 Oct 2026.
+// The researcher ledger intentionally abbreviates these coalition labels.
+test('six primary-PDF designations are verbatim in data and both renderings', () => {
+  const coalition = 'Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita'
+  const hlas = 'Hlas - sociálna demokracia, Smer - sociálna demokracia'
+  const expected = new Map([
+    ['Linda HORNÁ, Bc.',coalition], ['Iva PIPÍŠKOVÁ, Mgr.',coalition],
+    ['Michal PELEŠ, Ing.',coalition], ['Ondrej ĎURAJ, JUDr.',coalition],
+    ['Miroslav MICHELÍK, Ing.',coalition], ['Miroslav SLIVKA, Ing.',hlas],
+  ])
+  for (const district of data.districts) for (const candidate of district.candidates) {
+    if (!expected.has(candidate.name)) continue
+    const designation = expected.get(candidate.name)
+    assert.equal(candidate.designation,designation)
+    assert.ok(homepage.includes(designation))
+    assert.ok(readFileSync(`public/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8').includes(designation))
+    expected.delete(candidate.name)
+  }
+  assert.equal(expected.size,0)
+})
+
+test('both homepage modes show designation and office-scoped source context', () => {
+  const fallback = homepage.split('<!-- council-fallback:start -->')[1].split('<!-- council-fallback:end -->')[0]
+  assert.equal((fallback.match(/class="council-designation"/g) || []).length,44)
+  assert.ok(!fallback.includes('13 mandáty'))
+  assert.ok(fallback.includes('3 mandáty'))
+  assert.ok(homepage.includes('<strong>Kandidáti na starostu obce:</strong>'))
+  assert.ok(homepage.includes('<strong>Kandidáti na poslancov obecného zastupiteľstva:</strong>'))
+  const main = readFileSync('src/main.tsx','utf8')
+  assert.ok(main.includes('className="council-designation"'))
+  assert.ok(main.includes('<strong>Kandidáti na poslancov obecného zastupiteľstva:</strong>'))
 })

@@ -113,9 +113,9 @@ function App() {
             <ol className="council-list">
               {district.candidates.map((candidate) => (
                 <li key={candidate.id}>
-                  <a href={`/kandidati-na-poslancov/${candidate.id}/`} aria-label={`Profil kandidáta na poslanca obecného zastupiteľstva ${candidate.name}`}>
+                  <a href={`/kandidati-na-poslancov/${candidate.id}/`} aria-label={`Profil: ${candidate.name}, kandidát na poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
                     <span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
-                    <span className="council-name">{candidate.name}</span>
+                    <span className="council-name">{candidate.name}<small className="council-designation">{candidate.designation}</small></span>
                     <span className="council-arrow" aria-hidden="true">↗</span>
                   </a>
                 </li>
@@ -146,7 +146,8 @@ function App() {
         <div>
           <h2>Zdroj a stav údajov</h2>
           <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
-          <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Naposledy overené 18. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
+          <p><strong>Kandidáti na starostu obce:</strong> Mená a poradie podľa <a href={correctedList}>opraveného zoznamu (PDF)</a> a <a href={officialNotice}>oznámenia obce</a>. Naposledy overené 18. októbra 2026.</p>
+          <p><strong>Kandidáti na poslancov obecného zastupiteľstva:</strong> Mená, príslušnosť a poradie podľa opravených zoznamov obce pre {councilData.districts.map((district, index) => <React.Fragment key={district.number}>{index > 0 ? ", " : ""}<a href={district.sourceUrl}>obvod {district.number} (PDF)</a></React.Fragment>)}. Zoznamy sú datované {councilData.officialDate}; skontrolované {councilData.checked}. Uvedené čísla sú číslami v zozname, nie overenými číslami na hlasovacom lístku.</p>
           {portraits ? (
             <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
           ) : (

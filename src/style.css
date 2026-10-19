@@ -684,3 +684,4 @@ h1 em {
   .council-district-heading { display: block; }
   .council-list { grid-template-columns: 1fr; }
 }
+.council-designation { display: block; margin-top: .25rem; font-size: .75rem; line-height: 1.4; font-weight: 400; color: #425f7e; }
