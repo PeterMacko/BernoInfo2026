@@ -1,6 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
+import councilData from './council-candidates.json'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -26,9 +27,9 @@ function App() {
         </div>
         <div className="intro-main">
           <div>
-            <p className="section-kicker">Bernolákovo / voľby starostu</p>
+            <p className="section-kicker">Bernolákovo / komunálne voľby</p>
             <h1 id="page-title">
-              Kandidáti na<br /><em>starostu obce.</em>
+              Voľby v<br /><em>Bernolákove.</em>
             </h1>
           </div>
           <div className="intro-aside">
@@ -60,7 +61,7 @@ function App() {
       <section className="candidate-section" aria-labelledby="candidates-title">
         {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>}
         <div className="section-heading">
-          <h2 id="candidates-title">Zoznam kandidátov</h2>
+          <h2 id="candidates-title">Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
         <ol className="candidate-grid">
@@ -95,6 +96,33 @@ function App() {
             )
           })}
         </ol>
+      </section>
+
+      <section className="council-section" aria-labelledby="council-title">
+        <div className="section-heading">
+          <h2 id="council-title">Kandidáti na poslancov obecného zastupiteľstva</h2>
+          <p>44 registrácií · 13 mandátov</p>
+        </div>
+        <p className="council-intro">Kandidáti sú zoradení podľa <a href={officialNotice}>oznámenia obce</a> a opravených zoznamov jednotlivých volebných obvodov. Čísla označujú poradie v zverejnenom zozname obvodu, nie overené čísla na hlasovacom lístku. Údaje boli skontrolované {councilData.checked}; prípadné neskoršie zmeny či odstúpenia treba pred voľbami znovu preveriť.</p>
+        {councilData.districts.map((district) => (
+          <section className="council-district" key={district.number} aria-labelledby={`district-${district.number}`}>
+            <div className="council-district-heading">
+              <h3 id={`district-${district.number}`}>Volebný obvod {district.number}</h3>
+              <p>{district.candidates.length} kandidátov · {district.seats} mandátov · <a href={district.sourceUrl}>Opravený zoznam obce (PDF)</a>, datovaný {councilData.officialDate}</p>
+            </div>
+            <ol className="council-list">
+              {district.candidates.map((candidate) => (
+                <li key={candidate.id}>
+                  <a href={`/kandidati-na-poslancov/${candidate.id}/`} aria-label={`Profil kandidáta na poslanca obecného zastupiteľstva ${candidate.name}`}>
+                    <span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
+                    <span className="council-name">{candidate.name}</span>
+                    <span className="council-arrow" aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
       </section>
 
       {portraits && (

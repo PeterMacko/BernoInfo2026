@@ -9,8 +9,10 @@
     "build:placeholder": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "generate:details": "node scripts/generate-candidate-pages.mjs",
-    "prebuild": "npm run generate:details",
-    "prebuild:placeholder": "npm run generate:details"
+    "prebuild": "npm run generate:details && npm run generate:council",
+    "prebuild:placeholder": "npm run generate:details && npm run generate:council",
+    "generate:council": "node scripts/generate-council-pages.mjs",
+    "test": "node --test tests/*.test.mjs"
   },
   "dependencies": {
     "react": "19.3.1",

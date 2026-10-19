@@ -216,3 +216,8 @@ body:has(.static-page) {
     grid-template-columns: 1fr;
   }
 }
+
+.static-page .static-council { margin: 2rem 0; padding: 1.5rem 0; border-top: 1px solid #b7c7db; }
+.static-page .static-council h2 { max-width: none; }
+.static-page .static-council section { margin-top: 1.7rem; }
+.static-page .static-council h3 { margin-bottom: .3rem; }

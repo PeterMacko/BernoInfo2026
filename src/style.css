@@ -662,3 +662,25 @@ h1 em {
     grid-template-columns: 1fr;
   }
 }
+
+.council-section {
+  padding: clamp(42px, 5.5vw, 83px) clamp(24px, 5vw, 76px);
+  background: #edf2f8;
+  border-top: 1px solid #b7c7db;
+}
+.council-intro { max-width: 75ch; line-height: 1.65; }
+.council-district { margin-top: 2.5rem; }
+.council-district-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; border-bottom: 1px solid #b7c7db; }
+.council-district-heading h3 { font: 700 clamp(1.3rem, 2vw, 1.8rem) Manrope, Arial, sans-serif; letter-spacing: -.04em; }
+.council-district-heading p { font-size: .83rem; line-height: 1.5; }
+.council-list { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; padding: 1rem 0 0; margin: 0; }
+.council-list li { min-width: 0; }
+.council-list a { display: flex; align-items: center; gap: .9rem; height: 100%; padding: .9rem 1rem; background: #f8f9fc; border: 1px solid #cad5e3; text-decoration: none; }
+.council-list a:hover { background: #e4ecf7; }
+.council-number { color: #47668b; font: 700 .8rem Manrope, Arial, sans-serif; }
+.council-name { flex: 1; font-weight: 700; }
+.council-arrow { color: #47668b; }
+@media (max-width: 700px) {
+  .council-district-heading { display: block; }
+  .council-list { grid-template-columns: 1fr; }
+}
