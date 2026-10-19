@@ -92,3 +92,31 @@ test('both homepage modes show designation and office-scoped source context', ()
   assert.ok(main.includes('className="council-designation"'))
   assert.ok(main.includes('<strong>Kandidáti na poslancov obecného zastupiteľstva:</strong>'))
 })
+
+test('Peter-identified entity URLs are exact ledger links on 21 matching pages only', () => {
+  const issue22 = readFileSync('docs/research/ISSUE22_COUNCIL_FB_PORTRAIT_DISCOVERY_2026-10-19.md','utf8')
+  const links = JSON.parse(readFileSync('src/council-entity-links.json','utf8'))
+  const rows = issue22.split('\n').filter(line => /^\| D[123]\/\d+ /.test(line))
+  const expected = new Map()
+  for (const line of rows) {
+    const cells = line.split('|').slice(1,-1).map(x => x.trim())
+    const url = cells[2].match(/\]\((https:\/\/www\.facebook\.com\/[^)]+)\)/)?.[1]
+    if (url) expected.set(cells[0].split(' ')[0],url)
+  }
+  assert.equal(rows.length,44)
+  assert.equal(expected.size,21)
+  assert.deepEqual(links.urls,Object.fromEntries(expected))
+  for (const district of data.districts) for (const candidate of district.candidates) {
+    const key = `D${district.number}/${candidate.listNumber}`
+    const page = readFileSync(`public/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
+    const url = expected.get(key)
+    assert.equal(page.includes('Facebookový odkaz označený Petrom'),Boolean(url),key)
+    if (url) {
+      assert.ok(page.includes(`href="${url.replaceAll('&','&amp;')}"`),key)
+      assert.ok(page.includes('Peter priradil tento odkaz ku kandidátovi 19. októbra 2026.'),key)
+      assert.ok(page.includes('neboli nezávisle overené'),key)
+    }
+    assert.ok(!page.includes('facebook.com/search/'),key)
+    assert.ok(!page.includes('facebook.com/groups/'),key)
+  }
+})

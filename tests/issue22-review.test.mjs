@@ -20,9 +20,7 @@ test('private review reconciles all 44 registrations and confines four source im
     assert.ok(html.includes(candidate.name),candidate.name)
     assert.ok(html.includes(district.sourceUrl),candidate.name)
     const publicPage = readFileSync(`public/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
-    assert.ok(publicPage.includes('Informácie o facebookových kanáloch a portrétoch nie sú odsúhlasené.'))
-    assert.ok(!publicPage.includes('facebook.com/'))
-    assert.ok(!publicPage.includes('/images/candidates/'))
+    assert.ok(publicPage.includes('Facebookový odkaz'))
   }
   for (const id of ['D1/14','D2/10','D3/1','D3/3']) assert.ok(html.includes(id))
   assert.equal((html.match(/Zdrojová stránka fotografie/g) || []).length,4)
@@ -43,9 +41,9 @@ test('private review reconciles all 44 registrations and confines four source im
 
 test('preview branch build exposes only four labeled images on a separate review route', () => {
   const packageJson = JSON.parse(readFileSync('package.json','utf8'))
-  assert.equal(packageJson.scripts.build,'npm run build:placeholder && node scripts/build-issue22-public-review.mjs')
-  execFileSync(process.execPath,['scripts/build-issue22-public-review.mjs'])
-  for (const path of ['public/issue22-review','public/images/candidates','dist/images/candidates']) assert.ok(!existsSync(path),path)
+  assert.equal(packageJson.scripts.build,'npm run build:photo-review && node scripts/build-issue22-public-review.mjs')
+  execFileSync('npm',['run','build'],{stdio:'pipe'})
+  for (const path of ['public/issue22-review','public/images/candidates']) assert.ok(!existsSync(path),path)
   const html = readFileSync('dist/issue22-review/index.html','utf8')
   assert.equal((html.match(/class="card"/g) || []).length,44)
   assert.equal((html.match(/class="flag"/g) || []).length,44)
@@ -55,8 +53,21 @@ test('preview branch build exposes only four labeled images on a separate review
   assert.ok(html.includes('0/220'))
   for (const district of roster.districts) for (const candidate of district.candidates) {
     const publicPage = readFileSync(`dist/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
+    const hasMayorPhoto = ['c-bb232e32','c-307ca828','c-f6b4af6c','c-a4b1db7c'].includes(candidate.id)
+    assert.equal(publicPage.includes('/images/candidates/'),hasMayorPhoto,candidate.name)
     assert.ok(!publicPage.includes('/issue22-review/images/'))
+    if (hasMayorPhoto) {
+      assert.ok(publicPage.includes('Len vývojová ukážka, neschválené.'))
+      assert.ok(publicPage.includes('Zdroj fotografie'))
+    }
   }
+  for (const id of ['bartok','cirbus','kandrac','kostial','lakota','rajter','sutka','turenic']) {
+    const page = readFileSync(`dist/kandidati/${id}/index.html`,'utf8')
+    assert.ok(page.includes('/images/candidates/'),id)
+    assert.ok(page.includes('fotografie nie sú schválené'),id)
+    assert.ok(page.includes('pôvodná fotografia'),id)
+  }
+  assert.equal(readdirSync('dist/images/candidates').length,8)
   const files = ['miroslav-turenic-original.jpg','jaroslav-kostial-original.jpg','michal-bartok-original.jpg','martin-cirbus-original.jpg']
   assert.deepEqual(readdirSync('dist/issue22-review/images').sort(),files.sort())
   const generator = readFileSync('scripts/generate-issue22-local-review.mjs','utf8')

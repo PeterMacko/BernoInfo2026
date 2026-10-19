@@ -3,6 +3,9 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const data = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
+const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
+const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
+const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
 const root = fileURLToPath(new URL('../public/kandidati-na-poslancov/', import.meta.url))
 const home = fileURLToPath(new URL('../index.html', import.meta.url))
 const councilUrl = 'https://www.bernolakovo.sk/19033/obecne-zastupitelstvo'
@@ -12,16 +15,21 @@ const link = (url, label) => `<a href="${esc(url)}">${esc(label)}</a>`
 
 function validate() {
   if (data.districts.length !== 3 || data.districts.reduce((n,d) => n+d.candidates.length,0) !== 44) throw Error('Expected 44 candidates in three districts')
-  const counts = [15,19,10], seats = [5,5,3], ids = new Set()
+  const counts = [15,19,10], seats = [5,5,3], ids = new Set(), keys = new Set()
   data.districts.forEach((district,i) => {
     if (district.number !== i+1 || district.seats !== seats[i] || district.candidates.length !== counts[i] || !district.sourceUrl) throw Error(`Invalid district ${i+1}`)
     district.candidates.forEach((candidate,j) => {
       if (candidate.listNumber !== j+1 || !/^c-[0-9a-f]{8}$/.test(candidate.id) || ids.has(candidate.id)) throw Error(`Invalid or duplicate route/list order: ${candidate.id}`)
       ids.add(candidate.id)
+      keys.add(`D${district.number}/${candidate.listNumber}`)
       for (const field of ['name','occupation','designation']) if (!candidate[field]?.trim()) throw Error(`Missing ${field}: ${candidate.id}`)
       if (!Number.isInteger(candidate.age) || candidate.age < 18) throw Error(`Invalid age: ${candidate.id}`)
     })
   })
+  if (entityLinks.identifiedBy !== 'Peter' || entityLinks.identifiedOn !== '19. októbra 2026' || Object.keys(entityLinks.urls).length !== 21) throw Error('Unexpected entity-link review state')
+  for (const [key, url] of Object.entries(entityLinks.urls)) {
+    if (!keys.has(key) || !/^https:\/\/www\.facebook\.com\/(?!search\/|groups\/|photo\/)[^\s]+$/.test(url)) throw Error(`Invalid candidate entity link: ${key}`)
+  }
 }
 
 function render(candidate, district) {
@@ -30,19 +38,29 @@ function render(candidate, district) {
   const gap = '<p class="empty">V preskúmaných zdrojoch sa tento údaj nepodarilo doložiť. Neznamená to, že neexistuje alebo že kandidát odmietol odpovedať.</p>'
   const section = (id,title,content) => `<section class="detail-section" aria-labelledby="${id}"><h2 id="${id}">${title}</h2><div>${content}</div></section>`
   const council = candidate.councilListMatch ? `<p>Presná podoba mena sa nachádza na ${link(councilUrl,'stránke obecného zastupiteľstva obce pre obdobie 2022 – 2026')}. Tento záznam sám osebe neurčuje presné dátumy výkonu funkcie ani stav k dňu volieb.</p><small class="source">Zdroj: Obec Bernolákovo · stránka naposledy upravená 3. decembra 2025 · skontrolované ${esc(data.checked)}</small>` : gap
+  const key = `D${district.number}/${candidate.listNumber}`
+  const entityUrl = entityLinks.urls[key]
+  const channel = entityUrl
+    ? `<p>${link(entityUrl,'Facebookový odkaz označený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi ${esc(entityLinks.identifiedOn)}. Zhoda osoby, identita a vlastníctvo účtu neboli nezávisle overené; obsah odkazu nepripisujeme kandidátovi.</small>`
+    : '<p class="empty">V doterajšej čiastočnej rešerši nie je k tomuto kandidátovi uvedený Peterom identifikovaný Facebookový odkaz. To neznamená, že účet neexistuje.</p>'
+  const mayorId = mayorRoutes.get(candidate.id)
+  const portrait = photoReview && mayorId ? reviewPortraits[mayorId] : null
+  const photo = portrait
+    ? `<figure class="detail-portrait"><div class="portrait-wrap"><img class="candidate-portrait candidate-portrait--${esc(mayorId)}" src="${esc(portrait.src)}" alt="Neschválený zdrojový obrázok na kontrolu pre ${esc(candidate.name)}" width="640" height="760"></div><figcaption>Len vývojová ukážka, neschválené. ${link(portrait.sourceUrl,'Zdroj fotografie')} · ${esc(portrait.credit)}. Totožnosť zobrazenej osoby, kredit a práva na použitie nie sú nezávisle overené.</figcaption></figure>`
+    : ''
   const mayor = mayorRoutes.has(candidate.id) ? `<p>Tá istá osoba je uvedená aj medzi kandidátmi na starostu obce. ${link(`/kandidati/${mayorRoutes.get(candidate.id)}/`,'Samostatný profil kandidatúry na starostu')}.</p>` : ''
   return `<!doctype html>
 <html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#183a64"><link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp"><title>${esc(candidate.name)} — kandidatúra na poslanca obecného zastupiteľstva — BernoInfo 2026</title><meta name="description" content="Kandidatúra na poslanca obecného zastupiteľstva obce Bernolákovo: ${esc(candidate.name)}."><link rel="stylesheet" href="/candidate-detail.css"></head>
 <body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main>
-<div class="hero"><a class="back" href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p class="kicker">Bernolákovo / poslanci obecného zastupiteľstva / volebný obvod ${district.number}</p><h1>${esc(candidate.name)}<small class="office-label">Kandidatúra na poslanca obecného zastupiteľstva</small></h1><p>Číslo ${number} v opravenom zozname obvodu ${district.number}. Nie je to nezávisle overené číslo na hlasovacom lístku.</p></div>
+<div class="hero"><a class="back" href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p class="kicker">Bernolákovo / poslanci obecného zastupiteľstva / volebný obvod ${district.number}</p><h1>${esc(candidate.name)}<small class="office-label">Kandidatúra na poslanca obecného zastupiteľstva</small></h1><p>Číslo ${number} v opravenom zozname obvodu ${district.number}. Nie je to nezávisle overené číslo na hlasovacom lístku.</p>${photoReview ? '<p class="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>' : ''}${photo}</div>
 <div class="content">
 ${section('registration','Registrácia',`<p><strong>${esc(candidate.name)}</strong> · volebný obvod ${district.number}, číslo ${number} v opravenom zozname. Obvod má ${district.seats} ${district.seats === 3 ? 'mandáty' : 'mandátov'} a ${district.candidates.length} zaregistrovaných kandidátov. Oficiálne uvedená príslušnosť: <strong>${esc(candidate.designation)}</strong>.</p>${citation}${mayor}`)}
 ${section('occupation','Vek a povolanie',`<p>Vek uvedený v zozname: <strong>${candidate.age}</strong>. Povolanie uvedené v zozname: <strong>${esc(candidate.occupation)}</strong>. Zápis sám osebe nepotvrdzuje dnešný vek, zamestnávateľa ani aktuálny pracovný pomer.</p>${citation}`)}
 ${section('functions','Verejné funkcie v období 2022 – 2026',council)}
 ${section('programme','Programové návrhy',gap)}
 ${section('interview','Rozhovor alebo video',gap)}
-${section('channels','Kanály kandidáta',`<p class="empty"><strong>Informácie o facebookových kanáloch a portrétoch nie sú odsúhlasené.</strong> Pre verejný profil zatiaľ nebol doložený schválený odkaz ani portrét. Týka sa to iba kanálov a portrétov, nie údajov o registrácii uvedených vyššie.</p>`)}
-${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Pre program, rozhovory a vlastné kanály nebol v čiastočnej rešerši doložený priamy datovaný stabilný zdroj pre každého kandidáta. Prázdne rubriky neznamenajú neprítomnosť stanoviska či zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
+${section('channels','Facebookový odkaz',channel)}
+${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Pre program a rozhovory nebol v čiastočnej rešerši doložený priamy datovaný stabilný zdroj pre každého kandidáta. Facebookové odkazy pri 21 kandidátoch priradil Peter 19. októbra 2026; nejde o nezávislé overenie identity alebo vlastníctva účtu. Prázdne rubriky neznamenajú neprítomnosť stanoviska či zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
 </div></main><footer><a href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>\n`
 }
 
