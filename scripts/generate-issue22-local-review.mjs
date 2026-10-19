@@ -1,9 +1,10 @@
-import { readFileSync, mkdirSync, writeFileSync, existsSync, rmSync } from 'node:fs'
+import { readFileSync, mkdirSync, writeFileSync, existsSync, rmSync, chmodSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Local file only: this script never writes under public/ or dist/.
 const ledger = readFileSync(new URL('../docs/research/ISSUE22_COUNCIL_FB_PORTRAIT_DISCOVERY_2026-10-19.md', import.meta.url), 'utf8')
 const roster = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
+const privateRoot = new URL('../.private/', import.meta.url)
 const out = new URL('../.private/issue22-review/', import.meta.url)
 const imageDir = new URL('../.private/issue22-review/images/', import.meta.url)
 // Previously sourced mayoral images are evidence for these four dual candidates only.
@@ -38,8 +39,11 @@ if (attemptedSourceQueries !== 101) throw Error(`Unexpected issue 22 checkpoint 
 const cards = []
 let stagedReviewImages = 0
 mkdirSync(out,{recursive:true,mode:0o700})
+chmodSync(privateRoot,0o700)
+chmodSync(out,0o700)
 rmSync(imageDir,{recursive:true,force:true})
 mkdirSync(imageDir,{recursive:true,mode:0o700})
+chmodSync(imageDir,0o700)
 for (const district of roster.districts) for (const candidate of district.candidates) {
   const key = `D${district.number}/${candidate.listNumber}`
   const row = byId.get(key)
@@ -64,4 +68,5 @@ const html = `<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta n
 :root{font-family:system-ui,sans-serif;color:#172b3b;background:#edf2f4}*{box-sizing:border-box}body{margin:0}header{background:#182e43;color:white;padding:1.5rem max(1rem,calc((100vw - 80rem)/2))}h1{font-size:clamp(1.6rem,3vw,2.5rem)}main{max-width:80rem;margin:auto;padding:1rem}a{color:#114d77;overflow-wrap:anywhere}header a{color:#bce5ff}.banner,.flag{background:#ffe0a3;color:#452500;font-weight:800;padding:.55rem .8rem;border:2px solid #885000}.banner{font-size:1.25rem}.cards{display:grid;gap:1rem}.card{display:grid;grid-template-columns:12rem 1fr;gap:1rem;background:white;border:1px solid #a7b7c2;border-radius:.5rem;padding:1rem}.card .flag{grid-column:1/-1;margin:0}.portrait{aspect-ratio:4/5;background:#dce5ea;border:2px dashed #7591a1;display:grid;place-items:center;text-align:center;padding:1rem;font-weight:700;overflow:hidden}.portrait img{display:block;width:100%;height:100%;object-fit:contain}.eyebrow{text-transform:uppercase;letter-spacing:.05em;color:#3a5262}h2{margin:.2rem 0}p{line-height:1.5}p span{display:block}@media(max-width:650px){.card{grid-template-columns:1fr}.portrait{width:10rem}}a:focus-visible{outline:3px solid #a85900;outline-offset:3px}
 </style></head><body><header><p class="banner">NEODSÚHLASENÉ — len na kontrolu</p><h1>44 kandidátov · lokálna kontrola stôp Facebooku a portrétov</h1><p>Len lokálny súbor. Nie je súčasťou verejného webu, nasadenia ani schválených profilov. Oficiálne údaje o registrácii pochádzajú z obecných PDF; neschválený je tento výskum kanálov a portrétov.</p></header><main><p><strong>Stav výskumu:</strong> 44/44 priamych prvých segmentov vyhľadávania; ${attemptedSourceQueries}/220 pokusov meno × päť dodaných zdrojov, 119/220 zatiaľ bez pokusu, 0/220 dokončených podľa širšieho štandardu kontroly koreňa a dátumu. Žiadny nový vysoko dôveryhodný kanál; 4 zdrojové stránky fotografií, 0 schválených verejných portrétov. Všetko je čiastočné. Odkazy sú výskumné stopy, nie potvrdenie vlastníctva ani súhlas s použitím. ${stagedReviewImages} zo štyroch už skôr získaných zdrojových obrázkov je priložených lokálne na kontrolu; ostatní majú zástupný blok. Obrázky nie sú verejné podklady.</p><div class="cards">${cards.join('\n')}</div></main></body></html>`
 writeFileSync(join(out.pathname,'index.html'),html,{mode:0o600})
+chmodSync(join(out.pathname,'index.html'),0o600)
 console.log(`Wrote ${cards.length} review cards to ${join(out.pathname,'index.html')}`)

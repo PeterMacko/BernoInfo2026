@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, statSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 
 const reviewPath = '.private/issue22-review/index.html'
@@ -36,6 +36,9 @@ test('private review reconciles all 44 registrations and confines four source im
   assert.ok(!html.includes('preview-assets/'))
   assert.ok(!html.includes('images/candidates/'))
   assert.ok(existsSync(reviewPath))
+  for (const path of ['.private','.private/issue22-review','.private/issue22-review/images']) assert.equal(statSync(path).mode & 0o777,0o700,path)
+  assert.equal(statSync(reviewPath).mode & 0o777,0o600)
+  for (const file of available) assert.equal(statSync(`.private/issue22-review/images/${file}`).mode & 0o777,0o600,file)
 })
 
 test('ordinary build keeps review and original-photo files out of dist', () => {
