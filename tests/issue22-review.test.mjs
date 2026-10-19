@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, existsSync, statSync } from 'node:fs'
+import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs'
 import { execFileSync } from 'node:child_process'
 
 const reviewPath = '.private/issue22-review/index.html'
@@ -41,10 +41,24 @@ test('private review reconciles all 44 registrations and confines four source im
   for (const file of available) assert.equal(statSync(`.private/issue22-review/images/${file}`).mode & 0o777,0o600,file)
 })
 
-test('ordinary build keeps review and original-photo files out of dist', () => {
+test('preview branch build exposes only four labeled images on a separate review route', () => {
   const packageJson = JSON.parse(readFileSync('package.json','utf8'))
-  assert.equal(packageJson.scripts.build,'npm run build:placeholder')
-  for (const path of ['public/issue22-review','public/images/candidates','dist/issue22-review','dist/images/candidates']) assert.ok(!existsSync(path),path)
+  assert.equal(packageJson.scripts.build,'npm run build:placeholder && node scripts/build-issue22-public-review.mjs')
+  execFileSync(process.execPath,['scripts/build-issue22-public-review.mjs'])
+  for (const path of ['public/issue22-review','public/images/candidates','dist/images/candidates']) assert.ok(!existsSync(path),path)
+  const html = readFileSync('dist/issue22-review/index.html','utf8')
+  assert.equal((html.match(/class="card"/g) || []).length,44)
+  assert.equal((html.match(/class="flag"/g) || []).length,44)
+  assert.equal((html.match(/<img /g) || []).length,4)
+  assert.ok(html.includes('verejne dostupná') || html.includes('Verejne dostupná'))
+  assert.ok(html.includes('101/220'))
+  assert.ok(html.includes('0/220'))
+  for (const district of roster.districts) for (const candidate of district.candidates) {
+    const publicPage = readFileSync(`dist/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
+    assert.ok(!publicPage.includes('/issue22-review/images/'))
+  }
+  const files = ['miroslav-turenic-original.jpg','jaroslav-kostial-original.jpg','michal-bartok-original.jpg','martin-cirbus-original.jpg']
+  assert.deepEqual(readdirSync('dist/issue22-review/images').sort(),files.sort())
   const generator = readFileSync('scripts/generate-issue22-local-review.mjs','utf8')
   assert.ok(generator.includes("../.private/issue22-review/"))
   assert.ok(!generator.includes('writeFileSync(join(root'))
