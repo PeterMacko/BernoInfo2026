@@ -146,3 +146,73 @@ body:has(.static-page) {
     padding: 12px 15px;
   }
 }
+
+.static-page .static-evidence-guide {
+  margin: 0 0 30px;
+  padding: clamp(20px, 3vw, 32px);
+  background: #e4edf7;
+  border: 1px solid #b7c7db;
+}
+
+.static-page .static-evidence-kicker {
+  margin: 0 0 8px;
+  color: #365a82;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.static-page .static-evidence-guide h2 {
+  max-width: none;
+  margin: 0 0 18px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -.04em;
+}
+
+.static-page .static-evidence-guide ul {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px;
+}
+
+.static-page .static-evidence-guide li {
+  min-width: 0;
+  padding: 16px;
+  background: #f8f9fc;
+  border-top: 3px solid #3564a7;
+}
+
+.static-page .static-evidence-guide li strong,
+.static-page .static-evidence-guide li span {
+  display: block;
+}
+
+.static-page .static-evidence-guide li strong {
+  margin-bottom: 8px;
+}
+
+.static-page .static-evidence-guide a {
+  overflow-wrap: anywhere;
+  text-underline-offset: 3px;
+}
+
+.static-page .static-evidence-guide a:focus-visible {
+  outline: 3px solid #a87800;
+  outline-offset: 3px;
+}
+
+.static-page .static-evidence-limit {
+  margin: 0;
+  font-size: .9rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .static-page .static-evidence-guide ul {
+    grid-template-columns: 1fr;
+  }
+}

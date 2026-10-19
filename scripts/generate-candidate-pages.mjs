@@ -81,14 +81,14 @@ function renderRegistration(candidate) {
   const number = String(candidate.position).padStart(2, '0')
   return [
     `<p><strong>${escapeHtml(candidate.name)}</strong> · číslo ${number} v opravenom zozname kandidátov. Registrovaná príslušnosť: ${escapeHtml(candidate.affiliation)}. Číslo v zozname nie je overeným číslom na hlasovacom lístku.</p>`,
-    source(data.officialUrl, officialPublisher, `zverejnené ${data.officialDate}`),
+    source(data.officialUrl, officialPublisher, `datované ${data.officialDate}`),
   ]
 }
 
 function renderOccupation(candidate) {
   return [
     `<p>Povolanie uvedené v oficiálnom zozname: <strong>${escapeHtml(candidate.occupation)}</strong>. Zápis nedokladá konkrétneho zamestnávateľa ani súčasný pracovný pomer.</p>`,
-    source(data.officialUrl, officialPublisher, `zverejnené ${data.officialDate}`),
+    source(data.officialUrl, officialPublisher, `datované ${data.officialDate}`),
   ]
 }
 
@@ -158,6 +158,19 @@ function renderSources() {
     `<p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correctionLink()}</p>`,
     '<p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>',
   ]
+}
+
+function renderEvidenceGuide() {
+  return block('section', ' class="evidence-guide" aria-labelledby="evidence-guide-title"', [
+    '<p class="evidence-guide-kicker">Ako čítať tento profil</p>',
+    '<h2 id="evidence-guide-title">Čo je doložené — a čo zostáva otvorené</h2>',
+    block('ul', ' class="evidence-guide-list"', [
+      `<li><strong>Oficiálny zoznam obce</strong><span>Registrácia, poradie v zozname, príslušnosť a uvedené povolanie vychádzajú z ${link(data.officialUrl, 'opravenej listiny obce (PDF)')} datovanej ${escapeHtml(data.officialDate)}. Číslo v zozname nie je overené číslo na hlasovacom lístku.</span></li>`,
+      '<li><strong>„Kandidát uvádza“</strong><span>Návrhy a skúsenosti sú pripísané kandidátovi a odkazujú na jeho zdroj. Ich pravdivosť, uskutočniteľnosť ani úplnosť programu tým nie sú nezávisle potvrdené.</span></li>',
+      '<li><strong>Nepodarilo sa doložiť</strong><span>Toto označenie znamená len to, že údaj nie je doložený v preskúmaných zdrojoch. Nie je to dôkaz, že stanovisko, funkcia či zdroj neexistuje, ani že kandidát odmietol odpovedať.</span></li>',
+    ]),
+    '<p class="evidence-guide-limit"><strong>Rozsah a dátumy:</strong> Uzávierka podkladov pre údaje v profiloch je 18. októbra 2026. Dňa 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október zostáva čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>',
+  ])
 }
 
 function renderSections(candidate) {
@@ -231,7 +244,7 @@ function renderDocument(candidate) {
   ])
   const page = block('div', ' class="page"', [
     header,
-    block('main', '', [renderHero(candidate), renderNavigation(candidate), renderSections(candidate)]),
+    block('main', '', [renderHero(candidate), renderNavigation(candidate), renderEvidenceGuide(), renderSections(candidate)]),
     footer,
   ])
   return `<!doctype html>\n${block('html', ' lang="sk"', [head, block('body', '', [page])])}\n`
