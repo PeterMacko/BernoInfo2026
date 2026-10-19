@@ -46,6 +46,17 @@ function App() {
         </div>
       </section>
 
+      <section className="evidence-guide" aria-labelledby="evidence-guide-title">
+        <p className="evidence-guide-kicker">Ako čítať profily</p>
+        <h2 id="evidence-guide-title">Čo je doložené — a čo zostáva otvorené</h2>
+        <ul className="evidence-guide-list">
+          <li><strong>Oficiálny zoznam obce</strong><span>Registrácia, poradie v zozname, príslušnosť a uvedené povolanie vychádzajú z <a href={correctedList}>opravenej listiny obce (PDF)</a> datovanej 2. septembra 2026. Číslo v zozname nie je overené číslo na hlasovacom lístku.</span></li>
+          <li><strong>„Kandidát uvádza“</strong><span>Návrhy a skúsenosti sú pripísané kandidátovi a odkazujú na jeho zdroj. Ich pravdivosť, uskutočniteľnosť ani úplnosť programu tým nie sú nezávisle potvrdené.</span></li>
+          <li><strong>Nepodarilo sa doložiť</strong><span>Toto označenie znamená len to, že údaj nie je doložený v preskúmaných zdrojoch. Nie je to dôkaz, že stanovisko, funkcia či zdroj neexistuje, ani že kandidát odmietol odpovedať.</span></li>
+        </ul>
+        <p className="evidence-guide-limit"><strong>Rozsah a dátumy:</strong> Uzávierka podkladov pre údaje v profiloch je 18. októbra 2026. Dňa 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október zostáva čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>
+      </section>
+
       <section className="candidate-section" aria-labelledby="candidates-title">
         {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>}
         <div className="section-heading">
