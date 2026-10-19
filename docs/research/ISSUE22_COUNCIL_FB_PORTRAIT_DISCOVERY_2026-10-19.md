@@ -1,5 +1,9 @@
 # Issue #22 — council Facebook and portrait discovery, 19 Oct 2026
 
+## Editorial identification after the bounded search
+
+On 19 October, Peter reviewed the URLs in the **Entity lead / identity state and basis** column and identified all linked entities as matching the respective candidates. This is a subsequent human editorial identification, not an outcome of the 101/220 first-segment source checks below, independent account-operator authentication, or photo/rights clearance. Candidate-page links based on this decision should be attributed as Peter-identified and dated; the original search confidence and coverage labels below remain intact for auditability. Rows with no entity URL remain without an identified profile link.
+
 **Private, NOT APPROVED — review only. Partial method handoff, not candidate-profile copy or public asset approval.** Observation date for new searches: 19 October 2026 (Europe/Bratislava). The official roster is the corrected [D1](https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_1.pdf), [D2](https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_2.pdf), [D3](https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_3.pdf), dated 2 September 2026 and reviewed in the [44-row council ledger](ISSUE20_COUNCIL_CANDIDATE_LEDGER_2026-10-19.md). Read with the [analyst issue #22 spec](/home/pmacko/projects/BernoInfo2026-analyst/docs/ISSUE_22_COUNCIL_FACEBOOK_PORTRAIT_SPEC.md).
 
 ## Method and coverage ledger
