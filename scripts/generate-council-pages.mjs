@@ -41,7 +41,7 @@ ${section('occupation','Vek a povolanie',`<p>Vek uvedený v zozname: <strong>${c
 ${section('functions','Verejné funkcie v období 2022 – 2026',council)}
 ${section('programme','Programové návrhy',gap)}
 ${section('interview','Rozhovor alebo video',gap)}
-${section('channels','Kanály kandidáta',gap)}
+${section('channels','Kanály kandidáta',`<p class="empty"><strong>Informácie o facebookových kanáloch a portrétoch nie sú odsúhlasené.</strong> Pre verejný profil zatiaľ nebol doložený schválený odkaz ani portrét. Týka sa to iba kanálov a portrétov, nie údajov o registrácii uvedených vyššie.</p>`)}
 ${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Pre program, rozhovory a vlastné kanály nebol v čiastočnej rešerši doložený priamy datovaný stabilný zdroj pre každého kandidáta. Prázdne rubriky neznamenajú neprítomnosť stanoviska či zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
 </div></main><footer><a href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>\n`
 }

@@ -4,7 +4,7 @@ A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovaki
 
 ## Local preview
 
-Run `npm ci`, then `npm run dev` for a local browser preview. On this development branch, `npm run build` creates the eight-photo review build used by Cloudflare; `npm run build:placeholder` creates the all-placeholder build. The app includes `noindex, nofollow` while under review, but that does not restrict access.
+Run `npm ci`, then `npm run dev` for a local browser preview. `npm run build` creates the all-placeholder deployment build. `npm run build:photo-review` is an explicit local-only eight-photo review build and must not be deployed. `npm run review:issue22` generates a private local 44-candidate research review at `.private/issue22-review/index.html`; it is never included in `public/` or `dist/`. The app includes `noindex, nofollow` while under review, but that does not restrict access.
 
 ## Content and image handoff
 
