@@ -8,31 +8,7 @@
     <link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp" />
     <meta name="description" content="Neutrálny prehľad zaregistrovaných kandidátov na starostu obce Bernolákovo v komunálnych voľbách 2026." />
     <title>Kandidáti na starostu obce Bernolákovo — BernoInfo 2026</title>
-    <noscript>
-      <style>
-        * { box-sizing: border-box; }
-        body { margin: 0; background: #eef2f7; color: #183a64; font-family: Arial, sans-serif; line-height: 1.5; }
-        .static-page { max-width: 1100px; min-height: 100vh; margin: auto; background: #f8f9fc; }
-        .static-header { padding: 22px clamp(20px, 5vw, 60px); border-bottom: 1px solid #bccde0; font-weight: 800; letter-spacing: -.04em; }
-        .static-header span { color: #3564a7; }
-        .static-main { padding: clamp(28px, 5vw, 60px) clamp(20px, 5vw, 60px) 55px; }
-        .static-eyebrow { margin: 0 0 10px; color: #3564a7; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-        .static-main h1 { max-width: 760px; margin: 0 0 12px; font-size: clamp(2rem, 6vw, 4rem); line-height: 1.08; letter-spacing: -.055em; }
-        .static-arms { display: flex; align-items: center; gap: 12px; margin: 0 0 15px; color: #35516f; font-size: .8rem; }
-        .static-arms img { display: block; width: 45px; height: auto; }
-        .static-header small { font-size: .7rem; font-weight: 600; letter-spacing: 0; }
-        .static-summary { max-width: 720px; margin: 0 0 30px; }
-        .static-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; list-style: none; padding: 0; margin: 0 0 35px; }
-        .static-list li { display: flex; gap: 20px; align-items: baseline; padding: 17px; border: 1px solid #cad6e5; background: #eef2f7; font-size: 1.08rem; font-weight: 700; }
-        .static-list span { flex: none; color: #3564a7; font-size: 1.5rem; }
-        .static-sources { padding-top: 20px; border-top: 1px solid #b7c7db; font-size: .9rem; }
-        .static-sources h2 { margin: 0 0 8px; font-size: 1.1rem; }
-        .static-sources p { max-width: 760px; margin: 0 0 10px; }
-        .static-sources a { color: #183a64; text-underline-offset: 3px; }
-        .static-sources a:focus-visible { outline: 3px solid #a87800; outline-offset: 3px; }
-        @media (max-width: 600px) { .static-list { grid-template-columns: 1fr; } .static-list li { padding: 12px 15px; } }
-      </style>
-    </noscript>
+    <link rel="stylesheet" href="/fallback.css" />
   </head>
   <body>
     <div id="root"></div>
@@ -46,20 +22,21 @@
           <p class="static-summary">Osem zaregistrovaných kandidátov v poradí opraveného oficiálneho zoznamu obce. Voľby sa konajú 24. októbra 2026.</p>
           <!-- Keep this static fallback in sync with src/candidates.ts. Numbers are list positions, not independently verified ballot-paper numbers. -->
           <ol class="static-list">
-            <li><span aria-label="Číslo v zozname 1">01</span>Michal BARTÓK</li>
-            <li><span aria-label="Číslo v zozname 2">02</span>Martin CIRBUS</li>
-            <li><span aria-label="Číslo v zozname 3">03</span>Filip KANDRÁČ</li>
-            <li><span aria-label="Číslo v zozname 4">04</span>Jaroslav KOŠTIAL</li>
-            <li><span aria-label="Číslo v zozname 5">05</span>Peter LAKOTA</li>
-            <li><span aria-label="Číslo v zozname 6">06</span>Milan RAJTER</li>
-            <li><span aria-label="Číslo v zozname 7">07</span>Roman ŠUTKA</li>
-            <li><span aria-label="Číslo v zozname 8">08</span>Miroslav TURENIČ</li>
+            <li><a href="/kandidati/bartok/" aria-label="Profil kandidáta Michal BARTÓK"><span aria-hidden="true">01</span>Michal BARTÓK</a></li>
+            <li><a href="/kandidati/cirbus/" aria-label="Profil kandidáta Martin CIRBUS"><span aria-hidden="true">02</span>Martin CIRBUS</a></li>
+            <li><a href="/kandidati/kandrac/" aria-label="Profil kandidáta Filip KANDRÁČ"><span aria-hidden="true">03</span>Filip KANDRÁČ</a></li>
+            <li><a href="/kandidati/kostial/" aria-label="Profil kandidáta Jaroslav KOŠTIAL"><span aria-hidden="true">04</span>Jaroslav KOŠTIAL</a></li>
+            <li><a href="/kandidati/lakota/" aria-label="Profil kandidáta Peter LAKOTA"><span aria-hidden="true">05</span>Peter LAKOTA</a></li>
+            <li><a href="/kandidati/rajter/" aria-label="Profil kandidáta Milan RAJTER"><span aria-hidden="true">06</span>Milan RAJTER</a></li>
+            <li><a href="/kandidati/sutka/" aria-label="Profil kandidáta Roman ŠUTKA"><span aria-hidden="true">07</span>Roman ŠUTKA</a></li>
+            <li><a href="/kandidati/turenic/" aria-label="Profil kandidáta Miroslav TURENIČ"><span aria-hidden="true">08</span>Miroslav TURENIČ</a></li>
           </ol>
           <section class="static-sources" aria-labelledby="static-sources-title">
             <h2 id="static-sources-title">Zdroj a stav údajov</h2>
             <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce pochádza z <a href="https://www.bernolakovo.sk/">oficiálnej stránky obce</a>.</p>
-            <p>Mená a poradie: <a href="https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf">opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href="https://www.bernolakovo.sk/novinka/139303/n">oznámenie obce Bernolákovo</a>. Overené 17. októbra 2026. Uvedené čísla sú číslami v zozname, nie označením čísiel na hlasovacom lístku.</p>
+            <p>Mená a poradie: <a href="https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf">opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href="https://www.bernolakovo.sk/novinka/139303/n">oznámenie obce Bernolákovo</a>. Naposledy overené 18. októbra 2026. Uvedené čísla sú číslami v zozname, nie označením čísiel na hlasovacom lístku.</p>
             <p>Táto textová verzia stránky nezobrazuje portréty. Dostupnosť fotografií závisí od verzie stránky.</p>
+            <p>Opravy údajov: <a href="mailto:Mr.petermacko@gmail.com">Mr.petermacko@gmail.com</a>. Uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov a zmenu označíme dátumom pri príslušnej informácii.</p>
           </section>
         </main>
       </div>

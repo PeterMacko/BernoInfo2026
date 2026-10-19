@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "bash scripts/build-photo-review.sh",
     "build:placeholder": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:details": "node scripts/generate-candidate-pages.mjs",
+    "prebuild": "npm run generate:details",
+    "prebuild:placeholder": "npm run generate:details"
   },
   "dependencies": {
     "react": "19.3.1",
