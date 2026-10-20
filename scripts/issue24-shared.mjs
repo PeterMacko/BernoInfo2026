@@ -13,7 +13,11 @@ const groups = [
 ]
 const availablePhotos = new Set(JSON.parse(readFileSync(new URL('../src/issue24-photo-availability.json', import.meta.url))))
 export function photoFor(id, review) {
- if (dualRoutes[id] && !availablePhotos.has(id)) {const p=mayorPortraits[dualRoutes[id]];return {src:p.src,url:p.sourceUrl,year:'2026',kind:'Zdrojová fotografia z kandidátskej kampane'}}
+ if (dualRoutes[id] && !availablePhotos.has(id)) {
+   if (!review) return null
+   const p=mayorPortraits[dualRoutes[id]]
+   return {src:p.src,url:p.sourceUrl,year:'2026',kind:'Zdrojová fotografia z kandidátskej kampane'}
+ }
  if (!availablePhotos.has(id)) return null
  if (!review) return null
  const item=evidence[id]?.photo
