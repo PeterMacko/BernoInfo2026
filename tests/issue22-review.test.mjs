@@ -40,7 +40,7 @@ test('review preview includes source photos while placeholder build keeps them o
  for(const [id,item] of Object.entries(evidence)) if(item.connection==='Turenič – predstavenie v kampani'){
   assert.ok(!readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes('Možné prepojenia na overenie'))
  }
- execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
+ execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
  assert.equal(readdirSync('dist/images/candidates').length,8)
  assert.equal(readdirSync('dist/images/council').length,available.length)
  assert.ok(!existsSync('dist/issue22-review'))

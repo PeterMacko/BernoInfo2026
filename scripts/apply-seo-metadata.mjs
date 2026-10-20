@@ -1,11 +1,37 @@
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const root = process.argv[2] || 'dist'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
-const originInput = process.env.SITE_ORIGIN
-if (mode === 'release' && (!originInput || process.env.RELEASE_ORIGIN_VERIFIED !== '1')) {
-  throw Error('Release metadata requires SITE_ORIGIN and RELEASE_ORIGIN_VERIFIED=1 after verifying the public hostname.')
+const productionOrigin = 'https://bernoinfo2026.mr-petermacko.workers.dev'
+const ciBranch = process.env.WORKERS_CI_BRANCH || null
+if (ciBranch && !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(ciBranch) && !process.env.SITE_ORIGIN) {
+  throw Error('Unexpected WORKERS_CI_BRANCH; supply a verified SITE_ORIGIN or use a supported branch name.')
+}
+if (ciBranch && ciBranch !== 'main' && mode === 'release') {
+  throw Error('Non-main Workers Builds must use preview mode and remain noindex.')
+}
+if (ciBranch === 'main' && mode !== 'release') {
+  throw Error('Main Workers Build must use release mode after merge approval.')
+}
+let derivedOrigin = null
+if (ciBranch === 'main') derivedOrigin = productionOrigin
+else if (ciBranch && /^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(ciBranch)) {
+  const slug = ciBranch.toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '')
+  if ((!slug || `${slug}-bernoinfo2026`.length > 63) && !process.env.SITE_ORIGIN) {
+    throw Error('Preview branch alias is too long or invalid; supply SITE_ORIGIN for this preview.')
+  }
+  if (slug && `${slug}-bernoinfo2026`.length <= 63) derivedOrigin = `https://${slug}-bernoinfo2026.mr-petermacko.workers.dev`
+}
+const originInput = process.env.SITE_ORIGIN || derivedOrigin
+if (mode === 'release' && !ciBranch && (!originInput || process.env.RELEASE_ORIGIN_VERIFIED !== '1')) {
+  throw Error('Local release metadata requires SITE_ORIGIN and RELEASE_ORIGIN_VERIFIED=1.')
+}
+if (mode === 'release' && ciBranch === 'main' && originInput !== productionOrigin) {
+  throw Error('Main Workers Build must use the verified production origin.')
+}
+if (ciBranch && ciBranch !== 'main' && originInput === productionOrigin) {
+  throw Error('Preview must not claim the public release origin.')
 }
 let origin = null
 if (originInput) {
