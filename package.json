@@ -17,7 +17,8 @@
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "test:http": "node tests/http-routes.mjs",
     "prebuild": "npm run generate:details && npm run generate:council && npm run generate:streets",
-    "generate:streets": "node scripts/generate-street-fallback.mjs"
+    "generate:streets": "node scripts/generate-street-fallback.mjs",
+    "test:navigation": "node tests/street-navigation.browser.mjs"
   },
   "dependencies": {
     "react": "19.3.1",

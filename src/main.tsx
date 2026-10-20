@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import councilData from './council-candidates.json'
@@ -26,6 +26,28 @@ function App() {
   const [streetInput, setStreetInput] = useState('')
   const [searched, setSearched] = useState(false)
   const result = searched ? findStreet(streetInput) : null
+
+  useEffect(() => {
+    let frameId = 0
+    const navigateToDistrict = () => {
+      if (!/^#district-[1-3]$/.test(window.location.hash)) return
+      // The browser's initial fragment jump may run before React creates this heading.
+      cancelAnimationFrame(frameId)
+      frameId = requestAnimationFrame(() => {
+        const heading = document.getElementById(window.location.hash.slice(1))
+        if (!heading) return
+        heading.scrollIntoView({ block: 'start', behavior: 'instant' })
+        heading.focus({ preventScroll: true })
+      })
+    }
+    navigateToDistrict()
+    window.addEventListener('hashchange', navigateToDistrict)
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('hashchange', navigateToDistrict)
+    }
+  }, [])
+
   return (
     <main className="page">
       <header className="masthead">
@@ -146,7 +168,7 @@ function App() {
         {councilData.districts.map((district) => (
           <section className="council-district" key={district.number} aria-labelledby={`district-${district.number}`}>
             <div className="council-district-heading">
-              <h3 id={`district-${district.number}`}>Volebný obvod {district.number}</h3>
+              <h3 id={`district-${district.number}`} tabIndex={-1}>Volebný obvod {district.number}</h3>
               <p>{district.candidates.length} kandidátov · {district.seats} mandátov · <a href={district.sourceUrl}>Opravený zoznam obce (PDF)</a>, datovaný {councilData.officialDate}</p>
             </div>
             <div className="district-polling">
