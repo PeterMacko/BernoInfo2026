@@ -218,7 +218,7 @@ function renderCouncilLinks(candidate) {
   const links = []
   const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
   if (label && url && (!reviewOnlyLead || photoReview)) links.push(`<p>${link(url,label)}</p><small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Vlastníctvo účtu nie je nezávisle overené.</small>`)
-  if (peterUrl && peterUrl !== url) links.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  if (photoReview && peterUrl && peterUrl !== url) links.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
   return links.length ? [section('council-source', 'Odkazy ku kandidatúre na poslanca', links)] : []
 }
 

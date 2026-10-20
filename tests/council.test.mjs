@@ -51,7 +51,7 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
    assert.ok(!page.includes(`href="${item.link.url}"`),`${item.key} review-only source leaked`)
   }
   const peterUrl=entityLinks.urls[item.key]
-  if(peterUrl)assert.ok(page.includes(`href="${peterUrl.replaceAll('&','&amp;')}"`),`${item.key} Peter-identified link missing`)
+  if(peterUrl && peterUrl!==item.link.url)assert.ok(!page.includes('Facebookový odkaz priradený Petrom'),`${item.key} review-only Peter-identified link leaked`)
   if(kind==='shared campaign page')assert.ok(page.includes('Spoločná stránka kampane')||page.includes('Doložené prepojenia'))
   if(kind==='post/appearance'&&!dual[c.id])assert.ok(page.includes('Príspevok o kandidátovi'))
   if(item.photo.url && !dual[c.id])assert.ok(page.includes('Obrazový zdroj'))

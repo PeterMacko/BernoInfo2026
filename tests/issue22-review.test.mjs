@@ -55,4 +55,7 @@ test('review preview includes source photos while placeholder build keeps them o
  for(const [id,item] of Object.entries(evidence)) if(['probable/unverified profile','mention only','historical page (2018)'].includes(item.link.kind)) {
   assert.ok(!readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes(`href="${item.link.url}"`),`${item.key} release lead leaked`)
  }
+ for(const id of ['bartok','cirbus','kostial','turenic']){
+  assert.ok(!readFileSync(`dist/kandidati/${id}/index.html`,'utf8').includes('Facebookový odkaz priradený Petrom'),`${id} release-only link leaked`)
+ }
 })
