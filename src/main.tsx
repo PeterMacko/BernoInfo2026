@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import councilData from './council-candidates.json'
 import issue24Evidence from './issue24-evidence.json'
 import issue24Photos from './issue24-photo-availability.json'
+import { checkedDate, districtSource, findStreet, precinctSource, suggestStreets, streetData, venues } from './street-lookup'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -22,6 +23,62 @@ const councilPhoto = (id:string) => {
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
+  const [streetInput, setStreetInput] = useState('')
+  const [searched, setSearched] = useState(false)
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [activeSuggestion, setActiveSuggestion] = useState(-1)
+  const suggestionList = useRef<HTMLDivElement>(null)
+  const suggestions = suggestStreets(streetInput)
+  const selectStreet = (street: string) => {
+    setStreetInput(street)
+    setSearched(false)
+    setSuggestionsOpen(false)
+    setActiveSuggestion(-1)
+  }
+  const handleStreetKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      setSuggestionsOpen(false)
+      setActiveSuggestion(-1)
+    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (!suggestionsOpen) {
+        setSuggestionsOpen(true)
+        setActiveSuggestion(event.key === 'ArrowDown' ? 0 : suggestions.length - 1)
+      } else if (suggestions.length) {
+        setActiveSuggestion(index => index < 0 ? (event.key === 'ArrowDown' ? 0 : suggestions.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + suggestions.length) % suggestions.length)
+      }
+    } else if (event.key === 'Enter' && suggestionsOpen && activeSuggestion >= 0 && suggestions[activeSuggestion]) {
+      event.preventDefault()
+      selectStreet(suggestions[activeSuggestion].street)
+    }
+  }
+  useEffect(() => {
+    if (activeSuggestion < 0) return
+    suggestionList.current?.querySelector(`[data-suggestion-index="${activeSuggestion}"]`)?.scrollIntoView({ block: 'nearest' })
+  }, [activeSuggestion])
+  const result = searched ? findStreet(streetInput) : null
+
+  useEffect(() => {
+    let frameId = 0
+    const navigateToDistrict = () => {
+      if (!/^#district-[1-3]$/.test(window.location.hash)) return
+      // The browser's initial fragment jump may run before React creates this heading.
+      cancelAnimationFrame(frameId)
+      frameId = requestAnimationFrame(() => {
+        const heading = document.getElementById(window.location.hash.slice(1))
+        if (!heading) return
+        heading.scrollIntoView({ block: 'start', behavior: 'instant' })
+        heading.focus({ preventScroll: true })
+      })
+    }
+    navigateToDistrict()
+    window.addEventListener('hashchange', navigateToDistrict)
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('hashchange', navigateToDistrict)
+    }
+  }, [])
+
   return (
     <main className="page">
       <header className="masthead">
@@ -55,6 +112,45 @@ function App() {
               <figcaption>Erb obce · zdroj: obec Bernolákovo</figcaption>
             </figure>
           </div>
+        </div>
+      </section>
+
+      <section className="street-section" aria-labelledby="street-title">
+        <div className="street-layout">
+          <div>
+            <p className="section-kicker">Volebné informácie / Bernolákovo</p>
+            <h2 id="street-title">Ktorý obvod volím</h2>
+            <p>Vyberte alebo napíšte názov ulice. Zistíte volebný obvod pre poslancov, volebný okrsok a volebnú miestnosť podľa oznámení obce.</p>
+            <form onSubmit={event => { event.preventDefault(); setSuggestionsOpen(false); setActiveSuggestion(-1); setSearched(true) }}>
+              <label htmlFor="street-name">Ulica v Bernolákove</label>
+              <div className="street-control">
+                <div className="street-input-wrap">
+                  <input id="street-name" name="street" type="text" role="combobox" aria-autocomplete="list" aria-controls={suggestionsOpen && suggestions.length ? "street-options" : undefined} aria-expanded={suggestionsOpen && suggestions.length > 0} aria-activedescendant={suggestionsOpen && activeSuggestion >= 0 && suggestions[activeSuggestion] ? `street-option-${activeSuggestion}` : undefined} autoComplete="off" value={streetInput} onFocus={() => setSuggestionsOpen(true)} onBlur={() => { setSuggestionsOpen(false); setActiveSuggestion(-1) }} onKeyDown={handleStreetKeyDown} onChange={event => { setStreetInput(event.target.value); setSearched(false); setSuggestionsOpen(true); setActiveSuggestion(-1) }} placeholder="Napr. Hlavná" />
+                  {suggestionsOpen && (suggestions.length ? <div id="street-options" className="street-suggestions" role="listbox" aria-label="Ulice v Bernolákove" ref={suggestionList}>
+                    {suggestions.map((row, index) => <div id={`street-option-${index}`} data-suggestion-index={index} role="option" aria-selected={index === activeSuggestion} className={`street-suggestion${index === activeSuggestion ? ' is-active' : ''}`} key={row.street} onMouseDown={event => event.preventDefault()} onClick={() => selectStreet(row.street)}>{row.street}</div>)}
+                  </div> : <div className="street-suggestions street-no-match" role="status">Žiadna zhodná ulica. Skontrolujte názov.</div>)}
+                </div>
+                <button type="submit">Zistiť obvod</button>
+              </div>
+            </form>
+            <div className="street-result" role="status" aria-live="polite">
+              {searched && result && <>
+                <p className="result-kicker">Výsledok pre {result.street}</p>
+                <h3>Volebný obvod {result.district} · okrsok {result.precinct}</h3>
+                <p><strong>Volebná miestnosť:</strong> {venues[result.precinct]}</p>
+                <p><a href={`#district-${result.district}`}>Kandidáti na poslancov v obvode {result.district} a všetky jeho okrsky</a></p>
+                <p className="result-source">Obvod: <a href={districtSource}>uznesenie obce z 23. júna 2026</a>. Okrsok a miestnosť: <a href={precinctSource}>oznámenie obce z 29. júla 2026</a>. Skontrolované {checkedDate}.</p>
+              </>}
+              {searched && !result && <p>Nenašli sme jednoznačnú zhodu. Skontrolujte celý názov ulice alebo ho vyberte zo zoznamu. Obvod ani miestnosť nehádame; overte si ich v <a href={precinctSource}>oficiálnom zozname obce (PDF)</a>. Pri „Záhradkárskej oblasti“ použite celý júlový názov „Záhradkárska oblasť (pri Trnavskej)“.</p>}
+            </div>
+          </div>
+          <aside className="street-explainer">
+            <h3>Obvod ≠ okrsok</h3>
+            <p>Obvod určuje kandidátov na poslancov. Okrsok určuje volebnú miestnosť. Aj v obvode 2 sú dve rôzne miestnosti, preto zobrazujeme výsledok podľa ulice.</p>
+            <p>Vyhľadávanie beží iba v tomto prehliadači. Zadanú ulicu neodosielame ani neukladáme.</p>
+            <p><a href={districtSource}>Obvody a mandáty: uznesenie obce (PDF)</a>, 23. júna 2026; <a href={precinctSource}>okrsky, ulice a miestnosti: oznámenie obce (PDF)</a>, 29. júla 2026. Skontrolované {checkedDate}.</p>
+            <p><a href="/volby/ulice/">Textový zoznam všetkých ulíc a okrskov</a> (funguje aj bez JavaScriptu).</p>
+          </aside>
         </div>
       </section>
 
@@ -107,8 +203,14 @@ function App() {
         {councilData.districts.map((district) => (
           <section className="council-district" key={district.number} aria-labelledby={`district-${district.number}`}>
             <div className="council-district-heading">
-              <h3 id={`district-${district.number}`}>Volebný obvod {district.number}</h3>
+              <h3 id={`district-${district.number}`} tabIndex={-1}>Volebný obvod {district.number}</h3>
               <p>{district.candidates.length} kandidátov · {district.seats} mandátov · <a href={district.sourceUrl}>Opravený zoznam obce (PDF)</a>, datovaný {councilData.officialDate}</p>
+            </div>
+            <div className="district-polling">
+              <h4>Okrsky a volebné miestnosti</h4>
+              <ul>{[...new Set(streetData.filter(row => row.district === district.number).map(row => row.precinct))].map(precinct => <li key={precinct}><strong>Okrsok {precinct}:</strong> {venues[precinct]}</li>)}</ul>
+              <p>Miesto určite podľa svojho okrsku, nie iba podľa obvodu. <a href={precinctSource}>Zdroj: obec Bernolákovo, oznámenie z 29. júla 2026 (PDF)</a>; skontrolované {checkedDate}.</p>
+              <p><a href={districtSource}>Zdroj počtu mandátov: uznesenie obce z 23. júna 2026 (PDF)</a>; skontrolované {checkedDate}.</p>
             </div>
             <ol className="council-list">
               {district.candidates.map((candidate) => (

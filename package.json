@@ -12,10 +12,13 @@
     "build:placeholder": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "generate:details": "node scripts/generate-candidate-pages.mjs",
-    "prebuild:placeholder": "npm run generate:details && npm run generate:council",
+    "prebuild:placeholder": "npm run generate:details && npm run generate:council && npm run generate:streets",
     "generate:council": "node scripts/generate-council-pages.mjs",
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
-    "test:http": "node tests/http-routes.mjs"
+    "test:http": "node tests/http-routes.mjs",
+    "prebuild": "npm run generate:details && npm run generate:council && npm run generate:streets",
+    "generate:streets": "node scripts/generate-street-fallback.mjs",
+    "test:navigation": "node tests/street-navigation.browser.mjs"
   },
   "dependencies": {
     "react": "19.3.1",
