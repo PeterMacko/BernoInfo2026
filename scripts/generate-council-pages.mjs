@@ -48,7 +48,8 @@ function render(candidate, district) {
   const key = `D${district.number}/${candidate.listNumber}`
   const peterUrl = entityLinks.urls[key]
   const channelItems = []
-  if (label && url) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
+  const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
+  if (label && url && (!reviewOnlyLead || photoReview)) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
   if (peterUrl && peterUrl !== url) channelItems.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
   const channel = channelItems.length ? channelItems.join('') : gap
   const portrait = photoFor(candidate.id,photoReview)

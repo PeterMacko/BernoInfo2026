@@ -48,8 +48,7 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   const kind=item.link.kind
   if(['probable/unverified profile','mention only','historical page (2018)'].includes(kind)){
-   assert.ok(page.includes(`href="${item.link.url}"`),`${item.key} source link missing`)
-   assert.ok(page.includes(kind==='probable/unverified profile'?'Možný profil — nepotvrdené':kind==='mention only'?'Príspevok so zmienkou':'Historická stránka'),`${item.key} caveat missing`)
+   assert.ok(!page.includes(`href="${item.link.url}"`),`${item.key} review-only source leaked`)
   }
   const peterUrl=entityLinks.urls[item.key]
   if(peterUrl)assert.ok(page.includes(`href="${peterUrl.replaceAll('&','&amp;')}"`),`${item.key} Peter-identified link missing`)
@@ -64,7 +63,7 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
 test('sourced connections use internal person links and equal cards',()=>{
  for(const c of rows.filter(c=>['Tím Bartók','ZA BERnolákovo','Turenič – predstavenie v kampani'].includes(evidence[c.id].connection))){
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
-  assert.ok(page.includes('Doložené prepojenia'),evidence[c.id].key)
+  assert.ok(page.includes(evidence[c.id].connection==='Turenič – predstavenie v kampani'?'Možné prepojenia na overenie':'Doložené prepojenia'),evidence[c.id].key)
   assert.ok(page.includes('connection-card'),evidence[c.id].key)
  }
 })
