@@ -48,7 +48,7 @@ async function openPage(width, height) {
   return { command, evaluate, close: () => ws.close() }
 }
 const key = (page, key, code = key, windowsVirtualKeyCode = key === 'ArrowDown' ? 40 : key === 'ArrowUp' ? 38 : key === 'Enter' ? 13 : key === 'Escape' ? 27 : 0) => page.command('Input.dispatchKeyEvent', { type: 'keyDown', key, code, windowsVirtualKeyCode })
-const state = `(() => { const input = document.querySelector('#street-name'); const menu = document.querySelector('.street-suggestions'); const a = input.getBoundingClientRect(); const b = menu?.getBoundingClientRect(); return {value: input.value, expanded: input.getAttribute('aria-expanded'), active: input.getAttribute('aria-activedescendant'), options: document.querySelectorAll('[role="option"]').length, noMatch: Boolean(document.querySelector('.street-no-match')), menuTop: b?.top, inputBottom: a.bottom, menuHeight: b?.height, menuScrollHeight: menu?.scrollHeight, menuClientHeight: menu?.clientHeight, menuRight: b?.right, viewport: document.documentElement.clientWidth, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth, result: document.querySelector('.street-result')?.textContent?.trim() } })()`
+const state = `(() => { const input = document.querySelector('#street-name'); const menu = document.querySelector('.street-suggestions'); const a = input.getBoundingClientRect(); const b = menu?.getBoundingClientRect(); return {value: input.value, expanded: input.getAttribute('aria-expanded'), active: input.getAttribute('aria-activedescendant'), options: document.querySelectorAll('[role="option"]').length, noMatch: Boolean(document.querySelector('.street-no-match')), noMatchInListbox: Boolean(document.querySelector('[role="listbox"] .street-no-match')), controls: input.getAttribute('aria-controls'), menuTop: b?.top, inputBottom: a.bottom, menuHeight: b?.height, menuScrollHeight: menu?.scrollHeight, menuClientHeight: menu?.clientHeight, menuRight: b?.right, viewport: document.documentElement.clientWidth, overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth, result: document.querySelector('.street-result')?.textContent?.trim() } })()`
 async function type(page, value) {
   await page.evaluate(`(() => { const input = document.querySelector('#street-name'); input.focus(); input.select() })()`)
   await page.command('Input.insertText', { text: value })
@@ -88,6 +88,9 @@ try {
     current = await page.evaluate(state)
     assert.equal(current.options, 0)
     assert.equal(current.noMatch, true)
+    assert.equal(current.noMatchInListbox, false)
+    assert.equal(current.expanded, 'false')
+    assert.equal(current.controls, null)
     await key(page, 'Escape')
     assert.equal((await page.evaluate(state)).expanded, 'false')
     await page.evaluate(`document.querySelector('.street-control button').click()`)
