@@ -9,7 +9,7 @@
     "build:release": "bash scripts/build-release.sh",
     "build:photo-review": "bash scripts/build-photo-review.sh",
     "review:issue22": "node scripts/generate-issue22-local-review.mjs",
-    "build:placeholder": "tsc --noEmit && vite build",
+    "build:placeholder": "tsc --noEmit && vite build && node scripts/apply-seo-metadata.mjs dist",
     "preview": "vite preview",
     "generate:details": "node scripts/generate-candidate-pages.mjs",
     "prebuild:placeholder": "npm run generate:details && npm run generate:council && npm run generate:streets",
