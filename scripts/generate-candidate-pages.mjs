@@ -6,6 +6,7 @@ import {connectionCards} from './issue24-shared.mjs'
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
 const councilData = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
 const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url), 'utf8'))
+const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 const dualIds = {bartok:'c-f6b4af6c', cirbus:'c-a4b1db7c', kostial:'c-307ca828', turenic:'c-bb232e32'}
 const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
 const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
@@ -207,11 +208,15 @@ function renderCouncilLinks(candidate) {
   const url = item.link.url
   const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane (nie osobný profil)' :
     kind === 'post/appearance' ? 'Príspevok o kandidátovi (nie jeho účet)' :
-    kind === 'self-labelled candidate page/profile' || kind === 'campaign-used profile' ? 'Kandidátsky označená stránka / profil' : null
-  return label && url ? [section('council-source', 'Zdroj ku kandidatúre na poslanca', [
-    `<p>${link(url,label)}</p>`,
-    `<small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · v pracovnej kompilácii skontrolované 20. októbra 2026. Prevádzkovateľ účtu nebol nezávisle overený; príspevok alebo zdieľaná stránka nie sú osobným účtom.</small>`,
-  ])] : []
+    kind === 'self-labelled candidate page/profile' || kind === 'campaign-used profile' ? 'Kandidátsky označená stránka / profil — prevádzkovateľ neoverený' :
+    kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
+    kind === 'historical page (2018)' ? 'Historická stránka z roku 2018' :
+    kind === 'mention only' ? 'Príspevok so zmienkou — nie profil kandidáta' : null
+  const peterUrl = entityLinks.urls[item.key]
+  const links = []
+  if (label && url) links.push(`<p>${link(url,label)}</p><small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Vlastníctvo účtu nie je nezávisle overené.</small>`)
+  if (peterUrl && peterUrl !== url) links.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  return links.length ? [section('council-source', 'Odkazy ku kandidatúre na poslanca', links)] : []
 }
 
 function renderSections(candidate) {

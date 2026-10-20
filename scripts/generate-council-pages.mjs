@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const data = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
+const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 import {evidence, dualRoutes, personRoute, photoFor, connectionCards} from './issue24-shared.mjs'
 const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
 const root = fileURLToPath(new URL('../public/kandidati-na-poslancov/', import.meta.url))
@@ -40,8 +41,16 @@ function render(candidate, district) {
   const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane — nie osobný účet' :
     kind === 'post/appearance' ? 'Príspevok o kandidátovi — nie jeho účet' :
     kind === 'self-labelled candidate page/profile' ? 'Kandidátsky označená stránka alebo profil — prevádzkovateľ neoverený' :
-    kind === 'campaign-used profile' ? 'Profil používaný v kampani — prevádzkovateľ neoverený' : null
-  const channel = label && url ? `<p>${link(url,label)}</p><small class="source">${esc(kind)} · vydavateľ: ${url.includes('michalbartok.sk')?'kandidátsky web':'Facebookový účet alebo skupina'} · pôvodný dátum neznámy · v kompilácii skontrolované 20. októbra 2026. Odkaz nedokazuje vlastníctvo účtu ani stanovisko kandidáta.</small>` : gap
+    kind === 'campaign-used profile' ? 'Profil používaný v kampani — prevádzkovateľ neoverený' :
+    kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
+    kind === 'historical page (2018)' ? 'Historická stránka kampane z roku 2018 — nie dôkaz aktivity v roku 2026' :
+    kind === 'mention only' ? 'Príspevok so zmienkou — nie profil kandidáta' : null
+  const key = `D${district.number}/${candidate.listNumber}`
+  const peterUrl = entityLinks.urls[key]
+  const channelItems = []
+  if (label && url) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
+  if (peterUrl && peterUrl !== url) channelItems.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  const channel = channelItems.length ? channelItems.join('') : gap
   const portrait = photoFor(candidate.id,photoReview)
   const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Zdrojová fotografia na kontrolu pre ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${photoReview?'Len kontrolný náhľad.':'Jednotná zástupná plocha.'}</figcaption></figure>`
   const photoEvidence = item.photo.url ? `<p>Obrazový podklad: ${link(item.photo.url,'Zdrojová stránka fotografie')} · ${esc(item.photo.kind)} · rok podľa publikácie ${item.photo.kind==='archival PDF'?(item.photo.url.includes('2018')?'2018':'2022'):'2026'}; dátum vzniku záberu neznámy. Fotografia nie je dôkazom vlastníctva účtu.</p>` : '<p>V preskúmanej kompilácii nie je potvrdená fotografia tejto osoby.</p>'

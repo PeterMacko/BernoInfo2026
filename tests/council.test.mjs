@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {readFileSync,existsSync} from 'node:fs'
 const data=JSON.parse(readFileSync('src/council-candidates.json'))
 const evidence=JSON.parse(readFileSync('src/issue24-evidence.json'))
+const entityLinks=JSON.parse(readFileSync('src/council-entity-links.json'))
 const photos=JSON.parse(readFileSync('src/issue24-photo-availability.json'))
 const home=readFileSync('index.html','utf8')
 const mayor=JSON.parse(readFileSync('src/candidate-details.json')).candidates
@@ -47,8 +48,11 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   const kind=item.link.kind
   if(['probable/unverified profile','mention only','historical page (2018)'].includes(kind)){
-   assert.ok(!page.includes(`href="${item.link.url}"`),`${item.key} unverified exposed`)
+   assert.ok(page.includes(`href="${item.link.url}"`),`${item.key} source link missing`)
+   assert.ok(page.includes(kind==='probable/unverified profile'?'Možný profil — nepotvrdené':kind==='mention only'?'Príspevok so zmienkou':'Historická stránka'),`${item.key} caveat missing`)
   }
+  const peterUrl=entityLinks.urls[item.key]
+  if(peterUrl)assert.ok(page.includes(`href="${peterUrl.replaceAll('&','&amp;')}"`),`${item.key} Peter-identified link missing`)
   if(kind==='shared campaign page')assert.ok(page.includes('Spoločná stránka kampane')||page.includes('Doložené prepojenia'))
   if(kind==='post/appearance'&&!dual[c.id])assert.ok(page.includes('Príspevok o kandidátovi'))
   if(item.photo.url && !dual[c.id])assert.ok(page.includes('Obrazový zdroj'))
