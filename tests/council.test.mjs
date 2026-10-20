@@ -61,9 +61,13 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
 })
 
 test('sourced connections use internal person links and equal cards',()=>{
- for(const c of rows.filter(c=>['Tím Bartók','ZA BERnolákovo','Turenič – predstavenie v kampani'].includes(evidence[c.id].connection))){
+ for(const c of rows.filter(c=>['Tím Bartók','ZA BERnolákovo'].includes(evidence[c.id].connection))){
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   assert.ok(page.includes(evidence[c.id].connection==='Turenič – predstavenie v kampani'?'Možné prepojenia na overenie':'Doložené prepojenia'),evidence[c.id].key)
   assert.ok(page.includes('connection-card'),evidence[c.id].key)
+ }
+ for(const c of rows.filter(c=>evidence[c.id].connection==='Turenič – predstavenie v kampani')){
+  const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
+  assert.ok(!page.includes('Možné prepojenia na overenie'),evidence[c.id].key)
  }
 })

@@ -31,6 +31,7 @@ export function photoFor(id, review) {
 export function connectionCards(id,review) {
  const group=groups.find(g=>evidence[id]?.connection===g.name || (id==='c-bb232e32' && g.name==='Turenič – predstavenie v kampani'))
  if (!group) return ''
+ if (group.kind === 'presented_by' && !review) return ''
  const members=people.filter(p=>p.id!==id && evidence[p.id]?.connection===group.name)
  if (group.name==='Turenič – predstavenie v kampani' && id!=='c-bb232e32') members.unshift(people.find(p=>p.id==='c-bb232e32'))
  const cards=members.map(p=>{
