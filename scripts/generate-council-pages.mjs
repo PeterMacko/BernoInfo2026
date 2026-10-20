@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 const data = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
 const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 import {evidence, dualRoutes, personRoute, photoFor, connectionCards} from './issue24-shared.mjs'
+import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const photoReview = mode === 'photo-review'
 const withPhotos = mode !== 'placeholder'
@@ -45,14 +46,14 @@ function render(candidate, district) {
     kind === 'self-labelled candidate page/profile' ? 'Kandidátsky označená stránka alebo profil — prevádzkovateľ neoverený' :
     kind === 'campaign-used profile' ? 'Profil používaný v kampani — prevádzkovateľ neoverený' :
     kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
-    kind === 'historical page (2018)' ? 'Historická stránka kampane z roku 2018 — nie dôkaz aktivity v roku 2026' :
-    kind === 'mention only' ? 'Príspevok so zmienkou — nie profil kandidáta' : null
+    kind === 'historical page (2018)' ? 'Historická stránka kampane (2018) — nie dôkaz aktivity v roku 2026' :
+    kind === 'mention only' ? 'Príspevok so zmienkou o kandidátovi — nie profil' : null
   const key = `D${district.number}/${candidate.listNumber}`
-  const peterUrl = entityLinks.urls[key]
+  const alternateUrl = entityLinks.urls[key]
   const channelItems = []
   const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
   if (label && url && (!reviewOnlyLead || photoReview)) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
-  if (photoReview && peterUrl && peterUrl !== url) channelItems.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  if (photoReview && alternateUrl && alternateUrl !== url) channelItems.push(`<p>${link(alternateUrl,alternateLinkLabel(key))}</p><small class="source">${esc(alternateLinkNote)}</small>`)
   const channel = channelItems.length ? channelItems.join('') : gap
   const portrait = photoFor(candidate.id,withPhotos)
   const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Fotografia kandidáta ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${portrait ? (photoReview ? 'Len kontrolný náhľad.' : '') : 'Jednotná zástupná plocha.'}</figcaption></figure>`
