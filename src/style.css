@@ -687,3 +687,36 @@ h1 em {
 .council-designation { display: block; margin-top: .25rem; font-size: .75rem; line-height: 1.4; font-weight: 400; color: #425f7e; }
 
 .council-thumb{width:2.5rem;height:3rem;object-fit:contain;background:#e3ebf0;flex:none}.dual-office-label{display:block;font-size:.45em;line-height:1.2;margin-top:.2rem}
+
+.street-section {
+  padding: clamp(42px, 5vw, 76px) clamp(24px, 5vw, 76px);
+  background: #e6eef7;
+  border-bottom: 1px solid #b7c7db;
+}
+.street-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(260px, .8fr); gap: clamp(24px, 5vw, 72px); }
+.street-section .section-kicker { color: #365a82; }
+.street-section h2 { font: 700 clamp(2rem, 4vw, 3.8rem)/1.08 Manrope, Arial, sans-serif; letter-spacing: -.06em; margin-bottom: 16px; }
+.street-section p { line-height: 1.55; }
+.street-section label { display: block; font-weight: 700; margin: 24px 0 8px; }
+.street-control { display: flex; gap: 8px; }
+.street-control input { min-width: 0; flex: 1; padding: 13px 14px; border: 1px solid #829dbc; border-radius: 2px; background: #fff; color: #183a64; font: inherit; font-size: 1rem; }
+.street-control button { border: 0; border-radius: 2px; padding: 13px 18px; background: #183a64; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.street-control button:hover { background: #3564a7; }
+.street-control :focus-visible { outline: 3px solid #a87800; outline-offset: 3px; }
+.street-result:not(:empty) { margin-top: 20px; padding: 20px; border-left: 5px solid #3564a7; background: #fff; }
+.street-result h3 { font: 700 1.4rem Manrope, Arial, sans-serif; margin-bottom: 8px; }
+.street-result p:last-child { margin-bottom: 0; }
+.street-result .result-kicker { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; }
+.street-explainer { padding: 24px; border: 1px solid #b7c7db; background: #f8f9fc; }
+.street-explainer h3 { font: 700 1.3rem Manrope, Arial, sans-serif; }
+.street-explainer p { font-size: .88rem; }
+.street-explainer p:last-child { margin-bottom: 0; }
+.district-polling { margin: 0 0 26px; padding: 20px; background: #e6eef7; border: 1px solid #b7c7db; }
+.district-polling h4 { margin: 0 0 8px; font-size: 1rem; }
+.district-polling ul { margin: 0 0 12px; padding-left: 22px; line-height: 1.6; }
+.district-polling p { margin: 0 0 8px; font-size: .85rem; line-height: 1.5; }
+.district-polling p:last-child { margin: 0; }
+@media (max-width: 760px) { .street-layout { grid-template-columns: 1fr; } }
+@media (max-width: 480px) { .street-control { flex-direction: column; } .street-control button { width: 100%; } }
+
+.street-result .result-source { padding-top: 12px; border-top: 1px solid #cad5e3; font-size: .82rem; }

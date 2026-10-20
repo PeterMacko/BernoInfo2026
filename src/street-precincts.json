@@ -1,0 +1,617 @@
+[
+  {
+    "street": "Hurbanova",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Kvetná",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Nálepkova",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Staničná",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Štúrova",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Trnavská",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Železničná",
+    "district": 1,
+    "precinct": 1
+  },
+  {
+    "street": "Azalková",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Brusnicová",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Fialková",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Konvalinková",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Ľaliová",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Muškátová",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Okružná",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Orgovánová",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Poľná",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Poľovnícka",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Potočná",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Snežienková",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Tulipánová",
+    "district": 1,
+    "precinct": 2
+  },
+  {
+    "street": "Brečtanová",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Hájna",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Hornádska",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Hronská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Chmeľová",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Ipeľská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Krátka",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Kysucká",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Ľanová",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Moravská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Narcisová",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Ondavská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Oravská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Osiková",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Park Belvéder",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Pšeničná",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Ražná",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Roľnícka",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Stredná",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Toryská",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Vážska",
+    "district": 1,
+    "precinct": 3
+  },
+  {
+    "street": "Bottova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Clementisova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Dukelská",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Hlinkova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Hodžova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Hviezdoslavova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Chalupkova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Jesenského",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Kalinčiakova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Komenského",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Kukučínova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Lekárenská",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Národného oslobodenia",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Orechová",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Plemenárska",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Poštová",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Priemyselná",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Sládkovičova",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Školská",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Tajovského",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Viničná",
+    "district": 2,
+    "precinct": 4
+  },
+  {
+    "street": "Bernolákova",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Budovateľská",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Družstevná",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Fándlyho",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Grobská",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Hlavná",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Kaštieľ",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Svätoplukova",
+    "district": 2,
+    "precinct": 5
+  },
+  {
+    "street": "Ampérova",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Baničova",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Gaštanová alej",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Hlboká",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Horný dvor",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Hrušková",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Kollárova",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Mostová",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Obilná",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Pribinova",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Sacky",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Senecká cesta",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Slaná",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Strojárenská",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Šakoňská cesta",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Trnková",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Vŕšky",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Záhradná",
+    "district": 2,
+    "precinct": 6
+  },
+  {
+    "street": "Brezová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Broskyňová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Buková",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Čerešňová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Čučoriedková",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Dubová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Figová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Hrubé Lúky",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Jabloňová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Kondrótova",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Lúčna",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Malinová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Marhuľová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Mierová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Slivková",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Stromová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Šípková",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Višňová",
+    "district": 3,
+    "precinct": 7
+  },
+  {
+    "street": "Agátová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Borovicová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Dunajská",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Jelšová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Lesná",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Lipová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Nevädzová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Púpavová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Rezedová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Riečna",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Sadová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Slnečnicová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Smreková",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Šalviová",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Tabaková",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Topoľový rad",
+    "district": 3,
+    "precinct": 8
+  },
+  {
+    "street": "Záhradkárska oblasť (pri Trnavskej)",
+    "district": 3,
+    "precinct": 8
+  }
+]

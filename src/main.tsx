@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import councilData from './council-candidates.json'
 import issue24Evidence from './issue24-evidence.json'
 import issue24Photos from './issue24-photo-availability.json'
+import { checkedDate, districtSource, findStreet, precinctSource, streetData, venues } from './street-lookup'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -22,6 +23,9 @@ const councilPhoto = (id:string) => {
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
+  const [streetInput, setStreetInput] = useState('')
+  const [searched, setSearched] = useState(false)
+  const result = searched ? findStreet(streetInput) : null
   return (
     <main className="page">
       <header className="masthead">
@@ -55,6 +59,41 @@ function App() {
               <figcaption>Erb obce · zdroj: obec Bernolákovo</figcaption>
             </figure>
           </div>
+        </div>
+      </section>
+
+      <section className="street-section" aria-labelledby="street-title">
+        <div className="street-layout">
+          <div>
+            <p className="section-kicker">Volebné informácie / Bernolákovo</p>
+            <h2 id="street-title">Ktorý obvod volím</h2>
+            <p>Vyberte alebo napíšte názov ulice. Zistíte volebný obvod pre poslancov, volebný okrsok a volebnú miestnosť podľa oznámení obce.</p>
+            <form onSubmit={event => { event.preventDefault(); setSearched(true) }}>
+              <label htmlFor="street-name">Ulica v Bernolákove</label>
+              <div className="street-control">
+                <input id="street-name" name="street" type="text" list="street-options" autoComplete="off" value={streetInput} onChange={event => { setStreetInput(event.target.value); setSearched(false) }} placeholder="Napr. Hlavná" />
+                <datalist id="street-options">{streetData.map(row => <option key={row.street} value={row.street} />)}</datalist>
+                <button type="submit">Zistiť obvod</button>
+              </div>
+            </form>
+            <div className="street-result" role="status" aria-live="polite">
+              {searched && result && <>
+                <p className="result-kicker">Výsledok pre {result.street}</p>
+                <h3>Volebný obvod {result.district} · okrsok {result.precinct}</h3>
+                <p><strong>Volebná miestnosť:</strong> {venues[result.precinct]}</p>
+                <p><a href={`#district-${result.district}`}>Kandidáti na poslancov v obvode {result.district} a všetky jeho okrsky</a></p>
+                <p className="result-source">Obvod: <a href={districtSource}>uznesenie obce z 23. júna 2026</a>. Okrsok a miestnosť: <a href={precinctSource}>oznámenie obce z 29. júla 2026</a>. Skontrolované {checkedDate}.</p>
+              </>}
+              {searched && !result && <p>Nenašli sme jednoznačnú zhodu. Skontrolujte celý názov ulice alebo ho vyberte zo zoznamu. Obvod ani miestnosť nehádame; overte si ich v <a href={precinctSource}>oficiálnom zozname obce (PDF)</a>. Pri „Záhradkárskej oblasti“ použite celý júlový názov „Záhradkárska oblasť (pri Trnavskej)“.</p>}
+            </div>
+          </div>
+          <aside className="street-explainer">
+            <h3>Obvod ≠ okrsok</h3>
+            <p>Obvod určuje kandidátov na poslancov. Okrsok určuje volebnú miestnosť. Aj v obvode 2 sú dve rôzne miestnosti, preto zobrazujeme výsledok podľa ulice.</p>
+            <p>Vyhľadávanie beží iba v tomto prehliadači. Zadanú ulicu neodosielame ani neukladáme.</p>
+            <p><a href={districtSource}>Obvody a mandáty: uznesenie obce (PDF)</a>, 23. júna 2026; <a href={precinctSource}>okrsky, ulice a miestnosti: oznámenie obce (PDF)</a>, 29. júla 2026. Skontrolované {checkedDate}.</p>
+            <p><a href="/volby/ulice/">Textový zoznam všetkých ulíc a okrskov</a> (funguje aj bez JavaScriptu).</p>
+          </aside>
         </div>
       </section>
 
@@ -109,6 +148,12 @@ function App() {
             <div className="council-district-heading">
               <h3 id={`district-${district.number}`}>Volebný obvod {district.number}</h3>
               <p>{district.candidates.length} kandidátov · {district.seats} mandátov · <a href={district.sourceUrl}>Opravený zoznam obce (PDF)</a>, datovaný {councilData.officialDate}</p>
+            </div>
+            <div className="district-polling">
+              <h4>Okrsky a volebné miestnosti</h4>
+              <ul>{[...new Set(streetData.filter(row => row.district === district.number).map(row => row.precinct))].map(precinct => <li key={precinct}><strong>Okrsok {precinct}:</strong> {venues[precinct]}</li>)}</ul>
+              <p>Miesto určite podľa svojho okrsku, nie iba podľa obvodu. <a href={precinctSource}>Zdroj: obec Bernolákovo, oznámenie z 29. júla 2026 (PDF)</a>; skontrolované {checkedDate}.</p>
+              <p><a href={districtSource}>Zdroj počtu mandátov: uznesenie obce z 23. júna 2026 (PDF)</a>; skontrolované {checkedDate}.</p>
             </div>
             <ol className="council-list">
               {district.candidates.map((candidate) => (
