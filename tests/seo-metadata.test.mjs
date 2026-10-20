@@ -57,7 +57,7 @@ test('preview and release initial HTML cover all public routes and suppress non-
   for(const c of mayor) {
     const html=read(`/kandidati/${c.id}/`)
     publicPage(`/kandidati/${c.id}/`,c.name,release,false)
-    assert.equal(html.includes('starostu aj poslanca'),Object.values(dual).includes(c.id),c.id)
+    assert.equal(html.includes('kandidatúra na starostu obce aj do obecného zastupiteľstva'),Object.values(dual).includes(c.id),c.id)
   }
   for(const c of council) {
     const path=`/kandidati-na-poslancov/${c.id}/`
@@ -68,6 +68,15 @@ test('preview and release initial HTML cover all public routes and suppress non-
       assert.ok(!html.includes('property="og:'))
       assert.ok(!html.includes('name="twitter:'))
     } else publicPage(path,c.name,release,false)
+  }
+  for (const name of ['Adéla ÁLLÓ FERANCOVÁ', 'Martina BRUNEL, Ing.']) {
+    const candidate = council.find(c => c.name === name)
+    assert.ok(candidate, `Missing reviewed council name: ${name}`)
+    const html = read(`/kandidati-na-poslancov/${candidate.id}/`)
+    assert.ok(html.includes(`<title>${name} — kandidatúra do obecného zastupiteľstva — BernoInfo 2026</title>`))
+    assert.match(value(html,'description'),/kandidatúra do obecného zastupiteľstva/)
+    assert.match(value(html,'og:description','property'),/kandidatúra do obecného zastupiteľstva/)
+    assert.doesNotMatch(html,/kandidát na poslanca/)
   }
   publicPage('/volby/ulice/','Ulice, obvody a okrsky',release,false)
   const notFound=readFileSync('dist/404.html','utf8').split('</head>')[0]

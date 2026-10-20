@@ -78,19 +78,19 @@ function apply(file, tags) {
 }
 apply(join(root, 'index.html'), head('Komunálne voľby v Bernolákove 2026 — BernoInfo 2026', 'Nezávislý prehľad komunálnych volieb v Bernolákove 2026: kandidáti na starostu a poslancov, volebné obvody a odkazy na zdroje.', '/'))
 for (const candidate of mayor) {
-  const office = shared.has(candidate.id) ? 'kandidát na starostu aj poslanca obecného zastupiteľstva' : 'kandidát na starostu obce'
+  const office = shared.has(candidate.id) ? 'kandidatúra na starostu obce aj do obecného zastupiteľstva' : 'kandidatúra na starostu obce'
   const title = `${candidate.name} — ${office} — BernoInfo 2026`
-  const description = `Profil: ${candidate.name}, ${office} v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
+  const description = `Profil: ${candidate.name} — ${office} v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
   apply(join(root, 'kandidati', candidate.id, 'index.html'), head(title, description, `/kandidati/${candidate.id}/`))
 }
 for (const candidate of council) {
   const file = join(root, 'kandidati-na-poslancov', candidate.id, 'index.html')
   if (dual.has(candidate.id)) {
     const destination = `/kandidati/${dual.get(candidate.id)}/`
-    apply(file, head('Presmerovanie na spoločný profil — BernoInfo 2026', `Spoločný profil kandidáta ${candidate.name} na starostu aj poslanca obecného zastupiteľstva.`, destination, { noindex: true, redirect: true }))
+    apply(file, head('Presmerovanie na spoločný profil — BernoInfo 2026', `Spoločný profil: ${candidate.name} — kandidatúra na starostu obce aj do obecného zastupiteľstva.`, destination, { noindex: true, redirect: true }))
   } else {
-    const title = `${candidate.name} — kandidát na poslanca obecného zastupiteľstva — BernoInfo 2026`
-    const description = `Profil: ${candidate.name}, kandidát na poslanca obecného zastupiteľstva v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
+    const title = `${candidate.name} — kandidatúra do obecného zastupiteľstva — BernoInfo 2026`
+    const description = `Profil: ${candidate.name} — kandidatúra do obecného zastupiteľstva v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
     apply(file, head(title, description, `/kandidati-na-poslancov/${candidate.id}/`))
   }
 }
