@@ -10,6 +10,7 @@ const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 const portraits = approvedPortraits ?? privatePreviewPortraits
+const photoReview = import.meta.env.VITE_SITE_BUILD_MODE === 'photo-review'
 const dualRoutes: Record<string,string> = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
 const councilRoute = (id:string) => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/` : `/kandidati-na-poslancov/${id}/`
 const councilPhoto = (id:string) => {
@@ -69,7 +70,7 @@ function App() {
       </section>
 
       <section className="candidate-section" aria-labelledby="candidates-title">
-        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
+        {photoReview && privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">
           <h2 id="candidates-title">Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
@@ -88,7 +89,7 @@ function App() {
                     <img
                       src={portrait?.src ?? placeholderImage}
                       className={portrait ? `candidate-portrait candidate-portrait--${candidate.id}` : undefined}
-                      alt={portrait ? `Zdrojová fotografia pre ${candidate.registeredName}; totožnosť zobrazenej osoby nie je nezávisle overená` : ''}
+                      alt={portrait ? `Fotografia kandidáta ${candidate.registeredName}` : ''}
                       aria-hidden={portrait ? undefined : true}
                       width="640"
                       height="760"

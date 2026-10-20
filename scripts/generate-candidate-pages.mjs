@@ -9,7 +9,9 @@ const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json',
 const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 const dualIds = {bartok:'c-f6b4af6c', cirbus:'c-a4b1db7c', kostial:'c-307ca828', turenic:'c-bb232e32'}
 const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
-const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
+const mode = process.env.SITE_BUILD_MODE || 'placeholder'
+const photoReview = mode === 'photo-review'
+const withPhotos = mode !== 'placeholder'
 const outputRoot = fileURLToPath(new URL('../public/kandidati/', import.meta.url))
 
 const empty = '<p class="empty">V preskúmaných zdrojoch sa tento údaj nepodarilo doložiť. Neznamená to, že neexistuje alebo že kandidát odmietol odpovedať.</p>'
@@ -230,7 +232,7 @@ function renderSections(candidate) {
     section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
     ...renderCouncilLinks(candidate),
-    ...[connectionCards(dualIds[candidate.id],photoReview)].filter(Boolean),
+    ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
     section('companies', 'Firemné funkcie', renderCompanies()),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),
@@ -244,11 +246,11 @@ function renderNavigation(candidate) {
 
 function renderPortrait(candidate) {
   const portrait = reviewPortraits[candidate.id]
-  const image = photoReview
-    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Zdrojová fotografia pre ${escapeHtml(candidate.name)}; totožnosť zobrazenej osoby nie je nezávisle overená" width="640" height="760">`
+  const image = withPhotos
+    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Fotografia kandidáta ${escapeHtml(candidate.name)}" width="640" height="760">`
     : '<img src="/images/portrait-placeholder.svg" alt="" width="640" height="760">'
-  const caption = photoReview
-    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. Kontrolný náhľad, rok vzniku záberu neznámy.</figcaption>`
+  const caption = withPhotos
+    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. ${photoReview ? 'Kontrolný náhľad, ' : ''}Rok vzniku záberu neznámy.</figcaption>`
     : '<figcaption>Portrét zatiaľ nie je zverejnený; grafická výplň nie je podobizňou kandidáta.</figcaption>'
   return block('figure', ' class="detail-portrait"', [
     block('div', ' class="portrait-wrap"', [image]),
@@ -276,7 +278,7 @@ function renderDocument(candidate) {
   const head = block('head', '', [
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    '<meta name="robots" content="noindex, nofollow">',
+    ...(mode === 'release' ? [] : ['<meta name="robots" content="noindex, nofollow">']),
     '<meta name="theme-color" content="#183a64">',
     '<link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp">',
     `<title>${escapeHtml(candidate.name)} — ${councilRecord(candidate) ? 'kandidát na starostu aj poslanca' : 'kandidát na starostu'} — BernoInfo 2026</title>`,

@@ -8,7 +8,7 @@ for name in michal-bartok martin-cirbus filip-kandrac jaroslav-kostial peter-lak
     exit 1
   }
 done
-DETAIL_PHOTO_REVIEW=1 VITE_PRIVATE_PORTRAIT_PREVIEW=1 npm run build:placeholder
+SITE_BUILD_MODE=photo-review VITE_PRIVATE_PORTRAIT_PREVIEW=1 VITE_SITE_BUILD_MODE=photo-review npm run build:placeholder
 mkdir -p dist/images/candidates
 cp .private/portrait-preview-images/*.jpg dist/images/candidates/
 exec npm run preview -- --host 127.0.0.1 --port 4173

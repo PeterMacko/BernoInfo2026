@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url'
 const data = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
 const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 import {evidence, dualRoutes, personRoute, photoFor, connectionCards} from './issue24-shared.mjs'
-const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
+const mode = process.env.SITE_BUILD_MODE || 'placeholder'
+const photoReview = mode === 'photo-review'
+const withPhotos = mode !== 'placeholder'
 const root = fileURLToPath(new URL('../public/kandidati-na-poslancov/', import.meta.url))
 const home = fileURLToPath(new URL('../index.html', import.meta.url))
 const councilUrl = 'https://www.bernolakovo.sk/19033/obecne-zastupitelstvo'
@@ -50,14 +52,14 @@ function render(candidate, district) {
   const channelItems = []
   const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
   if (label && url && (!reviewOnlyLead || photoReview)) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
-  if (peterUrl && peterUrl !== url) channelItems.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  if (photoReview && peterUrl && peterUrl !== url) channelItems.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
   const channel = channelItems.length ? channelItems.join('') : gap
-  const portrait = photoFor(candidate.id,photoReview)
-  const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Zdrojová fotografia na kontrolu pre ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${photoReview?'Len kontrolný náhľad.':'Jednotná zástupná plocha.'}</figcaption></figure>`
+  const portrait = photoFor(candidate.id,withPhotos)
+  const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Fotografia kandidáta ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${portrait ? (photoReview ? 'Len kontrolný náhľad.' : '') : 'Jednotná zástupná plocha.'}</figcaption></figure>`
   const photoEvidence = item.photo.url ? `<p>Obrazový podklad: ${link(item.photo.url,'Zdrojová stránka fotografie')} · ${esc(item.photo.kind)} · rok podľa publikácie ${item.photo.kind==='archival PDF'?(item.photo.url.includes('2018')?'2018':'2022'):'2026'}; dátum vzniku záberu neznámy. Fotografia nie je dôkazom vlastníctva účtu.</p>` : '<p>V preskúmanej kompilácii nie je potvrdená fotografia tejto osoby.</p>'
-  const connection = connectionCards(candidate.id,photoReview)
+  const connection = connectionCards(candidate.id,withPhotos,photoReview)
   return `<!doctype html>
-<html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#183a64"><link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp"><link rel="canonical" href="/kandidati-na-poslancov/${candidate.id}/"><title>${esc(candidate.name)} — kandidatúra na poslanca obecného zastupiteľstva — BernoInfo 2026</title><meta name="description" content="Kandidatúra na poslanca obecného zastupiteľstva obce Bernolákovo: ${esc(candidate.name)}."><link rel="stylesheet" href="/candidate-detail.css"></head>
+<html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">${mode === 'release' ? '' : '<meta name="robots" content="noindex, nofollow">'}<meta name="theme-color" content="#183a64"><link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp"><link rel="canonical" href="/kandidati-na-poslancov/${candidate.id}/"><title>${esc(candidate.name)} — kandidatúra na poslanca obecného zastupiteľstva — BernoInfo 2026</title><meta name="description" content="Kandidatúra na poslanca obecného zastupiteľstva obce Bernolákovo: ${esc(candidate.name)}."><link rel="stylesheet" href="/candidate-detail.css"></head>
 <body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main>
 <div class="hero"><a class="back" href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p class="kicker">Bernolákovo / poslanci obecného zastupiteľstva / volebný obvod ${district.number}</p><h1>${esc(candidate.name)}<small class="office-label">Kandidatúra na poslanca obecného zastupiteľstva</small></h1><p>Číslo ${number} v opravenom zozname obvodu ${district.number}. Nie je to nezávisle overené číslo na hlasovacom lístku.</p>${photoReview ? '<p class="preview-notice">Vývojový náhľad zdrojových fotografií</p>' : ''}${photo}</div>
 <div class="content">
@@ -79,7 +81,7 @@ for (const district of data.districts) for (const candidate of district.candidat
   mkdirSync(directory,{recursive:true})
   if (dualRoutes[candidate.id]) {
     const destination = personRoute(candidate.id)
-    writeFileSync(join(directory,'index.html'),`<!doctype html><html lang="sk"><head><meta charset="utf-8"><meta name="robots" content="noindex"><link rel="canonical" href="${destination}"><meta http-equiv="refresh" content="0;url=${destination}"><title>Presmerovanie na spoločný profil</title></head><body><p>Táto osoba kandiduje na starostu aj poslanca. <a href="${destination}">Spoločný profil</a>.</p></body></html>`)
+    writeFileSync(join(directory,'index.html'),`<!doctype html><html lang="sk"><head><meta charset="utf-8">${mode === 'release' ? '' : '<meta name="robots" content="noindex">'}<link rel="canonical" href="${destination}"><meta http-equiv="refresh" content="0;url=${destination}"><title>Presmerovanie na spoločný profil</title></head><body><p>Táto osoba kandiduje na starostu aj poslanca. <a href="${destination}">Spoločný profil</a>.</p></body></html>`)
   } else writeFileSync(join(directory,'index.html'),render(candidate,district))
 }
 // The no-JS list shares the checked roster and route IDs with the React view.
