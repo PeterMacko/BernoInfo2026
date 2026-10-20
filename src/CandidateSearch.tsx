@@ -7,6 +7,9 @@ export function CandidateSearch() {
   const [active, setActive] = useState(-1)
   const [message, setMessage] = useState('')
   const optionsRef = useRef<HTMLDivElement>(null)
+  const controlRef = useRef<HTMLDivElement>(null)
+  const touch = useRef<{ x: number; y: number; moved: boolean } | null>(null)
+  const handledTouch = useRef<{ id: string; at: number } | null>(null)
   const suggestions = suggestCandidates(name)
 
   const navigate = (person: SearchPerson) => { window.location.assign(person.route) }
@@ -44,6 +47,13 @@ export function CandidateSearch() {
     }
   }
   useEffect(() => {
+    const closeOutside = (event: PointerEvent) => {
+      if (!controlRef.current?.contains(event.target as Node)) { setOpen(false); setActive(-1) }
+    }
+    document.addEventListener('pointerdown', closeOutside)
+    return () => document.removeEventListener('pointerdown', closeOutside)
+  }, [])
+  useEffect(() => {
     if (active >= 0) optionsRef.current?.querySelector(`[data-option-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
   }, [active])
 
@@ -56,7 +66,7 @@ export function CandidateSearch() {
       </div>
       <form onSubmit={submit} role="search" aria-label="Vyhľadávanie kandidáta">
         <label htmlFor="candidate-name">Meno kandidáta</label>
-        <div className="candidate-search-control">
+        <div className="candidate-search-control" ref={controlRef}>
           <div className="candidate-search-input-wrap">
             <input id="candidate-name" type="search" name="candidate" value={name} autoComplete="off" placeholder="Napr. Michal Bartók"
               role="combobox" aria-autocomplete="list" aria-expanded={open && suggestions.length > 0}
@@ -64,13 +74,27 @@ export function CandidateSearch() {
               aria-activedescendant={open && active >= 0 && suggestions[active] ? `candidate-option-${active}` : undefined}
               aria-describedby="candidate-search-help candidate-search-status candidate-search-error"
               onFocus={() => { if (name.trim()) setOpen(true) }}
-              onBlur={() => { setOpen(false); setActive(-1) }}
+              onBlur={() => { if (!touch.current) { setOpen(false); setActive(-1) } }}
               onKeyDown={onKeyDown}
               onChange={event => { setName(event.target.value); setOpen(Boolean(event.target.value.trim())); setActive(-1); setMessage('') }} />
             {open && suggestions.length > 0 && <div id="candidate-options" ref={optionsRef} className="candidate-search-options" role="listbox" aria-label="Kandidáti">
               {suggestions.map((person, index) => <div id={`candidate-option-${index}`} data-option-index={index} role="option" aria-selected={index === active}
                 className={`candidate-search-option${index === active ? ' is-active' : ''}`} key={person.id}
-                onMouseDown={event => event.preventDefault()} onClick={() => navigate(person)}>
+                onMouseDown={event => event.preventDefault()}
+                onTouchStart={event => { const point = event.touches[0]; touch.current = { x: point.clientX, y: point.clientY, moved: false } }}
+                onTouchMove={event => { const start = touch.current; const point = event.touches[0]; if (start && Math.hypot(point.clientX - start.x, point.clientY - start.y) > 8) start.moved = true }}
+                onTouchCancel={() => { touch.current = null }}
+                onTouchEnd={event => {
+                  const gesture = touch.current
+                  touch.current = null
+                  if (!gesture || gesture.moved) return
+                  // A tap may blur the input before the browser synthesizes click.
+                  // Navigate on touchend; scrolling never selects an option.
+                  event.preventDefault()
+                  handledTouch.current = { id: person.id, at: Date.now() }
+                  navigate(person)
+                }}
+                onClick={() => { if (handledTouch.current?.id === person.id && Date.now() - handledTouch.current.at < 700) return; navigate(person) }}>
                 <strong>{person.name}</strong><small>{person.context}</small>
               </div>)}
             </div>}
