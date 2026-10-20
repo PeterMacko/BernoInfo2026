@@ -22,13 +22,22 @@ async function openPage(width) {
   await new Promise((resolve, reject) => { ws.onopen = resolve; ws.onerror = reject })
   let serial = 0
   const pending = new Map()
-  ws.onmessage = event => { const message = JSON.parse(event.data); if (pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id) } }
+  const externalRequests = []
+  ws.onmessage = event => {
+    const message = JSON.parse(event.data)
+    if (message.method === 'Fetch.requestPaused') {
+      externalRequests.push(message.params.request.url)
+      // Assert the redirect request without contacting the external site.
+      ws.send(JSON.stringify({ id: ++serial, method: 'Fetch.failRequest', params: { requestId: message.params.requestId, errorReason: 'Aborted' } }))
+    }
+    if (pending.has(message.id)) { pending.get(message.id)(message); pending.delete(message.id) }
+  }
   const command = (method, params = {}) => new Promise(resolve => { const id = ++serial; pending.set(id, resolve); ws.send(JSON.stringify({ id, method, params })) })
   await command('Emulation.setDeviceMetricsOverride', { width, height: 720, deviceScaleFactor: 1, mobile: true })
   await command('Page.navigate', { url: origin })
   const evaluate = async expression => { const response = await command('Runtime.evaluate', { expression, returnByValue: true }); if (response.result?.exceptionDetails) throw Error(JSON.stringify(response.result.exceptionDetails)); return response.result.result.value }
   for (let i = 0; i < 40; i++) { if (await evaluate(`Boolean(document.querySelector('#candidate-name'))`)) break; await pause(100) }
-  return { command, evaluate, close: () => ws.close() }
+  return { command, evaluate, externalRequests, close: () => ws.close() }
 }
 const state = `(() => { const input = document.querySelector('#candidate-name'); return { url: location.pathname, value: input?.value, expanded: input?.getAttribute('aria-expanded'), active: input?.getAttribute('aria-activedescendant'), options: document.querySelectorAll('.candidate-search-option').length, status: document.querySelector('#candidate-search-status')?.textContent, error: document.querySelector('#candidate-search-error')?.textContent, street: Boolean(document.querySelector('#street-name')), overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth } })()`
 async function type(page, value) { await page.evaluate(`(() => { const input = document.querySelector('#candidate-name'); input.focus(); input.select() })()`); await page.command('Input.insertText', { text: value }); await pause(100) }
@@ -58,6 +67,33 @@ try {
     assert.equal(await page.evaluate('location.pathname'), '/kandidati/bartok/')
     page.close()
   }
+  for (const value of ['Jožko Mrkvička', 'Jozko Mrkvicka', '  JOŽKO MRKVIČKA  ']) {
+    const page = await openPage(390)
+    await page.command('Fetch.enable', { patterns: [{ urlPattern: 'https://touchit.sk/*', requestStage: 'Request' }] })
+    const initial = await page.evaluate(`(() => { const input = document.querySelector('#candidate-name'); return { value: input.value, placeholder: input.placeholder } })()`)
+    assert.deepEqual(initial, { value: '', placeholder: 'Jožko Mrkvička' })
+    await type(page, value)
+    let s = await page.evaluate(state)
+    assert.equal(s.url, '/'); assert.equal(s.options, 0); assert.equal(page.externalRequests.length, 0)
+    await page.evaluate(`document.querySelector('#candidate-name').focus()`)
+    await pause(100)
+    assert.equal(page.externalRequests.length, 0, 'focus and typing must not redirect')
+    await page.evaluate(`document.querySelector('.candidate-search-control button').click()`)
+    for (let i = 0; i < 40 && page.externalRequests.length === 0; i++) await pause(100)
+    assert.deepEqual(page.externalRequests, ['https://touchit.sk/'], value)
+    page.close()
+  }
+  const negativePage = await openPage(390)
+  await negativePage.command('Fetch.enable', { patterns: [{ urlPattern: 'https://touchit.sk/*', requestStage: 'Request' }] })
+  for (const value of ['Jožko', 'Jožko Mrkvička Jr.', 'nobody']) {
+    await type(negativePage, value)
+    assert.equal(negativePage.externalRequests.length, 0, 'typing must not redirect')
+    await negativePage.evaluate(`document.querySelector('.candidate-search-control button').click()`)
+    await pause(100)
+    assert.equal((await negativePage.evaluate(state)).url, '/')
+    assert.equal(negativePage.externalRequests.length, 0, 'non-matching submission must not redirect')
+  }
+  negativePage.close()
   const keyboardPage = await openPage(390)
   await type(keyboardPage, 'bart')
   await key(keyboardPage, 'ArrowDown', 40)
@@ -95,7 +131,7 @@ try {
   for (let i = 0; i < 40; i++) { if ((await mousePage.evaluate('location.pathname')) === '/kandidati-na-poslancov/c-baf5b906/') break; await pause(100) }
   assert.equal(await mousePage.evaluate('location.pathname'), '/kandidati-na-poslancov/c-baf5b906/')
   mousePage.close()
-  console.log('Candidate search browser navigation, states, keyboard, mouse, touch tap/scroll, street coexistence and mobile widths: passed')
+  console.log('Candidate search browser example-name submit-only redirect, negative cases, navigation, keyboard, mouse, touch and mobile widths: passed')
 } finally {
   chrome.kill(); server.kill()
   if (chrome.exitCode === null) await Promise.race([once(chrome, 'exit'), pause(3000)])

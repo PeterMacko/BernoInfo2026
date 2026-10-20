@@ -48,6 +48,12 @@ export function normalizeCandidateName(value: string): string {
     .split(/\s+/).filter(word => word && !titleWords.has(word)).join(' ')
 }
 
+// The example is not a roster entry. Match only its complete submitted value;
+// candidate search deliberately keeps its separate, broader name normalizer.
+export function isExampleName(value: string): boolean {
+  return value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('sk') === 'jozko mrkvicka'
+}
+
 export function suggestCandidates(value: string): SearchPerson[] {
   const key = normalizeCandidateName(value)
   if (!key) return []

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { resolveCandidate, suggestCandidates, type SearchPerson } from './candidate-search'
+import { isExampleName, resolveCandidate, suggestCandidates, type SearchPerson } from './candidate-search'
 
 export function CandidateSearch() {
   const [name, setName] = useState('')
@@ -15,6 +15,10 @@ export function CandidateSearch() {
   const navigate = (person: SearchPerson) => { window.location.assign(person.route) }
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (isExampleName(name)) {
+      window.location.assign('https://touchit.sk/')
+      return
+    }
     if (open && active >= 0 && suggestions[active]) {
       navigate(suggestions[active])
       return
@@ -68,7 +72,7 @@ export function CandidateSearch() {
         <label htmlFor="candidate-name">Meno kandidáta</label>
         <div className="candidate-search-control" ref={controlRef}>
           <div className="candidate-search-input-wrap">
-            <input id="candidate-name" type="search" name="candidate" value={name} autoComplete="off" placeholder="Napr. Michal Bartók"
+            <input id="candidate-name" type="search" name="candidate" value={name} autoComplete="off" placeholder="Jožko Mrkvička"
               role="combobox" aria-autocomplete="list" aria-expanded={open && suggestions.length > 0}
               aria-controls={open && suggestions.length ? 'candidate-options' : undefined}
               aria-activedescendant={open && active >= 0 && suggestions[active] ? `candidate-option-${active}` : undefined}

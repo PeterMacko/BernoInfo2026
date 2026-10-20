@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 import { build } from 'esbuild'
 
 const bundled = await build({ entryPoints: [new URL('../src/candidate-search.ts', import.meta.url).pathname], bundle: true, platform: 'node', format: 'esm', write: false, define: { 'import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW': '"0"' } })
-const { searchPeople, normalizeCandidateName, suggestCandidates, resolveCandidate } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`)
+const { searchPeople, normalizeCandidateName, isExampleName, suggestCandidates, resolveCandidate } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`)
 const council = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url)))
 const home = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
 
@@ -39,6 +39,17 @@ test('partial, ambiguous, empty and unknown inputs cannot silently navigate', ()
   assert.equal(resolveCandidate('bart').person, undefined)
   assert.equal(suggestCandidates('MICHAL').filter(row => row.id === 'bartok').length, 1)
   assert.deepEqual(suggestCandidates('zzzzzz'), [])
+})
+
+test('example-name matching accepts only complete case/diacritic/edge-whitespace variants', () => {
+  for (const value of ['Jožko Mrkvička', 'Jozko Mrkvicka', '  JOŽKO MRKVIČKA  ', '\nJozko Mrkvicka\t']) {
+    assert.equal(isExampleName(value), true, value)
+    assert.equal(suggestCandidates(value).length, 0, value)
+  }
+  for (const value of ['', 'Jožko', 'Mrkvička', 'Jožko Mrkvička Jr.', 'Jožko  Mrkvička', 'other Jozko Mrkvicka']) {
+    assert.equal(isExampleName(value), false, value)
+  }
+  assert.equal(searchPeople.some(row => row.aliases.some(alias => isExampleName(alias))), false)
 })
 
 test('no-JS fallback retains complete linked mayoral and council rosters', () => {
