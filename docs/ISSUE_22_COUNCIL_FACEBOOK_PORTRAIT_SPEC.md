@@ -1,0 +1,51 @@
+# Issue #22 — council Facebook discovery and portrait review
+
+**Status:** analyst requirements, 19 October 2026. This is a research/implementation specification only: it contains no candidate findings and does not authorize publication or release. Related: [issue #22](https://github.com/PeterMacko/BernoInfo2026/issues/22), [issue #20 scope](ISSUE_20_COUNCIL_CANDIDATE_SCOPE.md), [charter](PROJECT_CHARTER.md), [research protocol](RESEARCH_PROTOCOL.md), [team contract](AGENT_TEAM.md).
+
+## Scope and identity thresholds
+
+For each of the 44 council registrations in the corrected official roster, research whether a candidate-associated Facebook page/profile can be identified, and whether a portrait is suitable for a private review preview. This does not expand the public candidate profile fields defined in issue #20. No factual candidate implementation is part of this task.
+
+Keep separate records for the official person/registration, a discovered Facebook entity, and an image. Each candidate row must have a stable official-roster ID, official display name, constituency/list context where applicable, and official roster citation/version and checked date. Record each candidate × method/source attempt, including outcome, canonical URL if visible, observed date, access state, and concise evidence note. No-result is “not located in this bounded pass,” never “does not have a page.”
+
+Use these identity states consistently:
+
+- **Confirmed candidate-owned (high confidence):** the candidate or an already verified candidate-owned channel explicitly identifies/links the page/profile, or the page itself has a direct first-party identity link plus corroborating candidate-specific evidence (for example, distinctive election role/list context). Preserve the specific evidence and source URL. A name/locality match alone is insufficient.
+- **Probable association (medium; review only):** multiple consistent indicators exist, but no direct ownership bridge. Do not present as the candidate’s channel; obtain human review or seek stronger corroboration.
+- **Unverified / name match only (low):** same/similar name, locality, group mention, supporter assertion, search-result snippet, or unattributed image without a first-party bridge. Do not link as candidate-owned or use as identity evidence for a portrait.
+- **Not located / inaccessible / ambiguous:** distinct outcomes, each with method, date, and reason. They are not negative identity findings.
+
+A third-party post or comment may be a discovery lead only. It never establishes a candidate position, page ownership, or depicted identity by itself. Do not infer a position from any Facebook content.
+
+## Five-source bounded discovery method
+
+Use the five sources and canonical URLs in [RESEARCH_PROTOCOL.md](RESEARCH_PROTOCOL.md): Bernolákovo group; Bernolákovo Online page; BERNOLÁKOVO NAHLAS !!! group; Michal Bartók pre Bernolákovo page; Roman Šutka candidate page. Treat these uniformly as discovery leads, not as five sources that must mention every candidate. For every roster candidate:
+
+1. Attempt a read-only pass through each of the five supplied sources, using the same bounded candidate-name variants (official full name; diacritic-free spelling; distinctive surname + Bernolákovo where useful). Record search/navigation method and date range actually reached; count relevant items reviewed, not total items visible.
+2. Separately run a direct public search for the official name and reasonable spelling variants to discover candidate self-identified public pages/profiles. Search snippets are leads; open and inspect the destination when accessible. Apply the same method and effort to all 44.
+3. For a promising entity, seek a direct identity/ownership bridge on the entity or a candidate-owned official source. Record corroboration and contradictions, and assign one identity state above. Do not use page popularity, group membership, third-party tagging, or matching names as proof.
+4. Maintain per-source coverage entries with attempted dates, actual date range reached, method/terms, relevant items reviewed, inaccessible content/videos, and specific gaps. Label each pass partial unless evidence supports complete bounded coverage; Facebook search alone cannot establish completeness. No automated bulk harvesting, and no statement that all Facebook activity was reviewed.
+
+Facebook access is strictly read-only under the research protocol: do not post, comment, react, share, follow, message, alter settings, publish, or inspect credentials/session tokens. Do not collect private-group material, ordinary residents’ identifying details, or raw copied comments/transcripts into committed notes. Keep research notes private; commit only this specification or appropriately redacted status methodology.
+
+## Portrait and review-preview gate
+
+A portrait is a separate evidence object, not automatically authorized by finding a page. Record image/source URL, publisher/photographer if stated, observed date, rights/reuse status and evidence, credit requirement, crop suitability, and depicted-person confidence. Require both (a) a high-confidence candidate identity bridge and (b) a credible basis for reuse/permission plus credit compliance before a portrait is eligible for any public-facing asset. If either is unresolved, use a uniform placeholder in implementation. A face/name resemblance or a third-party group image is not sufficient identification. Do not scrape or copy images into public assets during discovery.
+
+Researcher may prepare a **private, access-controlled review preview** of candidate-associated page links and candidate portrait thumbnails only when the reviewer can inspect source/provenance; every item must be visibly labeled **NOT APPROVED — review only**, with confidence and unresolved rights status. It must not be publicly reachable, indexed, or mistaken for approved site content. Do not place unapproved social links or portraits in a public/deployed preview. If a safe private preview is unavailable, deliver the review material privately through the agreed team handoff and leave all uncertain portraits as placeholders. The five supplied Facebook sources remain coverage leads only and do not constitute approval.
+
+Parity is mandatory: the same identity standard, methods, effort, source/date recording, portrait eligibility, and visual opportunity apply to all 44 candidates. A portrait must not alter card size, ordering, prominence, or ranking. Before any portrait enters public implementation, an independent reviewer checks identity, source attribution, rights/credit, crop, and parity for the complete set; unresolved cases remain uniform placeholders. Human editorial approval remains required before publication/release.
+
+## Acceptance criteria and review tests
+
+1. **Roster and completeness:** a 44-row ledger reconciles one-to-one with the current corrected official council roster and its version/citation. Each row has a result for all five supplied sources and the direct-search method, with observed date and accessible/inaccessible/no-result distinction. Test row count, unique official IDs, and method coverage; missing attempt is a gap, not a negative result.
+2. **Identity threshold:** every discovered entity has canonical URL (when accessible), evidence citation, observed date, contradictions/gaps, and one defined identity state. Audit all “confirmed” entries for a direct first-party ownership bridge; matching name/locality, group mention, or third-party claim alone must fail confirmation. Probable/low-confidence entities cannot be labeled or linked as candidate-owned.
+3. **Coverage honesty:** each of the five source ledgers and direct-search pass records actual reach, terms/method, relevant items reviewed, inaccessible material, and gaps. Review confirms partial labels wherever coverage is bounded or incomplete and that no claim implies exhaustive Facebook coverage or infers nonexistence from no result.
+4. **Portrait provenance and parity:** every proposed preview image records image URL, source/credit, rights/reuse state, crop, and depicted-person confidence; eligibility requires high identity confidence and documented reuse basis. Compare all 44 rows for equal search effort and equal portrait rules/opportunity. Any unresolved identity or rights state yields a placeholder, never a guessed portrait.
+5. **Unapproved preview safety:** inspect the proposed review artifact and confirm conspicuous “NOT APPROVED — review only” labeling and provenance for every item; confirm it is access-controlled and not public/indexed/deployed. If those conditions cannot be demonstrated, no preview is produced and materials remain in the private handoff. Verify no unapproved items entered public candidate pages/assets.
+6. **Read-only and data minimization:** handoff contains no account credentials/tokens, private-group content, copied resident comments, or personal details unrelated to candidate identity. Research action log shows no account interactions. No candidate positions are inferred from these discovery sources.
+7. **Release gate:** developer implementation follows issue #20’s reviewed scope and consumes only approved findings. Independent review records identity, rights/credit, parity, source, and preview/publication checks. Draft PR or preview is not editorial approval; no merge, public release, or deployment without the project’s human approval gate.
+
+## Current source status and boundary
+
+At specification time, issue #22 identifies five supplied Facebook sources, and the project research protocol lists their URLs and read-only restrictions. Issue #22 also states a target of 44 council registrations and refers to corrected roster evidence D1–D3 and issue #20 ledgers; this analyst task did not independently inspect or verify those records. Therefore **44 is the task’s working scope, not a newly verified roster count**. No candidate-specific Facebook page, portrait, identity bridge, rights status, or coverage result is asserted here. Research must first reconcile the corrected official roster and existing ledgers, then record actual source status per candidate/source. Missing or inaccessible sources remain explicit unresolved evidence, not assumed findings.

@@ -1,0 +1,511 @@
+{
+  "officialDate": "2. septembra 2026",
+  "checked": "20. októbra 2026",
+  "districts": [
+    {
+      "number": 1,
+      "seats": 5,
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204393_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-1.pdf",
+      "candidates": [
+        {
+          "id": "c-9fd006a7",
+          "listNumber": 1,
+          "name": "Adéla ÁLLÓ FERANCOVÁ",
+          "age": 56,
+          "occupation": "daňová poradkyňa",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-413edcf2",
+          "listNumber": 2,
+          "name": "Peter BOROS",
+          "age": 32,
+          "occupation": "IT manažér",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-baf5b906",
+          "listNumber": 3,
+          "name": "Martina BRUNEL, Ing.",
+          "age": 42,
+          "occupation": "pedagogická zamestnankyňa",
+          "designation": "nezávislá kandidátka",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-048c6a46",
+          "listNumber": 4,
+          "name": "Jaroslav CABÚK",
+          "age": 48,
+          "occupation": "podnikateľ v gastronómii",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-40a33e62",
+          "listNumber": 5,
+          "name": "Lenka DORČÁKOVÁ, PhDr., MBA",
+          "age": 50,
+          "occupation": "personálna manažérka",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-7be86c17",
+          "listNumber": 6,
+          "name": "Damiána DŽUGANOVÁ, Mgr.",
+          "age": 41,
+          "occupation": "advokátka",
+          "designation": "nezávislá kandidátka",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-2a1203e3",
+          "listNumber": 7,
+          "name": "Lenka GÉČ, JUDr.",
+          "age": 40,
+          "occupation": "právnička",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-2b9f6877",
+          "listNumber": 8,
+          "name": "Radovan HANIC",
+          "age": 54,
+          "occupation": "SZČO",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-a7eb4e22",
+          "listNumber": 9,
+          "name": "Linda HORNÁ, Bc.",
+          "age": 47,
+          "occupation": "arboristka",
+          "designation": "Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-8215ca14",
+          "listNumber": 10,
+          "name": "Ľuboslav CHUDOBA",
+          "age": 45,
+          "occupation": "stavbyvedúci",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-6d9a5867",
+          "listNumber": 11,
+          "name": "Iva PIPÍŠKOVÁ, Mgr.",
+          "age": 59,
+          "occupation": "koordinátorka strategických a verejných politík",
+          "designation": "Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-b4f704a2",
+          "listNumber": 12,
+          "name": "Trifon POPGEORGIEV",
+          "age": 52,
+          "occupation": "podnikateľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-e4ed91dc",
+          "listNumber": 13,
+          "name": "Peter TEPLAN",
+          "age": 41,
+          "occupation": "facility manažér",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-bb232e32",
+          "listNumber": 14,
+          "name": "Miroslav TURENIČ, Ing., MBA, LL.M.",
+          "age": 38,
+          "occupation": "starosta obce",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": true,
+          "mayorIncumbent": true
+        },
+        {
+          "id": "c-f5ea2014",
+          "listNumber": 15,
+          "name": "Ján VALTER",
+          "age": 31,
+          "occupation": "servisný technik",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "seats": 5,
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204395_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-2.pdf",
+      "candidates": [
+        {
+          "id": "c-724674d8",
+          "listNumber": 1,
+          "name": "Ronald ACHBERGER",
+          "age": 56,
+          "occupation": "SZČO",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-aba7e3e8",
+          "listNumber": 2,
+          "name": "Martin BERČÍK, Ing.",
+          "age": 49,
+          "occupation": "prednosta obecného úradu",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-7e485001",
+          "listNumber": 3,
+          "name": "Veronika DONÁTHOVÁ, Mgr.",
+          "age": 29,
+          "occupation": "podnikateľka",
+          "designation": "nezávislá kandidátka",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-326838e3",
+          "listNumber": 4,
+          "name": "Peter DORNAI",
+          "age": 23,
+          "occupation": "športový asistent",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-df02bb77",
+          "listNumber": 5,
+          "name": "Roman FIALA, Bc.",
+          "age": 33,
+          "occupation": "špecialista na kontrolu finančných transakcií",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-0bc5d04e",
+          "listNumber": 6,
+          "name": "Jaroslav GÉC, Ing.",
+          "age": 65,
+          "occupation": "dôchodca",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-8df05aac",
+          "listNumber": 7,
+          "name": "Valentína HEDA HORŇÁK",
+          "age": 30,
+          "occupation": "živnostníčka",
+          "designation": "nezávislá kandidátka",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-53585448",
+          "listNumber": 8,
+          "name": "Marek JAKUBOVIČ, Bc.",
+          "age": 29,
+          "occupation": "podnikateľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-164dbdc6",
+          "listNumber": 9,
+          "name": "Katarína KOPORCOVÁ",
+          "age": 62,
+          "occupation": "vychovávateľka",
+          "designation": "nezávislá kandidátka",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-307ca828",
+          "listNumber": 10,
+          "name": "Jaroslav KOŠTIAL, Ing.",
+          "age": 40,
+          "occupation": "technický a prevádzkový manažér",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": true,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-bddffcdf",
+          "listNumber": 11,
+          "name": "Milan MARUŠKANIČ",
+          "age": 45,
+          "occupation": "manažér prevádzky",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-5e9ee486",
+          "listNumber": 12,
+          "name": "Miroslav MATULA",
+          "age": 47,
+          "occupation": "vedúci oddelenia bezpečnosti a ochrany",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-eabdadbf",
+          "listNumber": 13,
+          "name": "Imrich MATÚŠ",
+          "age": 40,
+          "occupation": "živnostník",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-311f2be6",
+          "listNumber": 14,
+          "name": "Alexander MOLNÁR, Ing.",
+          "age": 66,
+          "occupation": "dôchodca",
+          "designation": "Republika",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-be773c61",
+          "listNumber": 15,
+          "name": "Michal PELEŠ, Ing.",
+          "age": 48,
+          "occupation": "stavebný inžinier",
+          "designation": "Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-7bb2976f",
+          "listNumber": 16,
+          "name": "Rastislav POŽÁR, Ing.",
+          "age": 51,
+          "occupation": "technický riaditeľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-79400f76",
+          "listNumber": 17,
+          "name": "Erik VALČEK, Bc.",
+          "age": 27,
+          "occupation": "študent",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-2a7c2b15",
+          "listNumber": 18,
+          "name": "Linda VOLÁRIKOVÁ",
+          "age": 48,
+          "occupation": "výkonná riaditeľka",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-c96b6d44",
+          "listNumber": 19,
+          "name": "Peter ZÁMOCKÝ, Mgr.",
+          "age": 54,
+          "occupation": "živnostník",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "seats": 3,
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204394_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-3.pdf",
+      "candidates": [
+        {
+          "id": "c-f6b4af6c",
+          "listNumber": 1,
+          "name": "Michal BARTÓK, JUDr. Ing.",
+          "age": 56,
+          "occupation": "právnik",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": true,
+          "mayorListed": true,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-5b5322d7",
+          "listNumber": 2,
+          "name": "Rudolf BUTKO, Bc.",
+          "age": 22,
+          "occupation": "študent",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-a4b1db7c",
+          "listNumber": 3,
+          "name": "Martin CIRBUS",
+          "age": 55,
+          "occupation": "vykonávateľ",
+          "designation": "Právo na pravdu",
+          "councilListMatch": false,
+          "mayorListed": true,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-a8a3f42b",
+          "listNumber": 4,
+          "name": "Ondrej ĎURAJ, JUDr.",
+          "age": 51,
+          "occupation": "advokát a manažér",
+          "designation": "Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-d5ea46dc",
+          "listNumber": 5,
+          "name": "Dušan CHALANI",
+          "age": 42,
+          "occupation": "podnikateľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-73b7e5fe",
+          "listNumber": 6,
+          "name": "Miroslav MICHELÍK, Ing.",
+          "age": 58,
+          "occupation": "dopravný inžinier",
+          "designation": "Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita",
+          "councilListMatch": true,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-16b4c499",
+          "listNumber": 7,
+          "name": "Michal PLAŠTIAK",
+          "age": 41,
+          "occupation": "živnostník",
+          "designation": "Starostovia a nezávislí kandidáti",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-5b003a58",
+          "listNumber": 8,
+          "name": "Miroslav SLIVKA, Ing.",
+          "age": 56,
+          "occupation": "pracovník informačnej technológie",
+          "designation": "Hlas - sociálna demokracia, Smer - sociálna demokracia",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-b71236e4",
+          "listNumber": 9,
+          "name": "Erik SVORAD, Ing.",
+          "age": 36,
+          "occupation": "podnikateľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        },
+        {
+          "id": "c-5dd4a189",
+          "listNumber": 10,
+          "name": "Emil ŠPALDA",
+          "age": 47,
+          "occupation": "podnikateľ",
+          "designation": "nezávislý kandidát",
+          "councilListMatch": false,
+          "mayorListed": false,
+          "mayorIncumbent": false
+        }
+      ]
+    }
+  ]
+}

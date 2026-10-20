@@ -1,12 +1,24 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
+import councilData from './council-candidates.json'
+import issue24Evidence from './issue24-evidence.json'
+import issue24Photos from './issue24-photo-availability.json'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 const portraits = approvedPortraits ?? privatePreviewPortraits
+const photoReview = import.meta.env.VITE_SITE_BUILD_MODE === 'photo-review'
+const dualRoutes: Record<string,string> = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
+const councilRoute = (id:string) => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/` : `/kandidati-na-poslancov/${id}/`
+const councilPhoto = (id:string) => {
+  const photo = (issue24Evidence as Record<string,{photo:{kind:string,url:string|null}}>)[id]?.photo
+  if (import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW !== '1') return placeholderImage
+  if (photo?.url && issue24Photos.includes(id)) return `/images/council/${id}.jpg`
+  return dualRoutes[id] ? portraits?.[dualRoutes[id] as keyof typeof portraits]?.src ?? placeholderImage : placeholderImage
+}
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
@@ -26,9 +38,9 @@ function App() {
         </div>
         <div className="intro-main">
           <div>
-            <p className="section-kicker">Bernolákovo / voľby starostu</p>
+            <p className="section-kicker">Bernolákovo / komunálne voľby</p>
             <h1 id="page-title">
-              Kandidáti na<br /><em>starostu obce.</em>
+              Voľby v<br /><em>Bernolákove.</em>
             </h1>
           </div>
           <div className="intro-aside">
@@ -58,9 +70,9 @@ function App() {
       </section>
 
       <section className="candidate-section" aria-labelledby="candidates-title">
-        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>}
+        {photoReview && privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">
-          <h2 id="candidates-title">Zoznam kandidátov</h2>
+          <h2 id="candidates-title">Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
         <ol className="candidate-grid">
@@ -71,13 +83,13 @@ function App() {
                 <a
                   className="candidate-card-link"
                   href={`/kandidati/${candidate.id}/`}
-                  aria-label={`Profil kandidáta ${candidate.registeredName}`}
+                  aria-label={`Profil kandidáta ${candidate.registeredName}${['bartok','cirbus','kostial','turenic'].includes(candidate.id) ? ' na starostu aj poslanca obecného zastupiteľstva' : ' na starostu obce'}`}
                 >
                   <div className="portrait-wrap">
                     <img
                       src={portrait?.src ?? placeholderImage}
                       className={portrait ? `candidate-portrait candidate-portrait--${candidate.id}` : undefined}
-                      alt={portrait ? `Portrét: ${candidate.registeredName}` : ''}
+                      alt={portrait ? `Fotografia kandidáta ${candidate.registeredName}` : ''}
                       aria-hidden={portrait ? undefined : true}
                       width="640"
                       height="760"
@@ -88,13 +100,40 @@ function App() {
                       <span>Číslo v zozname</span>
                       <strong>{String(candidate.listNumber).padStart(2, '0')}</strong>
                     </div>
-                    <h3>{candidate.registeredName}</h3>
+                    <h3>{candidate.registeredName}{['bartok','cirbus','kostial','turenic'].includes(candidate.id) && <small className="dual-office-label">Aj kandidát na poslanca</small>}</h3>
                   </div>
                 </a>
               </li>
             )
           })}
         </ol>
+      </section>
+
+      <section className="council-section" aria-labelledby="council-title">
+        <div className="section-heading">
+          <h2 id="council-title">Kandidáti na poslancov obecného zastupiteľstva</h2>
+          <p>44 registrácií · 13 mandátov</p>
+        </div>
+        <p className="council-intro">Kandidáti sú zoradení podľa <a href={officialNotice}>oznámenia obce</a> a opravených zoznamov jednotlivých volebných obvodov. Čísla označujú poradie v zverejnenom zozname obvodu, nie overené čísla na hlasovacom lístku. Údaje boli skontrolované {councilData.checked}; prípadné neskoršie zmeny či odstúpenia treba pred voľbami znovu preveriť.</p>
+        {councilData.districts.map((district) => (
+          <section className="council-district" key={district.number} aria-labelledby={`district-${district.number}`}>
+            <div className="council-district-heading">
+              <h3 id={`district-${district.number}`}>Volebný obvod {district.number}</h3>
+              <p>{district.candidates.length} kandidátov · {district.seats} mandátov · <a href={district.sourceUrl}>Opravený zoznam obce (PDF)</a>, datovaný {councilData.officialDate}</p>
+            </div>
+            <ol className="council-list">
+              {district.candidates.map((candidate) => (
+                <li key={candidate.id}>
+                  <a href={councilRoute(candidate.id)} aria-label={`Profil: ${candidate.name}, kandidát na ${dualRoutes[candidate.id] ? 'starostu aj ' : ''}poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
+                    <img className="council-thumb" src={councilPhoto(candidate.id)} alt="" width="48" height="57" loading="lazy" /><span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
+                    <span className="council-name">{candidate.name}<small className="council-designation">{candidate.designation}</small></span>
+                    <span className="council-arrow" aria-hidden="true">↗</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
       </section>
 
       {portraits && (
@@ -118,7 +157,8 @@ function App() {
         <div>
           <h2>Zdroj a stav údajov</h2>
           <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
-          <p>Mená a poradie: <a href={correctedList}>opravený zoznam zaregistrovaných kandidátov (PDF)</a> a <a href={officialNotice}>oznámenie obce Bernolákovo</a>. Naposledy overené 18. októbra 2026. Uvedené čísla sú číslami v zozname; nie sú tu označené ako čísla na hlasovacom lístku.</p>
+          <p><strong>Kandidáti na starostu obce:</strong> Mená a poradie podľa <a href={correctedList}>opraveného zoznamu (PDF)</a> a <a href={officialNotice}>oznámenia obce</a>. Naposledy overené 18. októbra 2026.</p>
+          <p><strong>Kandidáti na poslancov obecného zastupiteľstva:</strong> Mená, príslušnosť a poradie podľa opravených zoznamov obce pre {councilData.districts.map((district, index) => <React.Fragment key={district.number}>{index > 0 ? ", " : ""}<a href={district.sourceUrl}>obvod {district.number} (PDF)</a></React.Fragment>)}. Zoznamy sú datované {councilData.officialDate}; skontrolované {councilData.checked}. Uvedené čísla sú číslami v zozname, nie overenými číslami na hlasovacom lístku.</p>
           {portraits ? (
             <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
           ) : (

@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "bash scripts/build-photo-review.sh",
+    "build": "npm run build:release",
+    "build:release": "bash scripts/build-release.sh",
+    "build:photo-review": "bash scripts/build-photo-review.sh",
+    "review:issue22": "node scripts/generate-issue22-local-review.mjs",
     "build:placeholder": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "generate:details": "node scripts/generate-candidate-pages.mjs",
-    "prebuild": "npm run generate:details",
-    "prebuild:placeholder": "npm run generate:details"
+    "prebuild:placeholder": "npm run generate:details && npm run generate:council",
+    "generate:council": "node scripts/generate-council-pages.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:http": "node tests/http-routes.mjs"
   },
   "dependencies": {
     "react": "19.3.1",

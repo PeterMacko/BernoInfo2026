@@ -9,6 +9,9 @@ for name in michal-bartok martin-cirbus filip-kandrac jaroslav-kostial peter-lak
   }
 done
 
-DETAIL_PHOTO_REVIEW=1 VITE_PRIVATE_PORTRAIT_PREVIEW=1 npm run build:placeholder
+SITE_BUILD_MODE=photo-review VITE_PRIVATE_PORTRAIT_PREVIEW=1 VITE_SITE_BUILD_MODE=photo-review npm run build:placeholder
 mkdir -p dist/images/candidates
 cp preview-assets/candidates/*.jpg dist/images/candidates/
+
+mkdir -p dist/images/council
+cp preview-assets/council/*.jpg dist/images/council/

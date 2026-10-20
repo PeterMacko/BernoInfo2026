@@ -1,10 +1,17 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {connectionCards} from './issue24-shared.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
+const councilData = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
+const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url), 'utf8'))
+const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
+const dualIds = {bartok:'c-f6b4af6c', cirbus:'c-a4b1db7c', kostial:'c-307ca828', turenic:'c-bb232e32'}
 const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
-const photoReview = process.env.DETAIL_PHOTO_REVIEW === '1'
+const mode = process.env.SITE_BUILD_MODE || 'placeholder'
+const photoReview = mode === 'photo-review'
+const withPhotos = mode !== 'placeholder'
 const outputRoot = fileURLToPath(new URL('../public/kandidati/', import.meta.url))
 
 const empty = '<p class="empty">V preskúmaných zdrojoch sa tento údaj nepodarilo doložiť. Neznamená to, že neexistuje alebo že kandidát odmietol odpovedať.</p>'
@@ -173,14 +180,59 @@ function renderEvidenceGuide() {
   ])
 }
 
+function councilRecord(candidate) {
+  const id = dualIds[candidate.id]
+  if (!id) return null
+  for (const district of councilData.districts) {
+    const found = district.candidates.find((item) => item.id === id)
+    if (found) return {district, candidate:found}
+  }
+  throw Error(`Dual registration not found: ${candidate.id}`)
+}
+
+function renderCouncilRegistration(candidate) {
+  const record = councilRecord(candidate)
+  if (!record) return []
+  const {district, candidate: council} = record
+  return [section('council-registration', 'Kandidatúra na poslanca obecného zastupiteľstva', [
+    `<p><strong>${escapeHtml(council.name)}</strong> je samostatne registrovaný aj ako kandidát na poslanca v obvode ${district.number}, poradie ${council.listNumber} v opravenom zozname. Uvedená príslušnosť: ${escapeHtml(council.designation)}. Vek uvedený v tomto zozname: ${council.age}; povolanie: ${escapeHtml(council.occupation)}. Poradie nie je overené číslo na hlasovacom lístku.</p>`,
+    source(district.sourceUrl, 'Obec Bernolákovo — opravený zoznam kandidátov na poslancov (PDF)', `datované ${councilData.officialDate}`),
+    `<p>${link('/#council-title', 'Späť na zoznam kandidátov na poslancov')}</p>`,
+  ])]
+}
+
+function renderCouncilLinks(candidate) {
+  const record = councilRecord(candidate)
+  if (!record) return []
+  const item = evidence[record.candidate.id]
+  if (!item) return []
+  const kind = item.link.kind
+  const url = item.link.url
+  const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane (nie osobný profil)' :
+    kind === 'post/appearance' ? 'Príspevok o kandidátovi (nie jeho účet)' :
+    kind === 'self-labelled candidate page/profile' || kind === 'campaign-used profile' ? 'Kandidátsky označená stránka / profil — prevádzkovateľ neoverený' :
+    kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
+    kind === 'historical page (2018)' ? 'Historická stránka z roku 2018' :
+    kind === 'mention only' ? 'Príspevok so zmienkou — nie profil kandidáta' : null
+  const peterUrl = entityLinks.urls[item.key]
+  const links = []
+  const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
+  if (label && url && (!reviewOnlyLead || photoReview)) links.push(`<p>${link(url,label)}</p><small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Vlastníctvo účtu nie je nezávisle overené.</small>`)
+  if (photoReview && peterUrl && peterUrl !== url) links.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  return links.length ? [section('council-source', 'Odkazy ku kandidatúre na poslanca', links)] : []
+}
+
 function renderSections(candidate) {
   return block('div', ' class="content"', [
-    section('registration', 'Registrácia', renderRegistration(candidate)),
+    section('registration', 'Registrácia na starostu obce', renderRegistration(candidate)),
+    ...renderCouncilRegistration(candidate),
     section('occupation', 'Povolanie', renderOccupation(candidate)),
     section('experience', 'Skúsenosti a projekty', renderExperience(candidate)),
     section('programme', 'Programové návrhy', renderProgramme(candidate)),
     section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
+    ...renderCouncilLinks(candidate),
+    ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
     section('companies', 'Firemné funkcie', renderCompanies()),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),
@@ -194,11 +246,11 @@ function renderNavigation(candidate) {
 
 function renderPortrait(candidate) {
   const portrait = reviewPortraits[candidate.id]
-  const image = photoReview
-    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Portrét: ${escapeHtml(candidate.name)}" width="640" height="760">`
+  const image = withPhotos
+    ? `<img class="candidate-portrait candidate-portrait--${escapeHtml(candidate.id)}" src="${escapeHtml(portrait.src)}" alt="Fotografia kandidáta ${escapeHtml(candidate.name)}" width="640" height="760">`
     : '<img src="/images/portrait-placeholder.svg" alt="" width="640" height="760">'
-  const caption = photoReview
-    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. Identita, kredit a použitie vo finálnej verzii ešte nie sú schválené.</figcaption>`
+  const caption = withPhotos
+    ? `<figcaption>Zdroj fotografie: ${link(portrait.sourceUrl, 'pôvodná fotografia')} · ${escapeHtml(portrait.credit)}. ${photoReview ? 'Kontrolný náhľad, ' : ''}Rok vzniku záberu neznámy.</figcaption>`
     : '<figcaption>Portrét zatiaľ nie je zverejnený; grafická výplň nie je podobizňou kandidáta.</figcaption>'
   return block('figure', ' class="detail-portrait"', [
     block('div', ' class="portrait-wrap"', [image]),
@@ -209,12 +261,12 @@ function renderPortrait(candidate) {
 function renderHero(candidate) {
   const number = String(candidate.position).padStart(2, '0')
   return block('div', ' class="hero"', [
-    '<a class="back" href="/">← Všetci kandidáti</a>',
-    ...(photoReview ? ['<p class="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>'] : []),
+    `<a class="back" href="${councilRecord(candidate) ? '/#council-title' : '/#candidates-title'}">← ${councilRecord(candidate) ? 'Oba zoznamy kandidátov' : 'Kandidáti na starostu obce'}</a>`,
+    ...(photoReview ? ['<p class="preview-notice">Vývojový náhľad zdrojových fotografií</p>'] : []),
     block('div', ' class="hero-layout"', [
       block('div', ' class="hero-copy"', [
-        `<p class="kicker">Bernolákovo / voľby starostu / ${number} z 08</p>`,
-        `<h1>${escapeHtml(candidate.name)}</h1>`,
+        `<p class="kicker">Bernolákovo / ${councilRecord(candidate) ? 'kandidát na starostu aj poslanca obecného zastupiteľstva' : 'voľby starostu'} / ${number} z 08</p>`,
+        `<h1>${escapeHtml(candidate.name)}${councilRecord(candidate) ? '<small class="office-label">Kandidát na starostu obce aj poslanca obecného zastupiteľstva</small>' : ''}</h1>`,
         '<p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p>',
       ]),
       renderPortrait(candidate),
@@ -226,11 +278,12 @@ function renderDocument(candidate) {
   const head = block('head', '', [
     '<meta charset="UTF-8">',
     '<meta name="viewport" content="width=device-width, initial-scale=1">',
-    '<meta name="robots" content="noindex, nofollow">',
+    ...(mode === 'release' ? [] : ['<meta name="robots" content="noindex, nofollow">']),
     '<meta name="theme-color" content="#183a64">',
     '<link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp">',
-    `<title>${escapeHtml(candidate.name)} — BernoInfo 2026</title>`,
-    `<meta name="description" content="Profil kandidáta ${escapeHtml(candidate.name)} vo voľbách starostu obce Bernolákovo 2026.">`,
+    `<title>${escapeHtml(candidate.name)} — ${councilRecord(candidate) ? 'kandidát na starostu aj poslanca' : 'kandidát na starostu'} — BernoInfo 2026</title>`,
+    `<meta name="description" content="Profil kandidáta ${escapeHtml(candidate.name)} ${councilRecord(candidate) ? 'na starostu aj poslanca obecného zastupiteľstva' : 'na starostu obce'} Bernolákovo 2026.">`,
+    `<link rel="canonical" href="/kandidati/${escapeHtml(candidate.id)}/">`,
     '<link rel="stylesheet" href="/candidate-detail.css">',
   ])
   const header = block('header', ' class="masthead"', [

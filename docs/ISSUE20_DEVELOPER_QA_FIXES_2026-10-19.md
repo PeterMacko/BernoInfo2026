@@ -1,0 +1,10 @@
+# Issue 20 developer QA fixes — 19 October 2026
+
+Follow-up to independent report `docs/reviews/ISSUE20_INDEPENDENT_QA_2026-10-19.md` on lead commit `6d5aabf`. This is a developer handoff, not publication approval.
+
+- Rechecked the three revised district PDFs directly with `curl` and `pdftotext -layout` on 19 October. The five coalition designations use the full PDF string `Demokrati, Kdh - kresťanskodemokratické hnutie, Sloboda a solidarita`; D3/8 uses PDF hyphens in `Hlas - sociálna demokracia, Smer - sociálna demokracia`. Data, all profile pages and both homepage lists now use those forms. A six-record test fixture independent of the normalized ledger catches regression.
+- Both homepage lists now show official designation in every council item. Mayor and council source/date statements are separate in the JS and no-JS footer. No-JS mandate inflection is corrected.
+- Vite is configured as a multi-page app to disable SPA history fallback. `wrangler.jsonc` explicitly selects static-asset `404-page` handling. After `npm run build:placeholder`, local HTTP checks returned 200 for `/` and a real council profile, 404 for `/kandidati-na-poslancov/unknown/` and `/missing/` in both Vite preview and `wrangler dev --local`; Wrangler served the custom 404 page. `npm run test:http` repeats this. Actual deployed Cloudflare edge behavior and cache/routing configuration remain unverified; verify before release.
+- `npm run build:placeholder`, `npm test`, and `npm run test:http` pass. The eight mayoral generated files are preserved unchanged in the commit.
+
+**Research gate still open (review P2):** the research ledger groups 38 candidates and does not provide a 44-person candidate-by-field search matrix. This code change does not claim equal exhaustive candidate-source research or resolve that editorial requirement. Researcher/lead must complete or explicitly revise that gate before treating council programme/channel coverage as complete. Later withdrawals and final ballot numbers also remain unverified.

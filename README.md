@@ -1,15 +1,11 @@
 # BernoInfo 2026
 
-A neutral, sourced guide to the 2026 municipal election in Bernolákovo, Slovakia. This branch is a **development homepage and photo-review preview**, not a final publication approval. Its Cloudflare preview URL is publicly reachable.
+A neutral, sourced guide to the 24 October 2026 municipal election in Bernolákovo, Slovakia.
 
-## Local preview
+## Build modes
 
-Run `npm ci`, then `npm run dev` for a local browser preview. On this development branch, `npm run build` creates the eight-photo review build used by Cloudflare; `npm run build:placeholder` creates the all-placeholder build. The app includes `noindex, nofollow` while under review, but that does not restrict access.
+Run `npm ci` first. `npm run build` is the public-release build used by Cloudflare Workers Builds. It includes Peter-reviewed candidate photos, excludes the review-only route, labels, and uncertain social leads, and removes the homepage `noindex` tag. `npm run build:photo-review` retains review labels and uncertain leads on the publicly reachable branch preview. `npm run build:placeholder` creates an isolated all-placeholder build without candidate JPGs. `npm run review:issue22` separately generates a private local research review at `.private/issue22-review/index.html`.
 
-## Content and image handoff
+The default build change follows Peter's 20 October confirmation that he checked all detail photos and information and has permission to publish them. Five council candidates retain the same neutral placeholder where no usable photo was confirmed. Source and archival-year distinctions are preserved on candidate pages. The five supplied Facebook sources and candidate-owned discovery remain **partially** reviewed, not exhaustive. The municipality's corrected rosters are the baseline; list sequence is not asserted to be ballot number. See [release check](docs/reviews/RELEASE_CHECK_2026-10-20.md) and [issue #22 research](docs/research/ISSUE22_COUNCIL_FB_PORTRAIT_DISCOVERY_2026-10-19.md).
 
-`src/candidates.ts` contains the eight registered names and the *corrected municipality list numbers* in source order. The numbers are not labelled ballot-paper numbers. The page links the [corrected official list](https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf) and [municipal notice](https://www.bernolakovo.sk/novinka/139303/n), both checked 17 October 2026.
-
-The development preview now shows all eight candidate photos solely for source and crop review, as Peter requested on 18 October. These review copies live under `preview-assets/candidates/` on this branch and are copied into the Cloudflare preview build; they are **not** in the approved-portrait manifest. The all-placeholder build still renders the same non-likeness placeholder for all eight. Before final release, complete identity, photographer/rightsholder and credit, quality, and equal-treatment review for every photo; then populate `approvedPortraits` in `src/candidates.ts` with a reviewed local asset for each candidate. Do not merge this preview-only build configuration into production unchanged.
-
-Independent factual, fairness, accessibility, responsive, and source-link review is still required before release. Merge or deployment requires separate approval.
+`npm test` checks rosters, routes, source-link boundaries, and the three build modes. `npx wrangler deploy --dry-run` checks Workers asset packaging without publishing. The Cloudflare configuration is in `wrangler.jsonc`.
