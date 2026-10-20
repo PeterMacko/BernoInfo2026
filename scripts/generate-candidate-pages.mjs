@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {connectionCards} from './issue24-shared.mjs'
+import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
 const councilData = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
@@ -161,23 +162,11 @@ function correctionLink() {
 
 function renderSources() {
   return [
-    `<p>Spoločná uzávierka podkladov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja.</p>`,
+    `<p>Spoločný dátum poslednej kontroly záznamov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja ani to, že kandidát odmietol odpovedať.</p>`,
+    '<p>Prvotné zhromaždenie podkladov pre údaje v profiloch sa uzavrelo 18. októbra 2026; 19. októbra nasledovala cielená kontrola známych zdrojov a 20. októbra kontrola záznamov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október je čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>',
     `<p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correctionLink()}</p>`,
     '<p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>',
   ]
-}
-
-function renderEvidenceGuide() {
-  return block('section', ' class="evidence-guide" aria-labelledby="evidence-guide-title"', [
-    '<p class="evidence-guide-kicker">Ako čítať tento profil</p>',
-    '<h2 id="evidence-guide-title">Čo je doložené — a čo zostáva otvorené</h2>',
-    block('ul', ' class="evidence-guide-list"', [
-      `<li><strong>Oficiálny zoznam obce</strong><span>Registrácia, poradie v zozname, príslušnosť a uvedené povolanie vychádzajú z ${link(data.officialUrl, 'opravenej listiny obce (PDF)')} datovanej ${escapeHtml(data.officialDate)}. Číslo v zozname nie je overené číslo na hlasovacom lístku.</span></li>`,
-      '<li><strong>„Kandidát uvádza“</strong><span>Návrhy a skúsenosti sú pripísané kandidátovi a odkazujú na jeho zdroj. Ich pravdivosť, uskutočniteľnosť ani úplnosť programu tým nie sú nezávisle potvrdené.</span></li>',
-      '<li><strong>Nepodarilo sa doložiť</strong><span>Toto označenie znamená len to, že údaj nie je doložený v preskúmaných zdrojoch. Nie je to dôkaz, že stanovisko, funkcia či zdroj neexistuje, ani že kandidát odmietol odpovedať.</span></li>',
-    ]),
-    '<p class="evidence-guide-limit"><strong>Rozsah a dátumy:</strong> Uzávierka podkladov pre údaje v profiloch je 18. októbra 2026. Dňa 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október zostáva čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>',
-  ])
 }
 
 function councilRecord(candidate) {
@@ -210,15 +199,16 @@ function renderCouncilLinks(candidate) {
   const url = item.link.url
   const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane (nie osobný profil)' :
     kind === 'post/appearance' ? 'Príspevok o kandidátovi (nie jeho účet)' :
-    kind === 'self-labelled candidate page/profile' || kind === 'campaign-used profile' ? 'Kandidátsky označená stránka / profil — prevádzkovateľ neoverený' :
+    kind === 'self-labelled candidate page/profile' ? 'Kandidátsky označená stránka/profil — prevádzkovateľ neoverený' :
+    kind === 'campaign-used profile' ? 'Profil použitý v kampani — prevádzkovateľ neoverený' :
     kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
-    kind === 'historical page (2018)' ? 'Historická stránka z roku 2018' :
-    kind === 'mention only' ? 'Príspevok so zmienkou — nie profil kandidáta' : null
-  const peterUrl = entityLinks.urls[item.key]
+    kind === 'historical page (2018)' ? 'Historická stránka kampane (2018) — nie dôkaz súčasnej aktivity' :
+    kind === 'mention only' ? 'Príspevok so zmienkou o kandidátovi — nie profil' : null
+  const alternateUrl = entityLinks.urls[item.key]
   const links = []
   const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
   if (label && url && (!reviewOnlyLead || photoReview)) links.push(`<p>${link(url,label)}</p><small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Vlastníctvo účtu nie je nezávisle overené.</small>`)
-  if (photoReview && peterUrl && peterUrl !== url) links.push(`<p>${link(peterUrl,'Facebookový odkaz priradený Petrom')}</p><small class="source">Peter priradil tento odkaz ku kandidátovi 19. októbra 2026. Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.</small>`)
+  if (photoReview && alternateUrl && alternateUrl !== url) links.push(`<p>${link(alternateUrl, alternateLinkLabel(item.key))}</p><small class="source">${escapeHtml(alternateLinkNote)}</small>`)
   return links.length ? [section('council-source', 'Odkazy ku kandidatúre na poslanca', links)] : []
 }
 
@@ -297,7 +287,7 @@ function renderDocument(candidate) {
   ])
   const page = block('div', ' class="page"', [
     header,
-    block('main', '', [renderHero(candidate), renderNavigation(candidate), renderEvidenceGuide(), renderSections(candidate)]),
+    block('main', '', [renderHero(candidate), renderNavigation(candidate), renderSections(candidate)]),
     footer,
   ])
   return `<!doctype html>\n${block('html', ' lang="sk"', [head, block('body', '', [page])])}\n`

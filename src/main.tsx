@@ -58,17 +58,6 @@ function App() {
         </div>
       </section>
 
-      <section className="evidence-guide" aria-labelledby="evidence-guide-title">
-        <p className="evidence-guide-kicker">Ako čítať profily</p>
-        <h2 id="evidence-guide-title">Čo je doložené — a čo zostáva otvorené</h2>
-        <ul className="evidence-guide-list">
-          <li><strong>Oficiálny zoznam obce</strong><span>Registrácia, poradie v zozname, príslušnosť a uvedené povolanie vychádzajú z <a href={correctedList}>opravenej listiny obce (PDF)</a> datovanej 2. septembra 2026. Číslo v zozname nie je overené číslo na hlasovacom lístku.</span></li>
-          <li><strong>„Kandidát uvádza“</strong><span>Návrhy a skúsenosti sú pripísané kandidátovi a odkazujú na jeho zdroj. Ich pravdivosť, uskutočniteľnosť ani úplnosť programu tým nie sú nezávisle potvrdené.</span></li>
-          <li><strong>Nepodarilo sa doložiť</strong><span>Toto označenie znamená len to, že údaj nie je doložený v preskúmaných zdrojoch. Nie je to dôkaz, že stanovisko, funkcia či zdroj neexistuje, ani že kandidát odmietol odpovedať.</span></li>
-        </ul>
-        <p className="evidence-guide-limit"><strong>Rozsah a dátumy:</strong> Uzávierka podkladov pre údaje v profiloch je 18. októbra 2026. Dňa 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október zostáva čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>
-      </section>
-
       <section className="candidate-section" aria-labelledby="candidates-title">
         {photoReview && privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">
@@ -157,6 +146,7 @@ function App() {
         <div>
           <h2>Zdroj a stav údajov</h2>
           <p>BernoInfo 2026 je nezávislý informačný projekt. Nie je oficiálnou stránkou obce Bernolákovo ani s obcou nie je spojený. Erb obce je použitý ako označenie miesta; <a href={municipalityHome}>zdroj: oficiálna stránka obce</a>.</p>
+          <p>Prvotné zhromaždenie podkladov pre profily sa uzavrelo 18. októbra 2026; 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október je čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Kandidátske tvrdenia sú pripísané kandidátom, nie nezávisle potvrdené. Nedoložený údaj v preskúmaných zdrojoch neznamená, že neexistuje alebo že kandidát odmietol odpovedať.</p>
           <p><strong>Kandidáti na starostu obce:</strong> Mená a poradie podľa <a href={correctedList}>opraveného zoznamu (PDF)</a> a <a href={officialNotice}>oznámenia obce</a>. Naposledy overené 18. októbra 2026.</p>
           <p><strong>Kandidáti na poslancov obecného zastupiteľstva:</strong> Mená, príslušnosť a poradie podľa opravených zoznamov obce pre {councilData.districts.map((district, index) => <React.Fragment key={district.number}>{index > 0 ? ", " : ""}<a href={district.sourceUrl}>obvod {district.number} (PDF)</a></React.Fragment>)}. Zoznamy sú datované {councilData.officialDate}; skontrolované {councilData.checked}. Uvedené čísla sú číslami v zozname, nie overenými číslami na hlasovacom lístku.</p>
           {portraits ? (
