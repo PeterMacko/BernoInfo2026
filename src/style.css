@@ -698,10 +698,17 @@ h1 em {
 .street-section h2 { font: 700 clamp(2rem, 4vw, 3.8rem)/1.08 Manrope, Arial, sans-serif; letter-spacing: -.06em; margin-bottom: 16px; }
 .street-section p { line-height: 1.55; }
 .street-section label { display: block; font-weight: 700; margin: 24px 0 8px; }
-.street-control { display: flex; gap: 8px; }
-.street-control input { min-width: 0; flex: 1; padding: 13px 14px; border: 1px solid #829dbc; border-radius: 2px; background: #fff; color: #183a64; font: inherit; font-size: 1rem; }
-.street-control button { border: 0; border-radius: 2px; padding: 13px 18px; background: #183a64; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.street-control { display: flex; align-items: flex-start; gap: 8px; }
+.street-input-wrap { min-width: 0; flex: 1; }
+.street-control input { display: block; width: 100%; min-width: 0; padding: 13px 14px; border: 1px solid #829dbc; border-radius: 2px; background: #fff; color: #183a64; font: inherit; font-size: 1rem; }
+.street-control button { flex: none; border: 0; border-radius: 2px; padding: 13px 18px; background: #183a64; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
 .street-control button:hover { background: #3564a7; }
+.street-suggestions { max-height: min(240px, 35dvh); overflow-y: auto; overscroll-behavior: contain; margin-top: 2px; border: 1px solid #829dbc; background: #fff; box-shadow: 0 6px 18px #183a6424; }
+.street-suggestion, .street-no-match { padding: 10px 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.street-suggestion { cursor: pointer; min-height: 44px; }
+.street-suggestion:hover, .street-suggestion.is-active { background: #dce9f7; color: #102e52; }
+.street-suggestion[aria-selected="true"] { box-shadow: inset 4px 0 #3564a7; }
+.street-no-match { color: #425f7e; }
 .street-control :focus-visible { outline: 3px solid #a87800; outline-offset: 3px; }
 .street-result:not(:empty) { margin-top: 20px; padding: 20px; border-left: 5px solid #3564a7; background: #fff; }
 .street-result h3 { font: 700 1.4rem Manrope, Arial, sans-serif; margin-bottom: 8px; }
@@ -717,7 +724,7 @@ h1 em {
 .district-polling p { margin: 0 0 8px; font-size: .85rem; line-height: 1.5; }
 .district-polling p:last-child { margin: 0; }
 @media (max-width: 760px) { .street-layout { grid-template-columns: 1fr; } }
-@media (max-width: 480px) { .street-control { flex-direction: column; } .street-control button { width: 100%; } }
+@media (max-width: 480px) { .street-control { flex-direction: column; } .street-input-wrap { width: 100%; } .street-control button { width: 100%; } }
 
 .street-result .result-source { padding-top: 12px; border-top: 1px solid #cad5e3; font-size: .82rem; }
 

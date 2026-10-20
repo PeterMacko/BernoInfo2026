@@ -6,7 +6,7 @@ import { build } from 'esbuild'
 const data = JSON.parse(readFileSync(new URL('../src/street-precincts.json', import.meta.url)))
 const html = readFileSync(new URL('../public/volby/ulice/index.html', import.meta.url), 'utf8')
 const bundled = await build({ entryPoints: [new URL('../src/street-lookup.ts', import.meta.url).pathname], bundle: true, platform: 'node', format: 'esm', write: false })
-const { findStreet, normalizeStreet, venues } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`)
+const { findStreet, normalizeStreet, suggestStreets, venues } = await import(`data:text/javascript;base64,${Buffer.from(bundled.outputFiles[0].text).toString('base64')}`)
 
 test('all 123 official streets resolve uniquely to a district, precinct and venue', () => {
   assert.equal(data.length, 123)
@@ -45,4 +45,12 @@ test('homepage no-JS fallback links to directory and exact district anchors', ()
   const home = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
   assert.match(home, /href="\/volby\/ulice\/"/)
   for (const d of [1,2,3]) assert.match(home, new RegExp(`id="district-${d}"`))
+})
+
+test('partial suggestions include middle substrings, all rows for empty input, and no unknown rows', () => {
+  assert.equal(suggestStreets('').length, 123)
+  assert.ok(suggestStreets('lav').some(row => row.street === 'Hlavná'))
+  assert.ok(suggestStreets('UL. SKOL').some(row => row.street === 'Školská'))
+  assert.deepEqual(suggestStreets('unlikely-street-name'), [])
+  assert.equal(findStreet('lav'), null)
 })

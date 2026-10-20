@@ -21,6 +21,11 @@ export function normalizeStreet(value: string): string {
     .replace(/\s+/g, ' ').trim()
 }
 
+export function suggestStreets(value: string) {
+  const key = normalizeStreet(value)
+  return streetData.filter(row => normalizeStreet(row.street).includes(key))
+}
+
 export function findStreet(value: string) {
   const key = normalizeStreet(value)
   if (!key) return null

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import councilData from './council-candidates.json'
 import issue24Evidence from './issue24-evidence.json'
 import issue24Photos from './issue24-photo-availability.json'
-import { checkedDate, districtSource, findStreet, precinctSource, streetData, venues } from './street-lookup'
+import { checkedDate, districtSource, findStreet, precinctSource, suggestStreets, streetData, venues } from './street-lookup'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -25,6 +25,37 @@ const correctionEmail = 'Mr.petermacko@gmail.com'
 function App() {
   const [streetInput, setStreetInput] = useState('')
   const [searched, setSearched] = useState(false)
+  const [suggestionsOpen, setSuggestionsOpen] = useState(false)
+  const [activeSuggestion, setActiveSuggestion] = useState(-1)
+  const suggestionList = useRef<HTMLDivElement>(null)
+  const suggestions = suggestStreets(streetInput)
+  const selectStreet = (street: string) => {
+    setStreetInput(street)
+    setSearched(false)
+    setSuggestionsOpen(false)
+    setActiveSuggestion(-1)
+  }
+  const handleStreetKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      setSuggestionsOpen(false)
+      setActiveSuggestion(-1)
+    } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+      event.preventDefault()
+      if (!suggestionsOpen) {
+        setSuggestionsOpen(true)
+        setActiveSuggestion(event.key === 'ArrowDown' ? 0 : suggestions.length - 1)
+      } else if (suggestions.length) {
+        setActiveSuggestion(index => index < 0 ? (event.key === 'ArrowDown' ? 0 : suggestions.length - 1) : (index + (event.key === 'ArrowDown' ? 1 : -1) + suggestions.length) % suggestions.length)
+      }
+    } else if (event.key === 'Enter' && suggestionsOpen && activeSuggestion >= 0 && suggestions[activeSuggestion]) {
+      event.preventDefault()
+      selectStreet(suggestions[activeSuggestion].street)
+    }
+  }
+  useEffect(() => {
+    if (activeSuggestion < 0) return
+    suggestionList.current?.querySelector(`[data-suggestion-index="${activeSuggestion}"]`)?.scrollIntoView({ block: 'nearest' })
+  }, [activeSuggestion])
   const result = searched ? findStreet(streetInput) : null
 
   useEffect(() => {
@@ -90,11 +121,15 @@ function App() {
             <p className="section-kicker">Volebné informácie / Bernolákovo</p>
             <h2 id="street-title">Ktorý obvod volím</h2>
             <p>Vyberte alebo napíšte názov ulice. Zistíte volebný obvod pre poslancov, volebný okrsok a volebnú miestnosť podľa oznámení obce.</p>
-            <form onSubmit={event => { event.preventDefault(); setSearched(true) }}>
+            <form onSubmit={event => { event.preventDefault(); setSuggestionsOpen(false); setActiveSuggestion(-1); setSearched(true) }}>
               <label htmlFor="street-name">Ulica v Bernolákove</label>
               <div className="street-control">
-                <input id="street-name" name="street" type="text" list="street-options" autoComplete="off" value={streetInput} onChange={event => { setStreetInput(event.target.value); setSearched(false) }} placeholder="Napr. Hlavná" />
-                <datalist id="street-options">{streetData.map(row => <option key={row.street} value={row.street} />)}</datalist>
+                <div className="street-input-wrap">
+                  <input id="street-name" name="street" type="text" role="combobox" aria-autocomplete="list" aria-controls="street-options" aria-expanded={suggestionsOpen} aria-activedescendant={suggestionsOpen && activeSuggestion >= 0 && suggestions[activeSuggestion] ? `street-option-${activeSuggestion}` : undefined} autoComplete="off" value={streetInput} onFocus={() => setSuggestionsOpen(true)} onBlur={() => { setSuggestionsOpen(false); setActiveSuggestion(-1) }} onKeyDown={handleStreetKeyDown} onChange={event => { setStreetInput(event.target.value); setSearched(false); setSuggestionsOpen(true); setActiveSuggestion(-1) }} placeholder="Napr. Hlavná" />
+                  {suggestionsOpen && <div id="street-options" className="street-suggestions" role="listbox" aria-label="Ulice v Bernolákove" ref={suggestionList}>
+                    {suggestions.length ? suggestions.map((row, index) => <div id={`street-option-${index}`} data-suggestion-index={index} role="option" aria-selected={index === activeSuggestion} className={`street-suggestion${index === activeSuggestion ? ' is-active' : ''}`} key={row.street} onMouseDown={event => event.preventDefault()} onClick={() => selectStreet(row.street)}>{row.street}</div>) : <div className="street-no-match" role="status">Žiadna zhodná ulica. Skontrolujte názov.</div>}
+                  </div>}
+                </div>
                 <button type="submit">Zistiť obvod</button>
               </div>
             </form>
