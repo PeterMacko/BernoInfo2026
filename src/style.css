@@ -685,3 +685,5 @@ h1 em {
   .council-list { grid-template-columns: 1fr; }
 }
 .council-designation { display: block; margin-top: .25rem; font-size: .75rem; line-height: 1.4; font-weight: 400; color: #425f7e; }
+
+.council-thumb{width:2.5rem;height:3rem;object-fit:contain;background:#e3ebf0;flex:none}.dual-office-label{display:block;font-size:.45em;line-height:1.2;margin-top:.2rem}

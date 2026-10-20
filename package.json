@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:photo-review && node scripts/build-issue22-public-review.mjs",
+    "build": "npm run build:photo-review",
     "build:photo-review": "bash scripts/build-photo-review.sh",
     "review:issue22": "node scripts/generate-issue22-local-review.mjs",
     "build:placeholder": "tsc --noEmit && vite build",

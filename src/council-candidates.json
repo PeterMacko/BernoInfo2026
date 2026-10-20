@@ -1,11 +1,11 @@
 {
   "officialDate": "2. septembra 2026",
-  "checked": "19. októbra 2026",
+  "checked": "20. októbra 2026",
   "districts": [
     {
       "number": 1,
       "seats": 5,
-      "sourceUrl": "https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_1.pdf",
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204393_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-1.pdf",
       "candidates": [
         {
           "id": "c-9fd006a7",
@@ -177,7 +177,7 @@
     {
       "number": 2,
       "seats": 5,
-      "sourceUrl": "https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_2.pdf",
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204395_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-2.pdf",
       "candidates": [
         {
           "id": "c-724674d8",
@@ -393,7 +393,7 @@
     {
       "number": 3,
       "seats": 3,
-      "sourceUrl": "https://data.moderneobce.sk/data/uploads/bernolakovo.sk/VO%C4%BDBY_2026/nove/Zoznam_zaregistrovan%C3%BDch_kandid%C3%A1tov_pre_vo%C4%BEby_do_Obecn%C3%A9ho_zastupite%C4%BEstva_-_volebn%C3%BD_obvod_3.pdf",
+      "sourceUrl": "https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204394_zoznam-zaregistrovanych-kandidatov-pre-volby-do-obecneho-zastupitelstva-volebny-obvod-3.pdf",
       "candidates": [
         {
           "id": "c-f6b4af6c",

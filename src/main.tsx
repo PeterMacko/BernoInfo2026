@@ -2,12 +2,22 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { approvedPortraits, candidates, placeholderImage, privatePreviewPortraits } from './candidates'
 import councilData from './council-candidates.json'
+import issue24Evidence from './issue24-evidence.json'
+import issue24Photos from './issue24-photo-availability.json'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
 const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 const portraits = approvedPortraits ?? privatePreviewPortraits
+const dualRoutes: Record<string,string> = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
+const councilRoute = (id:string) => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/` : `/kandidati-na-poslancov/${id}/`
+const councilPhoto = (id:string) => {
+  const photo = (issue24Evidence as Record<string,{photo:{kind:string,url:string|null}}>)[id]?.photo
+  if (import.meta.env.VITE_PRIVATE_PORTRAIT_PREVIEW !== '1') return placeholderImage
+  if (photo?.url && issue24Photos.includes(id)) return `/images/council/${id}.jpg`
+  return dualRoutes[id] ? portraits?.[dualRoutes[id] as keyof typeof portraits]?.src ?? placeholderImage : placeholderImage
+}
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
@@ -59,7 +69,7 @@ function App() {
       </section>
 
       <section className="candidate-section" aria-labelledby="candidates-title">
-        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad portrétov · fotografie nie sú schválené na finálne zverejnenie</p>}
+        {privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">
           <h2 id="candidates-title">Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
@@ -72,13 +82,13 @@ function App() {
                 <a
                   className="candidate-card-link"
                   href={`/kandidati/${candidate.id}/`}
-                  aria-label={`Profil kandidáta ${candidate.registeredName}`}
+                  aria-label={`Profil kandidáta ${candidate.registeredName}${['bartok','cirbus','kostial','turenic'].includes(candidate.id) ? ' na starostu aj poslanca obecného zastupiteľstva' : ' na starostu obce'}`}
                 >
                   <div className="portrait-wrap">
                     <img
                       src={portrait?.src ?? placeholderImage}
                       className={portrait ? `candidate-portrait candidate-portrait--${candidate.id}` : undefined}
-                      alt={portrait ? `Neschválený zdrojový obrázok na kontrolu pre ${candidate.registeredName}; totožnosť zobrazenej osoby nie je nezávisle overená` : ''}
+                      alt={portrait ? `Zdrojová fotografia pre ${candidate.registeredName}; totožnosť zobrazenej osoby nie je nezávisle overená` : ''}
                       aria-hidden={portrait ? undefined : true}
                       width="640"
                       height="760"
@@ -89,7 +99,7 @@ function App() {
                       <span>Číslo v zozname</span>
                       <strong>{String(candidate.listNumber).padStart(2, '0')}</strong>
                     </div>
-                    <h3>{candidate.registeredName}</h3>
+                    <h3>{candidate.registeredName}{['bartok','cirbus','kostial','turenic'].includes(candidate.id) && <small className="dual-office-label">Aj kandidát na poslanca</small>}</h3>
                   </div>
                 </a>
               </li>
@@ -113,8 +123,8 @@ function App() {
             <ol className="council-list">
               {district.candidates.map((candidate) => (
                 <li key={candidate.id}>
-                  <a href={`/kandidati-na-poslancov/${candidate.id}/`} aria-label={`Profil: ${candidate.name}, kandidát na poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
-                    <span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
+                  <a href={councilRoute(candidate.id)} aria-label={`Profil: ${candidate.name}, kandidát na ${dualRoutes[candidate.id] ? 'starostu aj ' : ''}poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
+                    <img className="council-thumb" src={councilPhoto(candidate.id)} alt="" width="48" height="57" loading="lazy" /><span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
                     <span className="council-name">{candidate.name}<small className="council-designation">{candidate.designation}</small></span>
                     <span className="council-arrow" aria-hidden="true">↗</span>
                   </a>

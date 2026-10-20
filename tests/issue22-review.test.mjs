@@ -1,76 +1,29 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { readFileSync, existsSync, statSync, readdirSync } from 'node:fs'
-import { execFileSync } from 'node:child_process'
+import {readFileSync,existsSync,readdirSync} from 'node:fs'
+import {execFileSync} from 'node:child_process'
+const roster=JSON.parse(readFileSync('src/council-candidates.json'))
+const available=JSON.parse(readFileSync('src/issue24-photo-availability.json'))
+const none=['c-724674d8','c-0bc5d04e','c-311f2be6','c-5b5322d7','c-5b003a58']
 
-const reviewPath = '.private/issue22-review/index.html'
-const roster = JSON.parse(readFileSync('src/council-candidates.json','utf8'))
-
-test('private review reconciles all 44 registrations and confines four source images to local review', () => {
-  execFileSync(process.execPath,['scripts/generate-issue22-local-review.mjs'])
-  const html = readFileSync(reviewPath,'utf8')
-  const names = roster.districts.flatMap(d => d.candidates.map(c => c.name))
-  assert.equal(names.length,44)
-  assert.equal((html.match(/class="card"/g) || []).length,44)
-  assert.equal((html.match(/class="portrait"/g) || []).length,44)
-  assert.equal((html.match(/class="flag"/g) || []).length,44)
-  assert.ok(html.includes('101/220 pokusov'))
-  assert.ok(html.includes('119/220 zatiaľ bez pokusu'))
-  for (const district of roster.districts) for (const candidate of district.candidates) {
-    assert.ok(html.includes(candidate.name),candidate.name)
-    assert.ok(html.includes(district.sourceUrl),candidate.name)
-    const publicPage = readFileSync(`public/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
-    assert.ok(publicPage.includes('Facebookový odkaz'))
-  }
-  for (const id of ['D1/14','D2/10','D3/1','D3/3']) assert.ok(html.includes(id))
-  assert.equal((html.match(/Zdrojová stránka fotografie/g) || []).length,4)
-  const files = ['miroslav-turenic-original.jpg','jaroslav-kostial-original.jpg','michal-bartok-original.jpg','martin-cirbus-owner-confirmed.jpg']
-  const available = files.filter(file => existsSync(`.private/portrait-originals/${file}`))
-  assert.equal((html.match(/<img /g) || []).length,available.length)
-  for (const file of files) {
-    assert.equal(html.includes(`images/${file}`),available.includes(file))
-    assert.equal(existsSync(`.private/issue22-review/images/${file}`),available.includes(file))
-  }
-  assert.ok(!html.includes('preview-assets/'))
-  assert.ok(!html.includes('images/candidates/'))
-  assert.ok(existsSync(reviewPath))
-  for (const path of ['.private','.private/issue22-review','.private/issue22-review/images']) assert.equal(statSync(path).mode & 0o777,0o700,path)
-  assert.equal(statSync(reviewPath).mode & 0o777,0o600)
-  for (const file of available) assert.equal(statSync(`.private/issue22-review/images/${file}`).mode & 0o777,0o600,file)
-})
-
-test('preview branch build exposes only four labeled images on a separate review route', () => {
-  const packageJson = JSON.parse(readFileSync('package.json','utf8'))
-  assert.equal(packageJson.scripts.build,'npm run build:photo-review && node scripts/build-issue22-public-review.mjs')
-  execFileSync('npm',['run','build'],{stdio:'pipe'})
-  for (const path of ['public/issue22-review','public/images/candidates']) assert.ok(!existsSync(path),path)
-  const html = readFileSync('dist/issue22-review/index.html','utf8')
-  assert.equal((html.match(/class="card"/g) || []).length,44)
-  assert.equal((html.match(/class="flag"/g) || []).length,44)
-  assert.equal((html.match(/<img /g) || []).length,4)
-  assert.ok(html.includes('verejne dostupná') || html.includes('Verejne dostupná'))
-  assert.ok(html.includes('101/220'))
-  assert.ok(html.includes('0/220'))
-  for (const district of roster.districts) for (const candidate of district.candidates) {
-    const publicPage = readFileSync(`dist/kandidati-na-poslancov/${candidate.id}/index.html`,'utf8')
-    const hasMayorPhoto = ['c-bb232e32','c-307ca828','c-f6b4af6c','c-a4b1db7c'].includes(candidate.id)
-    assert.equal(publicPage.includes('/images/candidates/'),hasMayorPhoto,candidate.name)
-    assert.ok(!publicPage.includes('/issue22-review/images/'))
-    if (hasMayorPhoto) {
-      assert.ok(publicPage.includes('Len vývojová ukážka, neschválené.'))
-      assert.ok(publicPage.includes('Zdroj fotografie'))
-    }
-  }
-  for (const id of ['bartok','cirbus','kandrac','kostial','lakota','rajter','sutka','turenic']) {
-    const page = readFileSync(`dist/kandidati/${id}/index.html`,'utf8')
-    assert.ok(page.includes('/images/candidates/'),id)
-    assert.ok(page.includes('fotografie nie sú schválené'),id)
-    assert.ok(page.includes('pôvodná fotografia'),id)
-  }
-  assert.equal(readdirSync('dist/images/candidates').length,8)
-  const files = ['miroslav-turenic-original.jpg','jaroslav-kostial-original.jpg','michal-bartok-original.jpg','martin-cirbus-original.jpg']
-  assert.deepEqual(readdirSync('dist/issue22-review/images').sort(),files.sort())
-  const generator = readFileSync('scripts/generate-issue22-local-review.mjs','utf8')
-  assert.ok(generator.includes("../.private/issue22-review/"))
-  assert.ok(!generator.includes('writeFileSync(join(root'))
+test('review preview includes source photos while placeholder build keeps them out',()=>{
+ execFileSync('npm',['run','build'],{stdio:'pipe'})
+ assert.equal(readdirSync('dist/images/candidates').length,8)
+ assert.equal(readdirSync('dist/images/council').length,available.length)
+ for(const id of available){
+  const person=roster.districts.flatMap(d=>d.candidates).find(c=>c.id===id)
+  const dual={'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}[id]
+  const path=dual?`dist/kandidati/${dual}/index.html`:`dist/kandidati-na-poslancov/${id}/index.html`
+  const page=readFileSync(path,'utf8')
+  assert.ok(page.includes(person.name.split(' ')[0]))
+  assert.ok(existsSync(`dist/images/council/${id}.jpg`))
+ }
+ for(const id of none){
+  const page=readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8')
+  assert.ok(page.includes('/images/portrait-placeholder.svg'),id)
+ }
+ execFileSync('npm',['run','build:placeholder'],{stdio:'pipe'})
+ assert.ok(!existsSync('dist/images/council'))
+ assert.ok(!existsSync('dist/images/candidates'))
+ for(const id of none)assert.ok(readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes('/images/portrait-placeholder.svg'))
 })

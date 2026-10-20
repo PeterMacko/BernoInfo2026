@@ -4,7 +4,11 @@ import { spawn } from 'node:child_process'
 import { createServer } from 'node:net'
 import { readFileSync } from 'node:fs'
 
-const id = JSON.parse(readFileSync('src/council-candidates.json','utf8')).districts[0].candidates[0].id
+const council = JSON.parse(readFileSync('src/council-candidates.json','utf8')).districts.flatMap(d=>d.candidates)
+const mayors = JSON.parse(readFileSync('src/candidate-details.json','utf8')).candidates
+const dual = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
+const canonicalRoutes = [...mayors.map(c=>`/kandidati/${c.id}/`),...council.filter(c=>!dual[c.id]).map(c=>`/kandidati-na-poslancov/${c.id}/`)]
+const id = council[0].id
 async function freePort() {
   const server = createServer()
   await new Promise(resolve => server.listen(0,'127.0.0.1',resolve))
@@ -32,7 +36,16 @@ async function check(label, command, args, customBody) {
       if (expected===404 && customBody) assert.ok(body.includes('Stránka sa nenašla'),`${label}: custom 404 body`)
       if (path.includes(id)) assert.ok(body.includes('Oficiálne uvedená príslušnosť'),`${label}: candidate page`)
     }
-    console.log(`${label}: valid routes 200; invalid routes 404${customBody ? ' with custom page' : ''}`)
+    for (const path of canonicalRoutes) {
+      const response = await fetch(`http://127.0.0.1:${port}${path}`,{redirect:'manual'})
+      assert.equal(response.status,200,`${label}: ${path}`)
+    }
+    if (customBody) for (const [old,id] of Object.entries(dual)) {
+      const response = await fetch(`http://127.0.0.1:${port}/kandidati-na-poslancov/${old}/`,{redirect:'manual'})
+      assert.equal(response.status,301,`${label}: legacy ${old}`)
+      assert.equal(response.headers.get('location'),`/kandidati/${id}/`)
+    }
+    console.log(`${label}: 48 canonical routes 200; invalid routes 404${customBody ? '; four legacy routes 301' : ''}`)
   } finally {
     child.kill('SIGTERM')
   }
