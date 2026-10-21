@@ -179,7 +179,7 @@ function renderTurenicAssociation(candidate) {
   if (people.length !== ids.length) throw new Error('Missing council candidate in Turenič association')
   return [section('reported-association', 'Nahlásené prepojenie na kandidátov do zastupiteľstva', [
     '<p>Peter 21. októbra 2026 označil nasledujúcich piatich kandidátov za skupinu spojenú s Miroslavom Tureničom. Toto konkrétne prepojenie zatiaľ nebolo nezávisle doložené pomenovaným verejným zdrojom; neuvádzame ich preto ako overený Tureničov volebný tím.</p>',
-    connectionDistricts(people,withPhotos),
+    `<div class="connection-districts">${connectionDistricts(people,withPhotos)}</div>`,
     `<p>V ${link(councilData.districts[0].sourceUrl, 'opravenej listine obvodu 1')}, ${link(councilData.districts[1].sourceUrl, 'obvodu 2')} a ${link(councilData.districts[2].sourceUrl, 'obvodu 3')} majú títo piati spoločnú oficiálnu nomináciu Demokrati, KDH, SaS. ${link(data.officialUrl, 'Turenič je v opravenom zozname kandidátov na starostu')} uvedený ako nezávislý kandidát. Spoločná oficiálna nominácia piatich sama osebe nedokladá ich spoločnú kampaň s Tureničom.</p>`,
     '<small class="source">Podnet: Peter, 21. októbra 2026 · úradné listiny datované 2. septembra 2026 · prepojenie neoverené.</small>',
   ])]

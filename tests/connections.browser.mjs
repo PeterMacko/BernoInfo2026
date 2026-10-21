@@ -35,6 +35,13 @@ try{
  const selected=await evaluate(`(() => ({mayor:document.querySelectorAll('.candidate-card.is-selected').length,council:document.querySelectorAll('.council-list .is-selected').length,related:document.querySelectorAll('.council-list .is-related').length,pressed:document.querySelectorAll('.connection-toggle[aria-pressed="true"]').length,link:document.querySelector('.candidate-card.is-selected a').getAttribute('href')}))()`)
  assert.deepEqual([selected.mayor,selected.council,selected.related,selected.pressed],[1,1,9,2])
  assert.equal(selected.link,'/kandidati/bartok/')
+ const activeStyle=await evaluate(`(() => ({shadow:getComputedStyle(document.querySelector('.candidate-card.is-selected')).boxShadow,related:getComputedStyle(document.querySelector('.council-list .is-related')).boxShadow,icon:!!document.querySelector('.candidate-card.is-selected .connection-toggle svg[aria-hidden="true"]')}))()`)
+ assert.match(activeStyle.shadow,/rgb\(8, 103, 216\)/)
+ assert.notEqual(activeStyle.shadow,activeStyle.related)
+ assert.equal(activeStyle.icon,true)
+ assert.match(await evaluate(`getComputedStyle(document.querySelector('.council-list .is-selected a')).boxShadow`),/rgb\(8, 103, 216\)/)
+ const arrowOffsets=await evaluate(`[...document.querySelectorAll('.council-list li')].map(row=>Math.round(row.getBoundingClientRect().right-row.querySelector('.council-arrow').getBoundingClientRect().right))`)
+ assert.ok(Math.max(...arrowOffsets)-Math.min(...arrowOffsets)<=1,'profile arrows use one terminal alignment')
  status=await click(`document.querySelector('.council-list .is-selected .connection-toggle').click()`)
  assert.match(status,/žiadne prepojenie/)
  status=await click(`document.querySelector('.council-list .connection-toggle').click()`)
@@ -46,6 +53,9 @@ try{
  const turenicButtons=await evaluate(`[...document.querySelectorAll('.candidate-card:last-child .connection-toggle')].map(button=>button.getAttribute('aria-label'))`)
  assert.equal(turenicButtons.length,initial.review?2:1)
  assert.ok(turenicButtons.every(label=>/neoveren/i.test(label)))
+ const turenicVisible=await evaluate(`[...document.querySelectorAll('.candidate-card:last-child .connection-toggle span')].map(item=>item.textContent)`)
+ assert.ok(turenicVisible.every(label=>/Tur.*neoverené/i.test(label)))
+ if(initial.review) assert.notEqual(turenicVisible[0],turenicVisible[1])
  const turenicButton = index => `document.querySelectorAll('.candidate-card:last-child .connection-toggle')[${index}]`
  if(initial.review){
   status=await click(`${turenicButton(0)}.click()`)
@@ -79,5 +89,14 @@ try{
  await pause(100)
  assert.match(await evaluate(`document.querySelector('.connection-status').textContent`),/Tím Bartók/)
  assert.equal(await evaluate(`document.activeElement.classList.contains('connection-toggle')`),true)
+ await command('Page.navigate',{url:`http://127.0.0.1:${sitePort}/kandidati/turenic/`})
+ for(let i=0;i<40;i++){if(await evaluate(`Boolean(document.querySelector('[aria-labelledby="reported-association"] .connection-districts'))`))break;await pause(100)}
+ const profileMobile=await evaluate(`(() => ({overflow:document.documentElement.scrollWidth>innerWidth,columns:getComputedStyle(document.querySelector('[aria-labelledby="reported-association"] .connection-districts')).gridTemplateColumns,districts:document.querySelectorAll('[aria-labelledby="reported-association"] .connection-district').length}))()`)
+ assert.equal(profileMobile.overflow,false)
+ assert.equal(profileMobile.districts,3)
+ assert.equal(profileMobile.columns.split(' ').length,1)
+ await command('Emulation.setDeviceMetricsOverride',{width:1280,height:900,deviceScaleFactor:1,mobile:false})
+ const profileDesktop=await evaluate(`(() => {const region=document.querySelector('[aria-labelledby="reported-association"] .connection-districts');const section=region.closest('section');const cols=[...region.children].map(item=>item.getBoundingClientRect());return {overflow:document.documentElement.scrollWidth>innerWidth,columns:getComputedStyle(region).gridTemplateColumns.split(' ').length,fullWidth:Math.abs(region.getBoundingClientRect().width-section.getBoundingClientRect().width)<2,equal:Math.max(...cols.map(c=>c.width))-Math.min(...cols.map(c=>c.width))<2,belowHeading:region.getBoundingClientRect().top>section.querySelector('h2').getBoundingClientRect().bottom}})()`)
+ assert.deepEqual(profileDesktop,{overflow:false,columns:3,fullWidth:true,equal:true,belowHeading:true})
  console.log(`Connection browser checks passed (${initial.review?'photo-review':'release'}; mobile, reduced motion, buttons, dual office, links)`)
 }finally{ws?.close();server.kill();chrome.kill();rmSync(profile,{recursive:true,force:true,maxRetries:20,retryDelay:100})}

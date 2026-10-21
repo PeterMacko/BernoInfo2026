@@ -42,7 +42,7 @@ export function connectionCards(id,withPhotos,review = false) {
  if (group.kind === 'presented_by' && !review) return ''
  const members=people.filter(p=>p.id!==id && evidence[p.id]?.connection===group.name)
  if (group.name==='Turenič – predstavenie v kampani' && id!=='c-bb232e32') members.unshift(people.find(p=>p.id==='c-bb232e32'))
- const cards=connectionDistricts(members,withPhotos)
+ const cards=`<div class="connection-districts">${connectionDistricts(members,withPhotos)}</div>`
  const uncertain = group.kind === 'presented_by'
  const source = group.name === 'ZA BERnolákovo'
    ? `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=21">Bernolák 2/2026, strana PDF 21</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=22">22</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=23">23</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=24">24</a> (individuálne pomenované zelené reklamy)`
