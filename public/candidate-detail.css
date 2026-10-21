@@ -118,7 +118,6 @@ a:focus-visible {
 .hero-channels a:hover { text-decoration: underline; }
 .hero-channels a:focus-visible { outline-color: #f4d56a; }
 .hero-channels svg { width: 1.2rem; height: 1.2rem; flex: none; }
-.hero-channel-unavailable { color: #d9e5f2; }
 
 .candidate-nav {
   display: grid;
@@ -209,7 +208,7 @@ a:focus-visible {
 
 .link-slots {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1.5rem;
 }
 

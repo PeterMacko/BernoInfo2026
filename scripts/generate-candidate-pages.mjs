@@ -126,7 +126,6 @@ function renderFunctions(candidate) {
 }
 
 function renderChannel(url, note, publisher, supplied = false) {
-  if (!url) return [empty]
   return [
     `<p>${link(url, 'Otvoriť zdroj')}${note ? ` — ${escapeHtml(note)}` : ''}</p>`,
     source(url, publisher, 'dátum zverejnenia neuvedený', supplied ? 'odkaz dodal Peter 21. októbra 2026; obsah nebol nezávisle overený' : data.checked),
@@ -134,11 +133,13 @@ function renderChannel(url, note, publisher, supplied = false) {
 }
 
 function renderChannels(candidate) {
-  return [block('div', ' class="link-slots"', [
-    block('div', '', ['<h3>Web kandidáta</h3>', ...renderChannel(candidate.website, null, 'Web kandidáta', candidate.id === 'bartok')]),
-    block('div', '', ['<h3>Facebook</h3>', ...renderChannel(candidate.facebook, candidate.facebookNote, 'Facebook — kandidátsky označená alebo prepojená stránka', candidate.id === 'cirbus')]),
-    block('div', '', ['<h3>Instagram</h3>', ...renderChannel(candidate.instagram, 'Odkaz dodal prevádzkovateľ projektu; prevádzkovateľ účtu nebol nezávisle overený.', 'Instagram — kandidátsky označený účet', true)]),
-  ])]
+  const channels = [
+    ['Web kandidáta', candidate.website, null, 'Web kandidáta', candidate.id === 'bartok'],
+    ['Facebook', candidate.facebook, candidate.facebookNote, 'Facebook — kandidátsky označená alebo prepojená stránka', candidate.id === 'cirbus'],
+    ['Instagram', candidate.instagram, 'Odkaz dodal prevádzkovateľ projektu; prevádzkovateľ účtu nebol nezávisle overený.', 'Instagram — kandidátsky označený účet', true],
+  ]
+  return [block('div', ' class="link-slots"', channels.filter(([, url]) => url).map(([label, url, note, publisher, supplied]) =>
+    block('div', '', [`<h3>${label}</h3>`, ...renderChannel(url, note, publisher, supplied)])))]
 }
 
 const channelIcons = {
@@ -149,9 +150,8 @@ const channelIcons = {
 
 function renderTopChannels(candidate) {
   const slots = [['website', 'Web', candidate.website], ['facebook', 'Facebook', candidate.facebook], ['instagram', 'Instagram', candidate.instagram]]
-  return block('div', ' class="hero-channels" aria-label="Odkazy na kanály kandidáta"', slots.map(([kind, label, url]) =>
-    url ? `<a href="${escapeHtml(url)}" aria-label="${escapeHtml(label)} — ${escapeHtml(candidate.name)}">${channelIcons[kind]}<span>${escapeHtml(label)}</span></a>` :
-      `<span class="hero-channel-unavailable">${channelIcons[kind]}<span>${escapeHtml(label)}: odkaz nezistený</span></span>`))
+  return block('div', ' class="hero-channels" aria-label="Odkazy na kanály kandidáta"', slots.filter(([, , url]) => url).map(([kind, label, url]) =>
+    `<a href="${escapeHtml(url)}" aria-label="${escapeHtml(label)} — ${escapeHtml(candidate.name)}">${channelIcons[kind]}<span>${escapeHtml(label)}</span></a>`))
 }
 
 function renderTenQuestions(candidate) {
@@ -159,13 +159,6 @@ function renderTenQuestions(candidate) {
     `<p>${link(candidate.tenQuestions, `Príspevok k rubrike 10 otázok — ${candidate.name}`)}. Odkaz dodaný ako súčasť rubriky Bernolákovo Online; presný obsah príspevku ani prípadné odpovede nie sú overené.</p>`,
     source(candidate.tenQuestions, 'Bernolákovo Online — Facebook', 'dátum príspevku nezistený', 'odkaz dodal Peter 21. októbra 2026; obsah nebol nezávisle overený'),
   ] : ['<p class="empty">V dodanej sade nebol odkaz na túto rubriku doložený. Neznamená to, že príspevok alebo odpovede neexistujú.</p>']
-}
-
-function renderCompanies() {
-  return [
-    empty,
-    '<p class="qualifier">Žiadna firemná funkcia nie je uvedená: priamy záznam, IČO, obdobie a spoľahlivé priradenie osoby neboli doložené. Priamy prístup k FinStat bol pri výskume nedostupný. Nejde o potvrdenie neexistencie funkcie.</p>',
-  ]
 }
 
 function renderInterview(candidate) {
@@ -244,7 +237,6 @@ function renderSections(candidate) {
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
     ...renderCouncilLinks(candidate),
     ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
-    section('companies', 'Firemné funkcie', renderCompanies()),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('ten-questions', '10 otázok — Bernolákovo Online', renderTenQuestions(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),
