@@ -2,7 +2,7 @@
 
 ## Editorial rule
 
-Use only relationships already represented in the source-qualified profile evidence. A common nominator, independent registration, or a shared source link is not itself a mayoral alliance. Distinguish campaign-presented team membership from a reported or unverified association in visible copy. Do not enlarge the relationship graph from roster labels. Retain existing preview-only treatment for the four Turenič campaign-introduction leads from the working compilation. Peter's separate 21 October five-person report is already present in the release profile under issue #41; preserve it in all build modes, explicitly unverified, and do not silently promote it to a verified team.
+Use only relationships already represented in the source-qualified profile evidence. A common nominator, independent registration, or a shared source link is not itself a mayoral alliance. Distinguish campaign-presented team membership from a reported or unverified association in visible copy. Do not enlarge the relationship graph from roster labels. Retain existing preview-only treatment for the four Turenič campaign-introduction leads from the working compilation. **Superseded by #51 (21 October):** the prior instruction to label Peter's separate five-person report “explicitly unverified” no longer applies to its team control or profile heading after Peter confirmed the grouping. Attribute it to Peter and do not imply independent public-source verification or official-list status.
 
 ## Profile acceptance
 
@@ -14,7 +14,7 @@ Use only relationships already represented in the source-qualified profile evide
 
 - Show an independently operable corner button only for cards with an existing source-qualified relationship. Button activation selects that person's connected set; activating it again clears, and another button switches the set. Include mayoral and council appearances of a dual-office person in the same selection.
 - Visually distinguish selected, related, and unrelated cards without hiding or reordering anyone. An accessible text status identifies the selection and qualification; buttons expose their state. The card's normal profile link remains usable across its remaining area, including without JavaScript.
-- A reported or unverified connection must be visibly qualified, including in the button/status, and must follow its existing preview/release gate. In particular, the five-person Turenič report is shown with its qualification in all modes, whereas the distinct four-person working-attachment introductions remain photo-review-only. Homepage display must never imply that a highlighted set is an official electoral slate.
+- A reported or unverified connection must be visibly qualified, including in the button/status, and must follow its existing preview/release gate. **Updated by #51:** the five-person Turenič grouping is Peter-confirmed editorial input in all modes; identify its source without an “neoverené” control suffix. The distinct four-person working-attachment introductions remain photo-review-only. Homepage display must never imply that a highlighted set is an official electoral slate.
 - Check keyboard and touch interaction, narrow mobile layout, reduced motion, release/preview modes, and source/profile navigation.
 
 ## Evidence boundary

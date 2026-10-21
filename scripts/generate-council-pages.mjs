@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 const data = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
 const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
-import {evidence, dualRoutes, personRoute, photoFor, connectionCards} from './issue24-shared.mjs'
+import {evidence, dualRoutes, personRoute, photoFor, connectionCards, turenicTeamCards} from './issue24-shared.mjs'
 import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const photoReview = mode === 'photo-review'
@@ -59,6 +59,7 @@ function render(candidate, district) {
   const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Fotografia kandidáta ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${portrait ? (photoReview ? 'Len kontrolný náhľad.' : '') : 'Jednotná zástupná plocha.'}</figcaption></figure>`
   const photoEvidence = item.photo.url ? `<p>Obrazový podklad: ${link(item.photo.url,'Zdrojová stránka fotografie')} · ${esc(item.photo.kind)} · rok podľa publikácie ${item.photo.kind==='archival PDF'?(item.photo.url.includes('2018')?'2018':'2022'):'2026'}; dátum vzniku záberu neznámy. Fotografia nie je dôkazom vlastníctva účtu.</p>` : '<p>V preskúmanej kompilácii nie je potvrdená fotografia tejto osoby.</p>'
   const connection = connectionCards(candidate.id,withPhotos,photoReview)
+  const turenicTeam = turenicTeamCards(candidate.id,withPhotos)
   return `<!doctype html>
 <html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">${mode === 'release' ? '' : '<meta name="robots" content="noindex, nofollow">'}<meta name="theme-color" content="#183a64"><link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp"><link rel="canonical" href="/kandidati-na-poslancov/${candidate.id}/"><title>${esc(candidate.name)} — kandidatúra na poslanca obecného zastupiteľstva — BernoInfo 2026</title><meta name="description" content="Kandidatúra na poslanca obecného zastupiteľstva obce Bernolákovo: ${esc(candidate.name)}."><link rel="stylesheet" href="/candidate-detail.css"></head>
 <body><div class="page"><header class="masthead"><a class="brand" href="/">BERNO<span>INFO</span> 2026</a><span>Nezávislý projekt · nie stránka obce</span></header><main>
@@ -71,7 +72,7 @@ ${section('programme','Programové návrhy',gap)}
 ${section('interview','Rozhovor alebo video',gap)}
 ${section('channels','Odkazy na kandidáta',channel)}
 ${section('photo-source','Obrazový zdroj',photoEvidence)}
-${connection}
+${connection}${turenicTeam ? '\n' + turenicTeam : ''}
 ${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Pre program a rozhovory nebol v čiastočnej rešerši doložený priamy datovaný stabilný zdroj pre každého kandidáta. Odkazy sú prenesené z 44-riadkovej pracovnej kompilácie a rozlišujú zdieľané stránky, príspevky a kandidátsky označené účty. Pravdepodobné, historické a iba spomínajúce odkazy nie sú prezentované ako účty kandidátov. Prázdne rubriky neznamenajú neprítomnosť stanoviska či zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
 </div></main><footer><a href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>\n`
 }

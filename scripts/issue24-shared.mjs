@@ -4,11 +4,13 @@ const mayorPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.j
 export const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url)))
 export const dualRoutes = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
 export const people = roster.districts.flatMap(d=>d.candidates.map(c=>({...c,district:d.number,officialUrl:d.sourceUrl})))
+export const turenicTeamIds = ['c-a7eb4e22','c-6d9a5867','c-be773c61','c-a8a3f42b','c-73b7e5fe']
 const rosterIds = new Set(people.map(person=>person.id))
 export function assertKnownCouncilIds(ids,context='relationship') {
  for (const id of ids) if (!rosterIds.has(id)) throw new Error(`${context}: council ID ${id} is absent from official roster`)
 }
 assertKnownCouncilIds(Object.keys(evidence),'issue24 evidence')
+assertKnownCouncilIds(turenicTeamIds,'Turenič team')
 assertKnownCouncilIds(Object.keys(dualRoutes),'dual-office routes')
 for (const person of people) if (!evidence[person.id]) throw new Error(`issue24 evidence: missing official roster ID ${person.id}`)
 
@@ -50,6 +52,12 @@ export function connectionCards(id,withPhotos,review = false) {
    : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}">kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
    : `<a href="${esc(group.source)}">Zdroj predstavenia</a>`
  return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':relationLabel} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
+}
+
+export function turenicTeamCards(id,withPhotos) {
+ if (!turenicTeamIds.includes(id)) return ''
+ const members=people.filter(person=>person.id!==id && (turenicTeamIds.includes(person.id) || person.id==='c-bb232e32'))
+ return `<section class="detail-section connections" aria-labelledby="turenic-team"><h2 id="turenic-team">Tím Miroslava Tureniča</h2><p>Peter 21. októbra 2026 potvrdil prepojenie týchto piatich kandidátov s Tureničovým tímom. Zdrojom prepojenia je Petrovo redakčné potvrdenie; nejde o oficiálnu volebnú listinu ani nezávislé overenie verejným zdrojom. Na tejto stránke sú odkazy na ostatných členov a Miroslava Tureniča.</p><div class="connection-districts">${connectionDistricts(members,withPhotos)}</div><small class="source">Zdroj prepojenia: Peter, 21. októbra 2026 · mená, obvody a poradie: opravené úradné listiny datované 2. septembra 2026.</small></section>`
 }
 
 export function connectionDistricts(members,withPhotos) {

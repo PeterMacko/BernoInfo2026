@@ -417,8 +417,8 @@ footer p {
 
 .connection-district{margin-top:1.35rem}.connection-district h3{font-size:1.05rem;margin:0 0 .6rem}.connection-card a:focus-visible{outline:3px solid #a87800;outline-offset:2px}
 
-/* Related districts span the profile width below the heading and context. */
-.detail-section > .connection-districts{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.75rem,2vw,1.5rem);min-width:0}
+/* Keep related candidates aligned with the section's content, clear of its heading column. */
+.detail-section > .connection-districts{grid-column:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.75rem,2vw,1.5rem);min-width:0}
 .detail-section > .connection-districts:has(> .connection-district:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
 .detail-section > .connection-districts:has(> .connection-district:first-child:last-child){grid-template-columns:1fr}
 .connection-districts .connection-district{min-width:0;margin-top:0}

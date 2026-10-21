@@ -73,5 +73,5 @@ test('sourced connections use internal person links and equal cards',()=>{
  }
  const report=readFileSync('public/kandidati/turenic/index.html','utf8')
  assert.ok(report.includes('reported-association'))
- assert.ok(report.includes('prepojenie neoverené'))
+ assert.ok(report.includes('Peter 21. októbra 2026 potvrdil'))
 })

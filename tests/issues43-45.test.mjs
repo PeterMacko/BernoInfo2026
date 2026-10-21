@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {execFileSync} from 'node:child_process'
-import {assertKnownCouncilIds, connectionCards, connectionDistricts, evidence, people, personRoute} from '../scripts/issue24-shared.mjs'
+import {assertKnownCouncilIds, connectionCards, connectionDistricts, evidence, people, personRoute, turenicTeamCards} from '../scripts/issue24-shared.mjs'
 
 const read = file => readFileSync(file,'utf8')
 const section = (html,id) => html.match(new RegExp(`<section class="detail-section(?: connections)?" aria-labelledby="${id}">[\\s\\S]*?<\\/section>`))?.[0]
@@ -67,8 +67,8 @@ test('all builds retain qualified five-person report and gate source portraits c
   const association=section(turenic,'reported-association')
   assert.ok(association,command)
   {
-   assert.match(association,/nebolo nezávisle doložené/)
-   assert.match(association,/prepojenie neoverené/)
+   assert.match(association,/Peter 21. októbra 2026 potvrdil/)
+   assert.match(association,/nejde o oficiálnu volebnú listinu ani nezávislé overenie/)
    assert.deepEqual([...association.matchAll(/<h3>Volebný obvod (\d)<\/h3>/g)].map(match=>Number(match[1])),[1,2,3])
    for(const id of reported) assert.ok(association.includes(`/kandidati-na-poslancov/${id}/`),id)
    assert.equal(association.includes('/images/council/'),command!=='build:placeholder')
@@ -82,5 +82,24 @@ test('all builds retain qualified five-person report and gate source portraits c
   const council=section(read('dist/kandidati-na-poslancov/c-9fd006a7/index.html'),'connections')
   assert.ok(council)
   assert.match(council,/Volebný obvod/)
+  for (const id of reported) {
+   const team=section(read(`dist/kandidati-na-poslancov/${id}/index.html`),'turenic-team')
+   assert.ok(team,`${command}: ${id}`)
+   assert.ok(team.includes('/kandidati/turenic/'))
+   assert.ok(!team.includes(`/kandidati-na-poslancov/${id}/`))
+   for (const peer of reported.filter(peer=>peer!==id)) assert.ok(team.includes(`/kandidati-na-poslancov/${peer}/`),peer)
+  }
  }
+})
+
+test('Turenič team cards retain right-column alignment and owner attribution',()=>{
+ const css=read('public/candidate-detail.css')
+ assert.match(css,/\.detail-section > \.connection-districts\{grid-column:2;/)
+ const html=turenicTeamCards(reported[0],false)
+ assert.match(html,/Zdroj prepojenia: Peter/)
+ assert.match(html,/Tím Miroslava Tureniča/)
+ assert.doesNotMatch(html,/neoverené/)
+ const source=read('src/connections.ts')
+ assert.match(source,/controlLabel: 'Tím Tureniča'/)
+ assert.doesNotMatch(source,/id: 'turenic-reported', controlLabel: '[^']*neoverené/)
 })
