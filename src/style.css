@@ -148,6 +148,26 @@ h1 em {
   margin-bottom: 27px;
 }
 
+.intro-stats {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.intro-stats li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.intro-stats li > span:last-child {
+  color: #e5edf7;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
 .municipal-arms {
   display: flex;
   align-items: center;
@@ -181,20 +201,11 @@ h1 em {
 
 .count {
   display: block;
-  margin-bottom: 12px;
   font-family: Manrope, Arial, sans-serif;
-  font-size: clamp(3.4rem, 5vw, 5rem);
+  font-size: clamp(2rem, 3vw, 2.8rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -.08em;
-}
-
-.count span {
-  color: #bbcee4;
-  font-size: .25em;
-  font-weight: 500;
-  letter-spacing: -.04em;
-  vertical-align: middle;
 }
 
 .intro-aside p {
@@ -379,51 +390,6 @@ h1 em {
   overflow-wrap: anywhere;
 }
 
-.portrait-sources {
-  padding: 0 clamp(24px, 5vw, 76px) 50px;
-}
-
-.portrait-sources h2 {
-  margin: 0 0 8px;
-  font-family: Manrope, Arial, sans-serif;
-  font-size: 1.15rem;
-  letter-spacing: -.04em;
-}
-
-.portrait-sources p {
-  margin: 0 0 18px;
-  color: #35516f;
-  font-size: 13px;
-  line-height: 1.65;
-}
-
-.portrait-sources ol {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0 30px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
-}
-
-.portrait-sources li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 15px;
-  padding: 10px 0;
-  border-top: 1px solid #bccde0;
-  font-size: 13px;
-}
-
-.portrait-sources li span:first-child {
-  flex-basis: 100%;
-  font-weight: 700;
-}
-
-.portrait-sources li span:last-child {
-  color: #35516f;
-}
-
 .source-note {
   display: grid;
   grid-template-columns: 74px minmax(0, 1fr);
@@ -577,9 +543,6 @@ h1 em {
   }
   .section-heading p {
     text-align: left;
-  }
-  .portrait-sources ol {
-    grid-template-columns: 1fr;
   }
   .source-note {
     grid-template-columns: 1fr;
