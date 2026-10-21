@@ -36,7 +36,7 @@ function publicPage(path, name, origin, preview) {
   assert.equal(value(html,'og:locale','property'),'sk_SK')
   assert.equal(value(html,'twitter:card'),'summary_large_image')
   assert.equal(value(html,'author'),'Peter Macko &amp; OpenClaw')
-  assert.equal(value(html,'date'),'2026-10-20')
+  assert.equal(value(html,'date'),'2026-10-21')
   assert.equal(html.includes('name="robots"'),preview,path)
   if (preview) assert.equal(value(html,'robots'),'noindex, nofollow')
 }
@@ -55,7 +55,7 @@ function checkCrawlPolicy(release) {
     assert.equal(locations.length,canonicalPaths.length)
     assert.deepEqual(new Set(locations),new Set(canonicalPaths.map(path=>productionOrigin+path)))
     assert.equal(new Set(locations).size,locations.length)
-    assert.deepEqual([...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(m=>m[1]), Array(locations.length).fill('2026-10-20'))
+    assert.ok(!sitemap.includes('<lastmod>'),'per-page modification dates are not tracked')
     assert.ok(!sitemap.includes('/404.html'))
     for(const id of Object.keys(dual)) assert.ok(!sitemap.includes(id))
   } else {

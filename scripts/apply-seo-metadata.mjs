@@ -4,9 +4,9 @@ import { join } from 'node:path'
 const root = process.argv[2] || 'dist'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const productionOrigin = 'https://bernoinfo2026.mr-petermacko.workers.dev'
-// Editorial snapshot date: both candidate source ledgers were checked on 20 October 2026.
-// Keep this explicit; a CI build time is not a content update.
-const editorialDate = '2026-10-20'
+// Site-wide editorial snapshot date: the homepage includes an editorial update dated
+// 21 October 2026. Keep this explicit; a CI build time is not a content update.
+const editorialDate = '2026-10-21'
 const ciBranch = process.env.WORKERS_CI_BRANCH || null
 const pagesContext = Boolean(process.env.CF_PAGES || process.env.CF_PAGES_BRANCH || process.env.CF_PAGES_URL)
 if (pagesContext) {
@@ -122,7 +122,7 @@ apply(join(root, 'o-projekte', 'index.html'), head('O projekte — BernoInfo 202
 apply(join(root, '404.html'), head('Stránka sa nenašla — BernoInfo 2026', 'Požadovaná stránka sa nenašla. Vráťte sa na prehľad komunálnych volieb v Bernolákove.', '/404.html', { noindex: true, redirect: true }))
 if (mode === 'release') {
   writeFileSync(join(root, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${canonical('/sitemap.xml')}\n`)
-  writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${publicPaths.map(path => `  <url><loc>${esc(canonical(path))}</loc><lastmod>${editorialDate}</lastmod></url>`).join('\n')}\n</urlset>\n`)
+  writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${publicPaths.map(path => `  <url><loc>${esc(canonical(path))}</loc></url>`).join('\n')}\n</urlset>\n`)
 } else {
   writeFileSync(join(root, 'robots.txt'), 'User-agent: *\nDisallow: /\n')
   rmSync(join(root, 'sitemap.xml'), { force: true })
