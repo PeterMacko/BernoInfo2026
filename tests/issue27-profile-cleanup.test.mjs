@@ -12,7 +12,7 @@ const dual = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial'
 const rows = districts.flatMap(d=>d.candidates.map(c=>({...c,key:`D${d.number}/${c.listNumber}`})))
 const path = c => `dist/${dual[c.id] ? `kandidati/${dual[c.id]}` : `kandidati-na-poslancov/${c.id}`}/index.html`
 const page = c => readFileSync(path(c),'utf8')
-const run = script => execFileSync('npm',['run',script],{stdio:'pipe'})
+const run = script => execFileSync('npm',['run',script],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
 const removed = /Čo je doložené — a čo zostáva otvorené|Ako čítať tento profil|Facebookový odkaz priradený Petrom|Peter priradil tento odkaz/
 
 function checkCommon() {

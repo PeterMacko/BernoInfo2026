@@ -9,8 +9,13 @@ for name in michal-bartok martin-cirbus filip-kandrac jaroslav-kostial peter-lak
   }
 done
 
-SITE_BUILD_MODE=release VITE_PRIVATE_PORTRAIT_PREVIEW=1 VITE_SITE_BUILD_MODE=release npm run build:placeholder
-sed -i '/<meta name="robots" content="noindex, nofollow" \/>/d' dist/index.html
+# Workers Builds sets WORKERS_CI_BRANCH. Non-main branches are review previews,
+# never indexable releases, even though they share the same npm build command.
+site_mode=release
+if [[ -n "${WORKERS_CI_BRANCH:-}" && "${WORKERS_CI_BRANCH}" != main ]]; then
+  site_mode=preview
+fi
+SITE_BUILD_MODE="$site_mode" VITE_PRIVATE_PORTRAIT_PREVIEW=1 VITE_SITE_BUILD_MODE="$site_mode" npm run build:placeholder
 mkdir -p dist/images/candidates dist/images/council
 cp preview-assets/candidates/*.jpg dist/images/candidates/
 cp preview-assets/council/*.jpg dist/images/council/
