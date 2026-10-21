@@ -25,7 +25,7 @@ const councilPhoto = (id:string) => {
 }
 const correctionEmail = 'Mr.petermacko@gmail.com'
 const menuItems = [
-  { id: 'candidates-title', label: 'Primátori' },
+  { id: 'candidates-title', label: 'Starostovia' },
   { id: 'district-1', label: 'Obvod 01' },
   { id: 'district-2', label: 'Obvod 02' },
   { id: 'district-3', label: 'Obvod 03' },
