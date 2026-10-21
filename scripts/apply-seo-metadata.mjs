@@ -4,6 +4,7 @@ import { join } from 'node:path'
 const root = process.argv[2] || 'dist'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const productionOrigin = 'https://bernoinfo2026.mr-petermacko.workers.dev'
+const pagesProductionOrigin = 'https://bernolakovo2026.pages.dev'
 // Site-wide editorial snapshot date: the homepage includes an editorial update dated
 // 21 October 2026. Keep this explicit; a CI build time is not a content update.
 const editorialDate = '2026-10-21'
@@ -13,9 +14,16 @@ if (pagesContext) {
   if (process.env.CF_PAGES !== '1' || !process.env.CF_PAGES_BRANCH || !process.env.CF_PAGES_URL || ciBranch) {
     throw Error('Incomplete or conflicting Cloudflare Pages build context.')
   }
-  if (mode !== 'preview') throw Error('Cloudflare Pages builds must use preview mode and remain noindex.')
-  if (process.env.SITE_ORIGIN !== process.env.CF_PAGES_URL) {
-    throw Error('SITE_ORIGIN must match CF_PAGES_URL in a Pages build.')
+  if (!/^https:\/\/([a-z0-9-]+\.)?bernolakovo2026\.pages\.dev$/.test(process.env.CF_PAGES_URL)) {
+    throw Error('CF_PAGES_URL must belong to the Bernolákovo Pages project.')
+  }
+  const pagesMain = process.env.CF_PAGES_BRANCH === 'main'
+  const expectedOrigin = pagesMain ? pagesProductionOrigin : process.env.CF_PAGES_URL
+  if (mode !== (pagesMain ? 'release' : 'preview') || (!pagesMain && expectedOrigin === pagesProductionOrigin)) {
+    throw Error('Pages main must be a release and branch previews must remain noindex.')
+  }
+  if (process.env.SITE_ORIGIN !== expectedOrigin) {
+    throw Error('SITE_ORIGIN conflicts with the expected Pages origin.')
   }
 }
 if (ciBranch && !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(ciBranch) && !process.env.SITE_ORIGIN) {
@@ -37,16 +45,16 @@ else if (ciBranch && /^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(ciBranch)) {
   if (slug && `${slug}-bernoinfo2026`.length <= 63) derivedOrigin = `https://${slug}-bernoinfo2026.mr-petermacko.workers.dev`
 }
 const originInput = process.env.SITE_ORIGIN || derivedOrigin
-if (mode === 'release' && !ciBranch && (!originInput || process.env.RELEASE_ORIGIN_VERIFIED !== '1')) {
+if (mode === 'release' && !ciBranch && !pagesContext && (!originInput || process.env.RELEASE_ORIGIN_VERIFIED !== '1')) {
   throw Error('Local release metadata requires SITE_ORIGIN and RELEASE_ORIGIN_VERIFIED=1.')
 }
 if (mode === 'release' && ciBranch === 'main' && originInput !== productionOrigin) {
   throw Error('Main Workers Build must use the verified production origin.')
 }
-if (mode === 'release' && originInput !== productionOrigin) {
-  throw Error('Release indexing requires the verified production origin.')
+if (mode === 'release' && originInput !== (pagesContext ? pagesProductionOrigin : productionOrigin)) {
+  throw Error('Release indexing requires the verified origin for this platform.')
 }
-if (ciBranch && ciBranch !== 'main' && originInput === productionOrigin) {
+if (mode !== 'release' && (originInput === productionOrigin || originInput === pagesProductionOrigin)) {
   throw Error('Preview must not claim the public release origin.')
 }
 let origin = null

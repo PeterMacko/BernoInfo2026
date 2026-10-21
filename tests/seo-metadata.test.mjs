@@ -46,14 +46,14 @@ const canonicalPaths=['/',...mayor.map(c=>`/kandidati/${c.id}/`),
   ...council.filter(c=>!dual[c.id]).map(c=>`/kandidati-na-poslancov/${c.id}/`),
   '/volby/ulice/','/o-projekte/']
 assert.equal(canonicalPaths.length,51,'expected canonical route count')
-function checkCrawlPolicy(release) {
+function checkCrawlPolicy(release, origin=productionOrigin) {
   const robots=readFileSync('dist/robots.txt','utf8')
   if (release) {
-    assert.equal(robots,`User-agent: *\nAllow: /\nSitemap: ${productionOrigin}/sitemap.xml\n`)
+    assert.equal(robots,`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`)
     const sitemap=readFileSync('dist/sitemap.xml','utf8')
     const locations=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1])
     assert.equal(locations.length,canonicalPaths.length)
-    assert.deepEqual(new Set(locations),new Set(canonicalPaths.map(path=>productionOrigin+path)))
+    assert.deepEqual(new Set(locations),new Set(canonicalPaths.map(path=>origin+path)))
     assert.equal(new Set(locations).size,locations.length)
     assert.ok(!sitemap.includes('<lastmod>'),'per-page modification dates are not tracked')
     assert.ok(!sitemap.includes('/404.html'))
@@ -134,19 +134,22 @@ test('preview and release initial HTML cover all public routes and suppress non-
   checkCrawlPolicy(true)
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'main',SITE_BUILD_MODE:'release',SITE_ORIGIN:'https://wrong.example.org'}}))
 
-  const pagesOrigin='https://abc123.bernoinfo-pages.pages.dev'
+  const pagesOrigin='https://abc123.bernolakovo2026.pages.dev'
+  const pagesProductionOrigin='https://bernolakovo2026.pages.dev'
   const pagesEnv={...testEnv,WORKERS_CI_BRANCH:'',CF_PAGES:'1',CF_PAGES_BRANCH:'main',CF_PAGES_URL:pagesOrigin,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}
   execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_BRANCH:'developer/issue-37-pages-workers'}})
   publicPage('/','Komunálne voľby',pagesOrigin,true)
   checkCrawlPolicy(false)
   execFileSync('npm',['run','build'],{stdio:'pipe',env:pagesEnv})
-  publicPage('/','Komunálne voľby',pagesOrigin,true)
-  publicPage('/kandidati/bartok/','Michal BARTÓK',pagesOrigin,true)
-  checkCrawlPolicy(false)
+  publicPage('/','Komunálne voľby',pagesProductionOrigin,false)
+  publicPage('/kandidati/bartok/','Michal BARTÓK',pagesProductionOrigin,false)
+  checkCrawlPolicy(true,pagesProductionOrigin)
   assert.ok(!read('/').includes('https://bernoinfo2026.mr-petermacko.workers.dev'))
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...pagesEnv,SITE_BUILD_MODE:'release',SITE_ORIGIN:pagesOrigin}}))
   assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:''}}))
   assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,WORKERS_CI_BRANCH:'main'}}))
   assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,SITE_ORIGIN:'https://wrong.example.org'}}))
   assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:'http://not-https.example.org'}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:'https://other.pages.dev'}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_BRANCH:'feature',CF_PAGES_URL:pagesProductionOrigin}}))
 })
