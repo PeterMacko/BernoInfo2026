@@ -3,6 +3,9 @@ import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
 import { readFileSync, statSync } from 'node:fs'
 
+const testEnv = {...process.env}
+for (const key of ['CF_PAGES', 'CF_PAGES_BRANCH', 'CF_PAGES_URL', 'WORKERS_CI_BRANCH', 'SITE_ORIGIN', 'RELEASE_ORIGIN_VERIFIED', 'SITE_BUILD_MODE', 'VITE_SITE_BUILD_MODE']) delete testEnv[key]
+
 const mayor = JSON.parse(readFileSync('src/candidate-details.json')).candidates
 const council = JSON.parse(readFileSync('src/council-candidates.json')).districts.flatMap(d => d.candidates)
 const dual = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
@@ -42,17 +45,17 @@ test('preview and release initial HTML cover all public routes and suppress non-
   assert.equal(image.readUInt32BE(16),1200)
   assert.equal(image.readUInt32BE(20),630)
   assert.ok(statSync('public/images/bernoinfo-social.png').size < 5_000_000)
-  execFileSync('npm',['run','build:placeholder'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
+  execFileSync('npm',['run','build:placeholder'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
   publicPage('/','Komunálne voľby',preview,true)
   publicPage('/kandidati/bartok/','Michal BARTÓK',preview,true)
   assert.ok(!read('/kandidati/bartok/').includes(release))
-  execFileSync('npm',['run','build:photo-review'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
+  execFileSync('npm',['run','build:photo-review'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
   const reviewHead=read('/kandidati/bartok/')
   assert.ok(reviewHead.includes('name="robots"'))
   assert.ok(!reviewHead.includes('property="og:'))
   assert.ok(!reviewHead.includes('name="twitter:'))
-  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_BUILD_MODE:'release',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'0'}}))
-  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'1'}})
+  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_BUILD_MODE:'release',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'0'}}))
+  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'1'}})
   publicPage('/','Komunálne voľby',release,false)
   for(const c of mayor) {
     const html=read(`/kandidati/${c.id}/`)
@@ -87,12 +90,26 @@ test('preview and release initial HTML cover all public routes and suppress non-
   assert.ok(statSync('dist/images/bernoinfo-social.png').size > 0)
   const branch='developer/issue-35-seo-metadata'
   const branchOrigin='https://developer-issue-35-seo-metadata-bernoinfo2026.mr-petermacko.workers.dev'
-  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:branch,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
+  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:branch,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
   publicPage('/','Komunálne voľby',branchOrigin,true)
   publicPage('/kandidati/bartok/','Michal BARTÓK',branchOrigin,true)
   assert.ok(!read('/').includes('https://bernoinfo2026.mr-petermacko.workers.dev'))
-  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:branch,SITE_BUILD_MODE:'preview',SITE_ORIGIN:'https://bernoinfo2026.mr-petermacko.workers.dev'}}))
-  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'main',SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
+  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:branch,SITE_BUILD_MODE:'preview',SITE_ORIGIN:'https://bernoinfo2026.mr-petermacko.workers.dev'}}))
+  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'main',SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
   publicPage('/','Komunálne voľby','https://bernoinfo2026.mr-petermacko.workers.dev',false)
-  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'main',SITE_BUILD_MODE:'release',SITE_ORIGIN:'https://wrong.example.org'}}))
+  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'main',SITE_BUILD_MODE:'release',SITE_ORIGIN:'https://wrong.example.org'}}))
+
+  const pagesOrigin='https://abc123.bernoinfo-pages.pages.dev'
+  const pagesEnv={...testEnv,WORKERS_CI_BRANCH:'',CF_PAGES:'1',CF_PAGES_BRANCH:'main',CF_PAGES_URL:pagesOrigin,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}
+  execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_BRANCH:'developer/issue-37-pages-workers'}})
+  publicPage('/','Komunálne voľby',pagesOrigin,true)
+  execFileSync('npm',['run','build'],{stdio:'pipe',env:pagesEnv})
+  publicPage('/','Komunálne voľby',pagesOrigin,true)
+  publicPage('/kandidati/bartok/','Michal BARTÓK',pagesOrigin,true)
+  assert.ok(!read('/').includes('https://bernoinfo2026.mr-petermacko.workers.dev'))
+  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...pagesEnv,SITE_BUILD_MODE:'release',SITE_ORIGIN:pagesOrigin}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:''}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,WORKERS_CI_BRANCH:'main'}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,SITE_ORIGIN:'https://wrong.example.org'}}))
+  assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:'http://not-https.example.org'}}))
 })
