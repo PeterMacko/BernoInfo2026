@@ -1,9 +1,12 @@
-import { readFileSync, writeFileSync } from 'node:fs'
+import { readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const root = process.argv[2] || 'dist'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const productionOrigin = 'https://bernoinfo2026.mr-petermacko.workers.dev'
+// Editorial snapshot date: both candidate source ledgers were checked on 20 October 2026.
+// Keep this explicit; a CI build time is not a content update.
+const editorialDate = '2026-10-20'
 const ciBranch = process.env.WORKERS_CI_BRANCH || null
 const pagesContext = Boolean(process.env.CF_PAGES || process.env.CF_PAGES_BRANCH || process.env.CF_PAGES_URL)
 if (pagesContext) {
@@ -40,6 +43,9 @@ if (mode === 'release' && !ciBranch && (!originInput || process.env.RELEASE_ORIG
 if (mode === 'release' && ciBranch === 'main' && originInput !== productionOrigin) {
   throw Error('Main Workers Build must use the verified production origin.')
 }
+if (mode === 'release' && originInput !== productionOrigin) {
+  throw Error('Release indexing requires the verified production origin.')
+}
 if (ciBranch && ciBranch !== 'main' && originInput === productionOrigin) {
   throw Error('Preview must not claim the public release origin.')
 }
@@ -62,6 +68,7 @@ const imagePath = '/images/bernoinfo-social.png'
 const imageAlt = 'BernoInfo 2026 — nezávislý informačný prehľad komunálnych volieb v Bernolákove'
 function head(title, description, path, { noindex = false, redirect = false } = {}) {
   const tags = [`<title>${esc(title)}</title>`, meta('description', description)]
+  if (!redirect && path !== '/404.html') tags.push(meta('author', 'Peter Macko & OpenClaw'), meta('date', editorialDate))
   if (noindex || mode !== 'release') tags.push(meta('robots', 'noindex, nofollow'))
   if (origin && path !== '/404.html') tags.push(`<link rel="canonical" href="${esc(canonical(path))}">`)
   if (!redirect && origin && mode !== 'photo-review') {
@@ -81,17 +88,20 @@ function apply(file, tags) {
   let html = readFileSync(file, 'utf8')
   if (!/<head(?:\s[^>]*)?>/i.test(html)) throw Error(`Missing head: ${file}`)
   html = html.replace(/<title>[^<]*<\/title>/gi, '')
-    .replace(/<meta\s+(?:name|property)="(?:description|robots|og:[^"]+|twitter:[^"]+)"\s+content="[^"]*"\s*\/?\s*>/gi, '')
+    .replace(/<meta\s+(?:name|property)="(?:description|author|date|robots|og:[^"]+|twitter:[^"]+)"\s+content="[^"]*"\s*\/?\s*>/gi, '')
     .replace(/<link\s+rel="canonical"\s+href="[^"]*"\s*\/?\s*>/gi, '')
   html = html.replace(/<head(?:\s[^>]*)?>/i, match => `${match}\n${tags}\n`)
   writeFileSync(file, html)
 }
+const publicPaths = ['/']
 apply(join(root, 'index.html'), head('Komunálne voľby v Bernolákove 2026 — BernoInfo 2026', 'Nezávislý prehľad komunálnych volieb v Bernolákove 2026: kandidáti na starostu a poslancov, volebné obvody a odkazy na zdroje.', '/'))
 for (const candidate of mayor) {
   const office = shared.has(candidate.id) ? 'kandidatúra na starostu obce aj do obecného zastupiteľstva' : 'kandidatúra na starostu obce'
   const title = `${candidate.name} — ${office} — BernoInfo 2026`
   const description = `Profil: ${candidate.name} — ${office} v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
-  apply(join(root, 'kandidati', candidate.id, 'index.html'), head(title, description, `/kandidati/${candidate.id}/`))
+  const path = `/kandidati/${candidate.id}/`
+  publicPaths.push(path)
+  apply(join(root, 'kandidati', candidate.id, 'index.html'), head(title, description, path))
 }
 for (const candidate of council) {
   const file = join(root, 'kandidati-na-poslancov', candidate.id, 'index.html')
@@ -99,12 +109,22 @@ for (const candidate of council) {
     const destination = `/kandidati/${dual.get(candidate.id)}/`
     apply(file, head('Presmerovanie na spoločný profil — BernoInfo 2026', `Spoločný profil: ${candidate.name} — kandidatúra na starostu obce aj do obecného zastupiteľstva.`, destination, { noindex: true, redirect: true }))
   } else {
+    const path = `/kandidati-na-poslancov/${candidate.id}/`
+    publicPaths.push(path)
     const title = `${candidate.name} — kandidatúra do obecného zastupiteľstva — BernoInfo 2026`
     const description = `Profil: ${candidate.name} — kandidatúra do obecného zastupiteľstva v Bernolákove 2026. Registrácia, dostupné podklady a odkazy na zdroje.`
-    apply(file, head(title, description, `/kandidati-na-poslancov/${candidate.id}/`))
+    apply(file, head(title, description, path))
   }
 }
+publicPaths.push('/volby/ulice/', '/o-projekte/')
 apply(join(root, 'volby', 'ulice', 'index.html'), head('Ulice, obvody a okrsky — BernoInfo 2026', 'Textový zoznam ulíc Bernolákova s volebnými obvodmi, okrskami a miestnosťami podľa zverejnených podkladov obce.', '/volby/ulice/'))
 apply(join(root, 'o-projekte', 'index.html'), head('O projekte — BernoInfo 2026', 'O projekte BernoInfo 2026, Petrovi Mackovi a nástrojoch použitých pri tvorbe stránky.', '/o-projekte/'))
 apply(join(root, '404.html'), head('Stránka sa nenašla — BernoInfo 2026', 'Požadovaná stránka sa nenašla. Vráťte sa na prehľad komunálnych volieb v Bernolákove.', '/404.html', { noindex: true, redirect: true }))
+if (mode === 'release') {
+  writeFileSync(join(root, 'robots.txt'), `User-agent: *\nAllow: /\nSitemap: ${canonical('/sitemap.xml')}\n`)
+  writeFileSync(join(root, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${publicPaths.map(path => `  <url><loc>${esc(canonical(path))}</loc><lastmod>${editorialDate}</lastmod></url>`).join('\n')}\n</urlset>\n`)
+} else {
+  writeFileSync(join(root, 'robots.txt'), 'User-agent: *\nDisallow: /\n')
+  rmSync(join(root, 'sitemap.xml'), { force: true })
+}
 console.log(`SEO metadata applied to ${mayor.length + council.length + 4} HTML pages (${mode}; ${origin || 'no origin'}).`)

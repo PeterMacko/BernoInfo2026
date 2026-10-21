@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { execFileSync } from 'node:child_process'
-import { readFileSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 
 const testEnv = {...process.env}
 for (const key of ['CF_PAGES', 'CF_PAGES_BRANCH', 'CF_PAGES_URL', 'WORKERS_CI_BRANCH', 'SITE_ORIGIN', 'RELEASE_ORIGIN_VERIFIED', 'SITE_BUILD_MODE', 'VITE_SITE_BUILD_MODE']) delete testEnv[key]
@@ -35,11 +35,37 @@ function publicPage(path, name, origin, preview) {
   assert.equal(value(html,'twitter:image'),origin+'/images/bernoinfo-social.png')
   assert.equal(value(html,'og:locale','property'),'sk_SK')
   assert.equal(value(html,'twitter:card'),'summary_large_image')
+  assert.equal(value(html,'author'),'Peter Macko &amp; OpenClaw')
+  assert.equal(value(html,'date'),'2026-10-20')
   assert.equal(html.includes('name="robots"'),preview,path)
+  if (preview) assert.equal(value(html,'robots'),'noindex, nofollow')
+}
+
+const productionOrigin='https://bernoinfo2026.mr-petermacko.workers.dev'
+const canonicalPaths=['/',...mayor.map(c=>`/kandidati/${c.id}/`),
+  ...council.filter(c=>!dual[c.id]).map(c=>`/kandidati-na-poslancov/${c.id}/`),
+  '/volby/ulice/','/o-projekte/']
+assert.equal(canonicalPaths.length,51,'expected canonical route count')
+function checkCrawlPolicy(release) {
+  const robots=readFileSync('dist/robots.txt','utf8')
+  if (release) {
+    assert.equal(robots,`User-agent: *\nAllow: /\nSitemap: ${productionOrigin}/sitemap.xml\n`)
+    const sitemap=readFileSync('dist/sitemap.xml','utf8')
+    const locations=[...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1])
+    assert.equal(locations.length,canonicalPaths.length)
+    assert.deepEqual(new Set(locations),new Set(canonicalPaths.map(path=>productionOrigin+path)))
+    assert.equal(new Set(locations).size,locations.length)
+    assert.deepEqual([...sitemap.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(m=>m[1]), Array(locations.length).fill('2026-10-20'))
+    assert.ok(!sitemap.includes('/404.html'))
+    for(const id of Object.keys(dual)) assert.ok(!sitemap.includes(id))
+  } else {
+    assert.equal(robots,'User-agent: *\nDisallow: /\n')
+    assert.equal(existsSync('dist/sitemap.xml'),false)
+  }
 }
 
 test('preview and release initial HTML cover all public routes and suppress non-public cards',()=>{
-  const preview='https://preview.example.org', release='https://release.example.org'
+  const preview='https://preview.example.org', release=productionOrigin
   const image=readFileSync('public/images/bernoinfo-social.png')
   assert.equal(image.toString('ascii',1,4),'PNG')
   assert.equal(image.readUInt32BE(16),1200)
@@ -47,6 +73,7 @@ test('preview and release initial HTML cover all public routes and suppress non-
   assert.ok(statSync('public/images/bernoinfo-social.png').size < 5_000_000)
   execFileSync('npm',['run','build:placeholder'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
   publicPage('/','Komunálne voľby',preview,true)
+  checkCrawlPolicy(false)
   publicPage('/kandidati/bartok/','Michal BARTÓK',preview,true)
   assert.ok(!read('/kandidati/bartok/').includes(release))
   execFileSync('npm',['run','build:photo-review'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:preview}})
@@ -54,9 +81,12 @@ test('preview and release initial HTML cover all public routes and suppress non-
   assert.ok(reviewHead.includes('name="robots"'))
   assert.ok(!reviewHead.includes('property="og:'))
   assert.ok(!reviewHead.includes('name="twitter:'))
+  checkCrawlPolicy(false)
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_BUILD_MODE:'release',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'0'}}))
+  assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_BUILD_MODE:'release',SITE_ORIGIN:'https://other.example.org',RELEASE_ORIGIN_VERIFIED:'1'}}))
   execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'',SITE_ORIGIN:release,RELEASE_ORIGIN_VERIFIED:'1'}})
   publicPage('/','Komunálne voľby',release,false)
+  checkCrawlPolicy(true)
   for(const c of mayor) {
     const html=read(`/kandidati/${c.id}/`)
     publicPage(`/kandidati/${c.id}/`,c.name,release,false)
@@ -82,30 +112,37 @@ test('preview and release initial HTML cover all public routes and suppress non-
     assert.doesNotMatch(html,/kandidát na poslanca/)
   }
   publicPage('/volby/ulice/','Ulice, obvody a okrsky',release,false)
+  publicPage('/o-projekte/','O projekte',release,false)
   const notFound=readFileSync('dist/404.html','utf8').split('</head>')[0]
   assert.ok(notFound.includes('name="robots"'))
   assert.ok(!notFound.includes('rel="canonical"'))
   assert.ok(!notFound.includes('property="og:'))
   assert.ok(!notFound.includes('name="twitter:'))
+  assert.ok(!notFound.includes('name="author"'))
+  assert.ok(!notFound.includes('name="date"'))
   assert.ok(statSync('dist/images/bernoinfo-social.png').size > 0)
   const branch='developer/issue-35-seo-metadata'
   const branchOrigin='https://developer-issue-35-seo-metadata-bernoinfo2026.mr-petermacko.workers.dev'
   execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:branch,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
   publicPage('/','Komunálne voľby',branchOrigin,true)
+  checkCrawlPolicy(false)
   publicPage('/kandidati/bartok/','Michal BARTÓK',branchOrigin,true)
   assert.ok(!read('/').includes('https://bernoinfo2026.mr-petermacko.workers.dev'))
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:branch,SITE_BUILD_MODE:'preview',SITE_ORIGIN:'https://bernoinfo2026.mr-petermacko.workers.dev'}}))
   execFileSync('npm',['run','build'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'main',SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}})
-  publicPage('/','Komunálne voľby','https://bernoinfo2026.mr-petermacko.workers.dev',false)
+  publicPage('/','Komunálne voľby',productionOrigin,false)
+  checkCrawlPolicy(true)
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...testEnv,WORKERS_CI_BRANCH:'main',SITE_BUILD_MODE:'release',SITE_ORIGIN:'https://wrong.example.org'}}))
 
   const pagesOrigin='https://abc123.bernoinfo-pages.pages.dev'
   const pagesEnv={...testEnv,WORKERS_CI_BRANCH:'',CF_PAGES:'1',CF_PAGES_BRANCH:'main',CF_PAGES_URL:pagesOrigin,SITE_ORIGIN:'',RELEASE_ORIGIN_VERIFIED:''}
   execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_BRANCH:'developer/issue-37-pages-workers'}})
   publicPage('/','Komunálne voľby',pagesOrigin,true)
+  checkCrawlPolicy(false)
   execFileSync('npm',['run','build'],{stdio:'pipe',env:pagesEnv})
   publicPage('/','Komunálne voľby',pagesOrigin,true)
   publicPage('/kandidati/bartok/','Michal BARTÓK',pagesOrigin,true)
+  checkCrawlPolicy(false)
   assert.ok(!read('/').includes('https://bernoinfo2026.mr-petermacko.workers.dev'))
   assert.throws(()=>execFileSync('node',['scripts/apply-seo-metadata.mjs','dist'],{stdio:'pipe',env:{...pagesEnv,SITE_BUILD_MODE:'release',SITE_ORIGIN:pagesOrigin}}))
   assert.throws(()=>execFileSync('npm',['run','build'],{stdio:'pipe',env:{...pagesEnv,CF_PAGES_URL:''}}))
