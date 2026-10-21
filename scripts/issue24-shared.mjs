@@ -4,6 +4,14 @@ const mayorPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.j
 export const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url)))
 export const dualRoutes = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
 export const people = roster.districts.flatMap(d=>d.candidates.map(c=>({...c,district:d.number,officialUrl:d.sourceUrl})))
+const rosterIds = new Set(people.map(person=>person.id))
+export function assertKnownCouncilIds(ids,context='relationship') {
+ for (const id of ids) if (!rosterIds.has(id)) throw new Error(`${context}: council ID ${id} is absent from official roster`)
+}
+assertKnownCouncilIds(Object.keys(evidence),'issue24 evidence')
+assertKnownCouncilIds(Object.keys(dualRoutes),'dual-office routes')
+for (const person of people) if (!evidence[person.id]) throw new Error(`issue24 evidence: missing official roster ID ${person.id}`)
+
 export const personRoute = id => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/` : `/kandidati-na-poslancov/${id}/`
 export const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 const groups = [
@@ -44,6 +52,7 @@ export function connectionCards(id,withPhotos,review = false) {
 }
 
 export function connectionDistricts(members,withPhotos) {
+ assertKnownCouncilIds(members.map(person=>person.id),'connection cards')
  return [1,2,3].map(number=>{
    const rows=members.filter(p=>p.district===number).sort((a,b)=>a.listNumber-b.listNumber)
    if (!rows.length) return ''

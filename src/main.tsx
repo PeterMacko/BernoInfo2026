@@ -7,7 +7,7 @@ import issue24Photos from './issue24-photo-availability.json'
 import { checkedDate, districtSource, findStreet, precinctSource, suggestStreets, streetData, venues } from './street-lookup'
 import { CandidateSearch } from './CandidateSearch'
 import { dualRoutes } from './candidate-search'
-import { canonicalPerson, connectionFor } from './connections'
+import { canonicalPerson, connections, connectionsFor } from './connections'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -25,10 +25,12 @@ const councilPhoto = (id:string) => {
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
-  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
-  const activeConnection = selectedPerson ? connectionFor(selectedPerson, photoReview) : undefined
+  const [selection, setSelection] = useState<{personId: string; groupId: string} | null>(null)
+  const activeConnection = selection ? connections.find(group => group.id === selection.groupId) : undefined
+  const selectedPerson = selection?.personId
   const connectionState = (id: string) => !activeConnection ? '' : activeConnection.members.some(member => canonicalPerson(member) === canonicalPerson(id)) ? (selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(id) ? 'is-selected' : 'is-related') : 'is-unrelated'
-  const toggleConnection = (id: string) => setSelectedPerson(current => current && canonicalPerson(current) === canonicalPerson(id) ? null : id)
+  const isPressed = (id: string, groupId: string) => Boolean(selection && selection.groupId === groupId && canonicalPerson(selection.personId) === canonicalPerson(id))
+  const toggleConnection = (id: string, groupId: string) => setSelection(current => current?.groupId === groupId && canonicalPerson(current.personId) === canonicalPerson(id) ? null : {personId: id, groupId})
   const [streetInput, setStreetInput] = useState('')
   const [searched, setSearched] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -198,10 +200,10 @@ function App() {
           {candidates.map((candidate) => {
             const portrait = portraits?.[candidate.id]
             const councilId = Object.keys(dualRoutes).find(id => dualRoutes[id] === candidate.id)
-            const connection = councilId ? connectionFor(councilId, photoReview) : undefined
+            const candidateConnections = councilId ? connectionsFor(councilId, photoReview) : []
             return (
               <li className={`candidate-card connection-item ${councilId ? connectionState(councilId) : activeConnection ? 'is-unrelated' : ''}`} key={candidate.id}>
-                {connection && <button className="connection-toggle" type="button" aria-pressed={Boolean(selectedPerson && councilId && canonicalPerson(selectedPerson) === canonicalPerson(councilId))} aria-label={`${Boolean(selectedPerson && councilId && canonicalPerson(selectedPerson) === canonicalPerson(councilId)) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${connection.title}. ${connection.qualification}`} onClick={() => toggleConnection(councilId!)} title={connection.title}>↔<span className="sr-only">{connection.title}</span></button>}
+                {councilId && candidateConnections.length > 0 && <div className="connection-controls" aria-label={`Prepojenia: ${candidate.registeredName}`}>{candidateConnections.map(group => <button key={group.id} className="connection-toggle" type="button" aria-pressed={isPressed(councilId, group.id)} aria-label={`${isPressed(councilId, group.id) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${group.title}. ${group.qualification}`} onClick={() => toggleConnection(councilId, group.id)} title={group.title}>{group.controlLabel}</button>)}</div>}
                 <a
                   className="candidate-card-link"
                   href={`/kandidati/${candidate.id}/`}
@@ -250,16 +252,17 @@ function App() {
               <p><a href={districtSource}>Zdroj počtu mandátov: uznesenie obce z 23. júna 2026 (PDF)</a>; skontrolované {checkedDate}.</p>
             </div>
             <ol className="council-list">
-              {district.candidates.map((candidate) => (
-                <li key={candidate.id} className={`connection-item ${connectionState(candidate.id)}`}>
-                  {connectionFor(candidate.id, photoReview) && <button className="connection-toggle" type="button" aria-pressed={Boolean(selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(candidate.id))} aria-label={`${Boolean(selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(candidate.id)) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${connectionFor(candidate.id, photoReview)?.title}. ${connectionFor(candidate.id, photoReview)?.qualification}`} onClick={() => toggleConnection(candidate.id)} title={connectionFor(candidate.id, photoReview)?.title}>↔<span className="sr-only">{connectionFor(candidate.id, photoReview)?.title}</span></button>}
+              {district.candidates.map((candidate) => {
+                const candidateConnections = connectionsFor(candidate.id, photoReview)
+                return <li key={candidate.id} className={`connection-item ${connectionState(candidate.id)}`}>
+                  {candidateConnections.length > 0 && <div className="connection-controls" aria-label={`Prepojenia: ${candidate.name}`}>{candidateConnections.map(group => <button key={group.id} className="connection-toggle" type="button" aria-pressed={isPressed(candidate.id, group.id)} aria-label={`${isPressed(candidate.id, group.id) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${group.title}. ${group.qualification}`} onClick={() => toggleConnection(candidate.id, group.id)} title={group.title}>{group.controlLabel}</button>)}</div>}
                   <a href={councilRoute(candidate.id)} aria-label={`Profil: ${candidate.name}, kandidát na ${dualRoutes[candidate.id] ? 'starostu aj ' : ''}poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
                     <img className="council-thumb" src={councilPhoto(candidate.id)} alt="" width="48" height="57" loading="lazy" /><span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
                     <span className="council-name">{candidate.name}<small className="council-designation">{candidate.designation}</small></span>
                     <span className="council-arrow" aria-hidden="true">↗</span>
                   </a>
                 </li>
-              ))}
+              })}
             </ol>
           </section>
         ))}

@@ -43,13 +43,36 @@ try{
  assert.match(status,/Tím Bartók/)
  status=await click(`document.querySelector('.candidate-card .connection-toggle').click()`)
  assert.match(status,/žiadne prepojenie/)
- const turenic=await evaluate(`(() => {const button=[...document.querySelectorAll('.candidate-card .connection-toggle')].find(b=>b.getAttribute('aria-label').includes('Turenič'));return {label:button?.getAttribute('aria-label')||'',preview:button?.getAttribute('aria-label').includes('Dva odlišné')}})()`)
- assert.match(turenic.label,/neoveren/i)
- assert.equal(turenic.preview,initial.review)
- status=await click(`[...document.querySelectorAll('.candidate-card .connection-toggle')].find(b=>b.getAttribute('aria-label').includes('Turenič')).click()`)
- assert.match(status,/neoveren/i)
- assert.equal(await evaluate(`document.querySelectorAll('.council-list .is-related').length`),initial.review?9:5)
- await click(`[...document.querySelectorAll('.candidate-card .connection-toggle')].find(b=>b.getAttribute('aria-label').includes('Turenič')).click()`)
+ const turenicButtons=await evaluate(`[...document.querySelectorAll('.candidate-card:last-child .connection-toggle')].map(button=>button.getAttribute('aria-label'))`)
+ assert.equal(turenicButtons.length,initial.review?2:1)
+ assert.ok(turenicButtons.every(label=>/neoveren/i.test(label)))
+ const turenicButton = index => `document.querySelectorAll('.candidate-card:last-child .connection-toggle')[${index}]`
+ if(initial.review){
+  status=await click(`${turenicButton(0)}.click()`)
+  assert.match(status,/pracovný súpis/)
+  assert.equal(await evaluate(`document.querySelectorAll('.council-list .is-related').length`),4)
+  assert.equal(await evaluate(`document.querySelector('a[href="/kandidati-na-poslancov/c-a7eb4e22/"]').closest('li').classList.contains('is-unrelated')`),true)
+  status=await click(`${turenicButton(1)}.click()`)
+  assert.match(status,/päťčlenný podnet/)
+  assert.equal(await evaluate(`document.querySelectorAll('.council-list .is-related').length`),5)
+  assert.equal(await evaluate(`document.querySelector('a[href="/kandidati-na-poslancov/c-5e9ee486/"]').closest('li').classList.contains('is-unrelated')`),true)
+ }else{
+  status=await click(`${turenicButton(0)}.click()`)
+  assert.match(status,/päťčlenný podnet/)
+  assert.equal(await evaluate(`document.querySelectorAll('.council-list .is-related').length`),5)
+ }
+ await click(`${turenicButton(initial.review?1:0)}.click()`)
+ if(initial.review){
+  const introButton=`document.querySelector('a[href="/kandidati-na-poslancov/c-5e9ee486/"]').closest('li').querySelector('.connection-toggle')`
+  const reportButton=`document.querySelector('a[href="/kandidati-na-poslancov/c-a7eb4e22/"]').closest('li').querySelector('.connection-toggle')`
+  status=await click(`${introButton}.click()`)
+  assert.match(status,/pracovný súpis/)
+  assert.equal(await evaluate(`document.querySelector('a[href="/kandidati-na-poslancov/c-a7eb4e22/"]').closest('li').classList.contains('is-unrelated')`),true)
+  status=await click(`${reportButton}.click()`)
+  assert.match(status,/päťčlenný podnet/)
+  assert.equal(await evaluate(`document.querySelector('a[href="/kandidati-na-poslancov/c-5e9ee486/"]').closest('li').classList.contains('is-unrelated')`),true)
+  await click(`${reportButton}.click()`)
+ }
  await evaluate(`document.querySelector('.candidate-card .connection-toggle').focus()`)
  await command('Input.dispatchKeyEvent',{type:'keyDown',key:' ',code:'Space',windowsVirtualKeyCode:32,nativeVirtualKeyCode:32})
  await command('Input.dispatchKeyEvent',{type:'keyUp',key:' ',code:'Space',windowsVirtualKeyCode:32,nativeVirtualKeyCode:32})

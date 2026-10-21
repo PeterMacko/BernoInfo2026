@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {connectionCards, connectionDistricts, people as councilPeople} from './issue24-shared.mjs'
+import {assertKnownCouncilIds, connectionCards, connectionDistricts, people as councilPeople} from './issue24-shared.mjs'
 import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
@@ -174,6 +174,7 @@ function renderTransparency(candidate) {
 function renderTurenicAssociation(candidate) {
   if (candidate.id !== 'turenic') return []
   const ids = ['c-a7eb4e22', 'c-6d9a5867', 'c-be773c61', 'c-a8a3f42b', 'c-73b7e5fe']
+  assertKnownCouncilIds(ids,'Turenič five-person report')
   const people = councilPeople.filter(person => ids.includes(person.id))
   if (people.length !== ids.length) throw new Error('Missing council candidate in Turenič association')
   return [section('reported-association', 'Nahlásené prepojenie na kandidátov do zastupiteľstva', [
