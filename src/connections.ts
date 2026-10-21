@@ -15,7 +15,8 @@ export type Connection = { id: string; title: string; qualification: string; mem
 export const connections: Connection[] = [
   { id: 'bartok', title: 'Tím Bartók', qualification: 'Kampaňou predstavený tím podľa kandidátskeho webu; nejde o oficiálnu volebnú listinu.', members: ['c-f6b4af6c', ...bartokIds], previewOnly: false },
   { id: 'zaber', title: 'ZA BERnolákovo', qualification: 'Spoločné označenie v piatich individuálnych reklamách v obecnom časopise; nejde o oficiálnu volebnú listinu.', members: zaBerIds, previewOnly: false },
-  { id: 'turenic', title: 'Možné prepojenia pri Tureničovi', qualification: 'Neoverené: štyri predstavenia podľa pracovného súpisu a samostatný päťčlenný podnet od Petra z 21. októbra. Nejde o potvrdený tím ani oficiálnu volebnú listinu.', members: ['c-bb232e32', ...introductionIds, ...reportedTurenicIds], previewOnly: true },
+  { id: 'turenic-preview', title: 'Dva odlišné neoverené podnety pri Tureničovi', qualification: 'Štyri možné predstavenia sú len z pracovného súpisu z 20. októbra; ďalších päť osôb označil Peter 21. októbra. Tieto podnety nie sú navzájom potvrdeným tímom ani oficiálnou volebnou listinou.', members: ['c-bb232e32', ...introductionIds, ...reportedTurenicIds], previewOnly: true },
+  { id: 'turenic-reported', title: 'Nahlásené prepojenie pri Tureničovi', qualification: 'Neoverený päťčlenný podnet od Petra z 21. októbra 2026; nejde o potvrdený Tureničov tím ani oficiálnu volebnú listinu.', members: ['c-bb232e32', ...reportedTurenicIds], previewOnly: false },
 ]
 export const canonicalPerson = (id: string) => dualRoutes[id] ? `mayor:${dualRoutes[id]}` : `council:${id}`
 export const connectionFor = (id: string, review: boolean) => connections.find(group => (!group.previewOnly || review) && group.members.includes(id))

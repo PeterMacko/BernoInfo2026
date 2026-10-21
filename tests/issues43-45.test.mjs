@@ -30,19 +30,20 @@ test('unverified campaign-introduction connections remain review-only',()=>{
  assert.doesNotMatch(review,/src="\/images\/council\//)
 })
 
-test('all builds gate five-person report and portrait cards consistently',()=>{
+test('all builds retain qualified five-person report and gate source portraits consistently',()=>{
  for(const [command,review] of [['build:placeholder',false],['build:photo-review',true],['build:release',false]]){
   execFileSync('npm',['run',command],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
   const turenic=read('dist/kandidati/turenic/index.html')
   const association=section(turenic,'reported-association')
-  assert.equal(Boolean(association),review,command)
-  if(review){
+  assert.ok(association,command)
+  {
    assert.match(association,/nebolo nezávisle doložené/)
    assert.match(association,/prepojenie neoverené/)
    assert.deepEqual([...association.matchAll(/<h3>Volebný obvod (\d)<\/h3>/g)].map(match=>Number(match[1])),[1,2,3])
    for(const id of reported) assert.ok(association.includes(`/kandidati-na-poslancov/${id}/`),id)
-   assert.match(association,/src="\/images\/council\//)
+   assert.equal(association.includes('/images/council/'),command!=='build:placeholder')
   }
+  assert.equal(Boolean(section(turenic,'connections')),review,`four introduction leads: ${command}`)
   const bartok=section(read('dist/kandidati/bartok/index.html'),'connections')
   assert.ok(bartok)
   assert.match(bartok,/Volebný obvod 1/)

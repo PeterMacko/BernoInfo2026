@@ -261,7 +261,7 @@ function renderSections(candidate) {
     section('transparency', 'Volebné financovanie — externý profil', renderTransparency(candidate)),
     ...renderCouncilLinks(candidate),
     ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
-    ...(photoReview ? renderTurenicAssociation(candidate) : []),
+    ...renderTurenicAssociation(candidate),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('ten-questions', '10 otázok — Bernolákovo Online', renderTenQuestions(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),

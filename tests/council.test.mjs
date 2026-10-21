@@ -71,5 +71,7 @@ test('sourced connections use internal person links and equal cards',()=>{
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   assert.ok(!page.includes('Možné prepojenia na overenie'),evidence[c.id].key)
  }
- assert.ok(!readFileSync('public/kandidati/turenic/index.html','utf8').includes('reported-association'))
+ const report=readFileSync('public/kandidati/turenic/index.html','utf8')
+ assert.ok(report.includes('reported-association'))
+ assert.ok(report.includes('prepojenie neoverené'))
 })
