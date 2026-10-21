@@ -16,7 +16,7 @@ export const personRoute = id => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/
 export const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
 const groups = [
  {name:'Tím Bartók',source:'https://michalbartok.sk/kandidati',kind:'explicit_team_membership',description:'Kandidátsky web predstavuje tento tím.'},
- {name:'ZA BERnolákovo',source:'https://www.facebook.com/zabernolakovo/',kind:'explicit_team_membership',description:'Spoločná kampaň predstavuje tieto osoby; nejde o individuálne účty.'},
+ {name:'ZA BERnolákovo',source:'https://www.facebook.com/zabernolakovo/',kind:'campaign_branding',description:'Päť individuálne pomenovaných reklám nesie spoločné označenie kampane ZA BERnolákovo; spoločná stránka kampane nie je osobný účet.'},
  {name:'Turenič – predstavenie v kampani',source:'https://www.facebook.com/100063832401156/',kind:'presented_by',description:'Pracovná kompilácia pripisuje tieto predstavenia stránke kampane Miroslava Tureniča. Konkrétne pomenované príspevky a dátumy zatiaľ neboli zachytené; členstvo v tíme nie je potvrdené.'},
 ]
 const availablePhotos = new Set(JSON.parse(readFileSync(new URL('../src/issue24-photo-availability.json', import.meta.url))))
@@ -44,11 +44,12 @@ export function connectionCards(id,withPhotos,review = false) {
  if (group.name==='Turenič – predstavenie v kampani' && id!=='c-bb232e32') members.unshift(people.find(p=>p.id==='c-bb232e32'))
  const cards=`<div class="connection-districts">${connectionDistricts(members,withPhotos)}</div>`
  const uncertain = group.kind === 'presented_by'
+ const relationLabel = group.kind === 'campaign_branding' ? 'Typ: spoločné označenie kampane; členstvo v tíme ani úplnosť zoznamu nie sú potvrdené.' : 'Typ: výslovné predstavenie tímu.'
  const source = group.name === 'ZA BERnolákovo'
    ? `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=21">Bernolák 2/2026, strana PDF 21</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=22">22</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=23">23</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=24">24</a> (individuálne pomenované zelené reklamy)`
    : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}">kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
    : `<a href="${esc(group.source)}">Zdroj predstavenia</a>`
- return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':'Typ: výslovné predstavenie tímu.'} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
+ return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':relationLabel} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
 }
 
 export function connectionDistricts(members,withPhotos) {
