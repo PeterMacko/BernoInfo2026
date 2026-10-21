@@ -1,0 +1,35 @@
+.about-page { min-height: 100vh; }
+.about-brand { color: #183a64; text-decoration: none; }
+.about-nav a, .about-home { font-weight: 700; text-decoration: none; }
+.about-nav a:hover, .about-home:hover { text-decoration: underline; }
+.about-hero { padding: clamp(52px, 7vw, 110px) clamp(24px, 6vw, 100px); background: #183a64; color: #f8f9fc; }
+.about-hero h1 { max-width: 900px; margin: 12px 0 25px; font-family: Manrope, Arial, sans-serif; font-size: clamp(3.1rem, 7vw, 7rem); line-height: 1.04; letter-spacing: -.07em; }
+.about-hero h1 em { color: #b7d2f6; font-style: normal; }
+.about-hero > p:last-child { max-width: 620px; line-height: 1.65; }
+.about-owner, .about-team, .about-tools, .about-footer { padding: clamp(40px, 6vw, 90px) clamp(24px, 6vw, 100px); }
+.about-index { color: #3564a7; font-size: .75rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.about-owner { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(220px, .8fr); align-items: center; gap: clamp(30px, 6vw, 90px); }
+.about-owner h2, .about-heading h2, .about-tools h2, .about-footer h2 { font-family: Manrope, Arial, sans-serif; font-size: clamp(2.2rem, 4vw, 4.5rem); line-height: 1.12; letter-spacing: -.055em; margin: 12px 0 20px; }
+.about-owner-text > p:last-child, .about-heading > p:last-child, .about-tools p:last-child { max-width: 650px; line-height: 1.7; }
+.about-portrait-link { display: block; overflow: hidden; border-radius: 3px; box-shadow: 16px 16px 0 #dbe5f2; }
+.about-portrait-link img { display: block; width: 100%; height: auto; aspect-ratio: 570 / 580; object-fit: cover; }
+.about-team { background: #e8eef6; }
+.about-heading { margin-bottom: 38px; }
+.about-agents { list-style: none; margin: 0; padding: 0; border-top: 1px solid #bacde2; }
+.about-agent { display: grid; grid-template-columns: 42px 70px minmax(0, 1fr) auto; gap: clamp(12px, 2vw, 28px); align-items: center; padding: 22px 0; border-bottom: 1px solid #bacde2; }
+.about-agent-number { font-size: .78rem; font-weight: 700; color: #4d6989; }
+.about-agent-icon { display: grid; place-items: center; width: 58px; height: 58px; border: 1px solid #9bb6d5; border-radius: 50%; background: #fff; font-size: 1.65rem; text-decoration: none; }
+.about-agent-icon:hover, .about-perplexity-icon:hover { background: #d5e7fc; }
+.about-agent h3 { margin: 0 0 5px; font-family: Manrope, Arial, sans-serif; font-size: 1.25rem; }
+.about-agent p { margin: 0; line-height: 1.4; }
+.about-agent code { overflow-wrap: anywhere; font-size: .8rem; color: #385878; }
+.about-tools { display: flex; justify-content: space-between; align-items: center; gap: 32px; }
+.about-perplexity-icon { display: flex; align-items: center; gap: 14px; flex: none; padding: 18px 24px; border: 1px solid #9bb6d5; border-radius: 3px; text-decoration: none; font-weight: 700; }
+.about-perplexity-icon img { display: block; width: 36px; height: 36px; }
+.about-footer { display: flex; justify-content: space-between; gap: 30px; align-items: end; background: #183a64; color: #fff; }
+.about-footer .about-index { color: #b7d2f6; }
+.about-footer a { color: #fff; }
+@media (max-width: 700px) { .about-owner { grid-template-columns: 1fr; } .about-portrait-link { max-width: 420px; } .about-agent { grid-template-columns: 28px 54px minmax(0, 1fr); gap: 10px; } .about-agent-icon { width: 50px; height: 50px; } .about-agent code { grid-column: 3; } .about-tools, .about-footer { flex-direction: column; align-items: start; } }
+@media (max-width: 400px) { .about-hero h1 { font-size: 2.8rem; } .about-agent h3 { font-size: 1.1rem; } }
+
+.about-nojs { max-width: 900px; margin: auto; padding: 32px 24px; line-height: 1.6; }
