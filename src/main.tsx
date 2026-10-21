@@ -333,7 +333,7 @@ function App() {
       </footer>
       <div className="colophon">
         <span>BERNOINFO 2026</span>
-        <span>Informácie bez poradia dôležitosti.</span>
+        <a href="/o-projekte/">O projekte</a>
       </div>
     </main>
   )
