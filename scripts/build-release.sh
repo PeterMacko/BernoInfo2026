@@ -9,20 +9,33 @@ for name in michal-bartok martin-cirbus filip-kandrac jaroslav-kostial peter-lak
   }
 done
 
-# Both CI platforms share this build command. Pages is preview-only, including
-# its main branch; only the existing Workers main path is an indexable release.
+# Both CI platforms share this build command. Only main builds are indexable;
+# Pages main uses the stable project URL rather than an immutable deployment URL.
 site_mode=release
 if [[ -n "${CF_PAGES:-}" || -n "${CF_PAGES_BRANCH:-}" || -n "${CF_PAGES_URL:-}" ]]; then
   if [[ "${CF_PAGES:-}" != 1 || -z "${CF_PAGES_BRANCH:-}" || -z "${CF_PAGES_URL:-}" || -n "${WORKERS_CI_BRANCH:-}" ]]; then
     printf 'Incomplete or conflicting Cloudflare Pages build context.\n' >&2
     exit 1
   fi
-  if [[ -n "${SITE_ORIGIN:-}" && "${SITE_ORIGIN}" != "${CF_PAGES_URL}" ]]; then
-    printf 'SITE_ORIGIN must match CF_PAGES_URL in a Pages build.\n' >&2
+  if [[ ! "${CF_PAGES_URL}" =~ ^https://([a-z0-9-]+\.)?bernolakovo2026\.pages\.dev$ ]]; then
+    printf 'CF_PAGES_URL must belong to the Bernolákovo Pages project.\n' >&2
     exit 1
   fi
-  site_mode=preview
-  export SITE_ORIGIN="$CF_PAGES_URL"
+  pages_origin="$CF_PAGES_URL"
+  if [[ "$CF_PAGES_BRANCH" == main ]]; then
+    pages_origin=https://bernolakovo2026.pages.dev
+  else
+    site_mode=preview
+    if [[ "$CF_PAGES_URL" == https://bernolakovo2026.pages.dev ]]; then
+      printf 'A Pages branch preview cannot use the public project URL.\n' >&2
+      exit 1
+    fi
+  fi
+  if [[ -n "${SITE_ORIGIN:-}" && "${SITE_ORIGIN}" != "$pages_origin" ]]; then
+    printf 'SITE_ORIGIN conflicts with the expected Pages origin.\n' >&2
+    exit 1
+  fi
+  export SITE_ORIGIN="$pages_origin"
 elif [[ -n "${WORKERS_CI_BRANCH:-}" && "${WORKERS_CI_BRANCH}" != main ]]; then
   site_mode=preview
 fi
