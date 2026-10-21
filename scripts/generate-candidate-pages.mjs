@@ -156,7 +156,7 @@ function renderTopChannels(candidate) {
 
 function renderTenQuestions(candidate) {
   return candidate.tenQuestions ? [
-    `<p>${link(candidate.tenQuestions, `10 otázok pre kandidáta — ${candidate.name}`)}. Rubrika Bernolákovo Online; odpovede tu nie sú zhrnuté ani nezávisle overené.</p>`,
+    `<p>${link(candidate.tenQuestions, `Príspevok k rubrike 10 otázok — ${candidate.name}`)}. Odkaz dodaný ako súčasť rubriky Bernolákovo Online; presný obsah príspevku ani prípadné odpovede nie sú overené.</p>`,
     source(candidate.tenQuestions, 'Bernolákovo Online — Facebook', 'dátum príspevku nezistený', 'odkaz dodal Peter 21. októbra 2026; obsah nebol nezávisle overený'),
   ] : ['<p class="empty">V dodanej sade nebol odkaz na túto rubriku doložený. Neznamená to, že príspevok alebo odpovede neexistujú.</p>']
 }
