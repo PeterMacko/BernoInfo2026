@@ -105,5 +105,6 @@ for (const candidate of council) {
   }
 }
 apply(join(root, 'volby', 'ulice', 'index.html'), head('Ulice, obvody a okrsky — BernoInfo 2026', 'Textový zoznam ulíc Bernolákova s volebnými obvodmi, okrskami a miestnosťami podľa zverejnených podkladov obce.', '/volby/ulice/'))
+apply(join(root, 'o-projekte', 'index.html'), head('O projekte — BernoInfo 2026', 'O projekte BernoInfo 2026, Petrovi Mackovi a nástrojoch použitých pri tvorbe stránky.', '/o-projekte/'))
 apply(join(root, '404.html'), head('Stránka sa nenašla — BernoInfo 2026', 'Požadovaná stránka sa nenašla. Vráťte sa na prehľad komunálnych volieb v Bernolákove.', '/404.html', { noindex: true, redirect: true }))
-console.log(`SEO metadata applied to ${mayor.length + council.length + 3} HTML pages (${mode}; ${origin || 'no origin'}).`)
+console.log(`SEO metadata applied to ${mayor.length + council.length + 4} HTML pages (${mode}; ${origin || 'no origin'}).`)

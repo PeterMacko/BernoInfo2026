@@ -136,6 +136,7 @@ function App() {
           BERNO<span>INFO</span><i>2026</i>
         </div>
         <nav className="section-menu" aria-label="Sekcie kandidátov">
+          <a href="/o-projekte/">O projekte</a>
           {menuItems.map(item => <a key={item.id} href={`#${item.id}`} className={activeMenu === item.id ? 'is-active' : undefined} aria-current={activeMenu === item.id ? 'location' : undefined}>{item.label}</a>)}
         </nav>
       </header>
