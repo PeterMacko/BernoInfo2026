@@ -47,10 +47,12 @@ function App() {
     const updateActiveMenu = () => {
       cancelAnimationFrame(frameId)
       frameId = requestAnimationFrame(() => {
-        const mastheadBottom = document.querySelector('.masthead')?.getBoundingClientRect().bottom ?? 0
         const reached = menuItems.filter(item => {
           const heading = document.getElementById(item.id)
-          return heading && heading.getBoundingClientRect().top <= mastheadBottom + 20
+          if (!heading) return false
+          // Match the browser's anchor landing position at every breakpoint.
+          const anchorOffset = parseFloat(getComputedStyle(heading).scrollMarginTop)
+          return heading.getBoundingClientRect().top <= anchorOffset + 1
         })
         setActiveMenu(reached.at(-1)?.id ?? null)
       })
