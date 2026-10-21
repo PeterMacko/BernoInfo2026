@@ -5,6 +5,8 @@ import councilData from './council-candidates.json'
 import issue24Evidence from './issue24-evidence.json'
 import issue24Photos from './issue24-photo-availability.json'
 import { checkedDate, districtSource, findStreet, precinctSource, suggestStreets, streetData, venues } from './street-lookup'
+import { CandidateSearch } from './CandidateSearch'
+import { dualRoutes } from './candidate-search'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -12,7 +14,6 @@ const officialNotice = 'https://www.bernolakovo.sk/novinka/139303/n'
 const correctedList = 'https://www.bernolakovo.sk/data/advertisement/bernolakovo.sk/532238/204396_zoznam-zaregistrovanych-kandidatov-pre-volby-starostu-obce.pdf'
 const portraits = approvedPortraits ?? privatePreviewPortraits
 const photoReview = import.meta.env.VITE_SITE_BUILD_MODE === 'photo-review'
-const dualRoutes: Record<string,string> = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
 const councilRoute = (id:string) => dualRoutes[id] ? `/kandidati/${dualRoutes[id]}/` : `/kandidati-na-poslancov/${id}/`
 const councilPhoto = (id:string) => {
   const photo = (issue24Evidence as Record<string,{photo:{kind:string,url:string|null}}>)[id]?.photo
@@ -114,6 +115,8 @@ function App() {
           </div>
         </div>
       </section>
+
+      <CandidateSearch />
 
       <section className="street-section" aria-labelledby="street-title">
         <div className="street-layout">
