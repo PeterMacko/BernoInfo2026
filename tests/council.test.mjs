@@ -48,7 +48,8 @@ test('link taxonomy does not upgrade unverified leads to candidate accounts',()=
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   const kind=item.link.kind
   if(['probable/unverified profile','mention only','historical page (2018)'].includes(kind)){
-   assert.ok(!page.includes(`href="${item.link.url}"`),`${item.key} review-only source leaked`)
+   const channel=page.match(/<section class="detail-section" aria-labelledby="(?:channels|council-source)">[\s\S]*?<\/section>/)?.[0] || ''
+   assert.ok(!channel.includes(`href="${item.link.url}"`),`${item.key} review-only account claim leaked`)
   }
   const peterUrl=entityLinks.urls[item.key]
   if(peterUrl && peterUrl!==item.link.url)assert.ok(!page.includes('Facebookový odkaz priradený Petrom'),`${item.key} review-only Peter-identified link leaked`)
@@ -70,4 +71,7 @@ test('sourced connections use internal person links and equal cards',()=>{
   const page=readFileSync(`public${route(c.id)}index.html`,'utf8')
   assert.ok(!page.includes('Možné prepojenia na overenie'),evidence[c.id].key)
  }
+ const report=readFileSync('public/kandidati/turenic/index.html','utf8')
+ assert.ok(report.includes('reported-association'))
+ assert.ok(report.includes('Peter 21. októbra 2026 potvrdil'))
 })

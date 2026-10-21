@@ -1,7 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import {connectionCards} from './issue24-shared.mjs'
+import {assertKnownCouncilIds, connectionCards, connectionDistricts, people as councilPeople, turenicTeamIds} from './issue24-shared.mjs'
 import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
@@ -173,14 +173,15 @@ function renderTransparency(candidate) {
 
 function renderTurenicAssociation(candidate) {
   if (candidate.id !== 'turenic') return []
-  const ids = ['c-a7eb4e22', 'c-6d9a5867', 'c-be773c61', 'c-a8a3f42b', 'c-73b7e5fe']
-  const people = ids.map(id => councilData.districts.flatMap(district => district.candidates.map(person => ({...person, district}))).find(person => person.id === id))
-  if (people.some(person => !person)) throw new Error('Missing council candidate in Turenič association')
-  return [section('reported-association', 'Nahlásené prepojenie na kandidátov do zastupiteľstva', [
-    '<p>Peter 21. októbra 2026 označil nasledujúcich piatich kandidátov za skupinu spojenú s Miroslavom Tureničom. Toto konkrétne prepojenie zatiaľ nebolo nezávisle doložené pomenovaným verejným zdrojom; neuvádzame ich preto ako overený Tureničov volebný tím.</p>',
-    block('ul', ' class="evidence-list"', people.map(person => `<li>${link(`/kandidati-na-poslancov/${person.id}/`, person.name)} — obvod ${person.district.number}, poradie ${person.listNumber} v opravenej listine.</li>`)),
+  const ids = turenicTeamIds
+  assertKnownCouncilIds(ids,'Turenič five-person report')
+  const people = councilPeople.filter(person => ids.includes(person.id))
+  if (people.length !== ids.length) throw new Error('Missing council candidate in Turenič association')
+  return [section('reported-association', 'Tím Miroslava Tureniča', [
+    '<p>Peter 21. októbra 2026 potvrdil prepojenie nasledujúcich piatich kandidátov s Tureničovým tímom. Ide o Petrovo redakčné potvrdenie; nejde o oficiálnu volebnú listinu ani nezávislé overenie pomenovaným verejným zdrojom.</p>',
+    `<div class="connection-districts">${connectionDistricts(people,withPhotos)}</div>`,
     `<p>V ${link(councilData.districts[0].sourceUrl, 'opravenej listine obvodu 1')}, ${link(councilData.districts[1].sourceUrl, 'obvodu 2')} a ${link(councilData.districts[2].sourceUrl, 'obvodu 3')} majú títo piati spoločnú oficiálnu nomináciu Demokrati, KDH, SaS. ${link(data.officialUrl, 'Turenič je v opravenom zozname kandidátov na starostu')} uvedený ako nezávislý kandidát. Spoločná oficiálna nominácia piatich sama osebe nedokladá ich spoločnú kampaň s Tureničom.</p>`,
-    '<small class="source">Podnet: Peter, 21. októbra 2026 · úradné listiny datované 2. septembra 2026 · prepojenie neoverené.</small>',
+    '<small class="source">Zdroj prepojenia: Peter, 21. októbra 2026 · mená, obvody a poradie: úradné listiny datované 2. septembra 2026.</small>',
   ])]
 }
 

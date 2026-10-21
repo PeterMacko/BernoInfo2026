@@ -414,3 +414,16 @@ footer p {
 
 .portrait-wrap .council-source-photo{object-fit:contain}
 .hero > .detail-portrait{width:min(100%,18rem);margin-top:1.25rem}
+
+.connection-district{margin-top:1.35rem}.connection-district h3{font-size:1.05rem;margin:0 0 .6rem}.connection-card a:focus-visible{outline:3px solid #a87800;outline-offset:2px}
+
+/* Keep related candidates aligned with the section's content, clear of its heading column. */
+.detail-section > .connection-districts{grid-column:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.75rem,2vw,1.5rem);min-width:0}
+.detail-section > .connection-districts:has(> .connection-district:nth-child(2):last-child){grid-template-columns:repeat(2,minmax(0,1fr))}
+.detail-section > .connection-districts:has(> .connection-district:first-child:last-child){grid-template-columns:1fr}
+.connection-districts .connection-district{min-width:0;margin-top:0}
+.connection-districts .connection-grid{grid-template-columns:minmax(0,1fr);margin:0}
+.connection-districts .connection-card{min-width:0}
+.connection-districts .connection-card a{min-width:0;overflow-wrap:anywhere}
+.connection-districts .connection-card span{min-width:0}
+@media(max-width:800px){.detail-section > .connection-districts,.detail-section > .connection-districts:has(> .connection-district:nth-child(2):last-child){grid-template-columns:1fr}}
