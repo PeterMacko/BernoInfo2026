@@ -121,8 +121,11 @@ function App() {
           </div>
           <div className="intro-aside">
             <div className="intro-count">
-              <span className="count">08<span aria-hidden="true"> / 08</span></span>
-              <p>Osem mien v poradí opraveného zoznamu obce.</p>
+              <ul className="intro-stats" aria-label="Počet kandidátov a volebných obvodov">
+                <li><span className="count">08</span><span>– Kandidátov na starostu</span></li>
+                <li><span className="count">44</span><span>– Kandidátov na poslanca</span></li>
+                <li><span className="count">3</span><span>– Obvody</span></li>
+              </ul>
             </div>
             <figure className="municipal-arms">
               <a href={municipalityHome} aria-label="Erb obce Bernolákovo — oficiálna stránka obce">
@@ -279,22 +282,6 @@ function App() {
         ))}
       </section>
 
-      {portraits && (
-        <section className="portrait-sources" aria-labelledby="portrait-sources-title">
-          <h2 id="portrait-sources-title">Zdroje portrétov</h2>
-          <p>Rovnaký obrazový formát pre všetkých osem kandidátov. Odkazy vedú na dostupné pôvodné zdroje fotografií.</p>
-          <ol>
-            {candidates.map((candidate) => (
-              <li key={candidate.id}>
-                <span>{candidate.registeredName}</span>
-                {portraits[candidate.id].sourceUrl && <a href={portraits[candidate.id].sourceUrl}>Zdroj fotografie</a>}
-                <span>{portraits[candidate.id].credit}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-      )}
-
       <footer className="source-note">
         <div className="source-mark" aria-hidden="true">↗</div>
         <div>
@@ -303,9 +290,7 @@ function App() {
           <p>Prvotné zhromaždenie podkladov pre profily sa uzavrelo 18. októbra 2026; 19. októbra nasledovala cielená kontrola známych zdrojov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október je čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Kandidátske tvrdenia sú pripísané kandidátom, nie nezávisle potvrdené. Nedoložený údaj v preskúmaných zdrojoch neznamená, že neexistuje alebo že kandidát odmietol odpovedať.</p>
           <p><strong>Kandidáti na starostu obce:</strong> Mená a poradie podľa <a href={correctedList}>opraveného zoznamu (PDF)</a> a <a href={officialNotice}>oznámenia obce</a>. Naposledy overené 18. októbra 2026.</p>
           <p><strong>Kandidáti na poslancov obecného zastupiteľstva:</strong> Mená, príslušnosť a poradie podľa opravených zoznamov obce pre {councilData.districts.map((district, index) => <React.Fragment key={district.number}>{index > 0 ? ", " : ""}<a href={district.sourceUrl}>obvod {district.number} (PDF)</a></React.Fragment>)}. Zoznamy sú datované {councilData.officialDate}; skontrolované {councilData.checked}. Uvedené čísla sú číslami v zozname, nie overenými číslami na hlasovacom lístku.</p>
-          {portraits ? (
-            <p>Zdroj a kredit každej fotografie sú uvedené v časti Zdroje portrétov.</p>
-          ) : (
+          {!portraits && (
             <p>Portréty zatiaľ nie sú zverejnené. Rovnaká grafická výplň pri každom mene nie je podobizňou kandidáta.</p>
           )}
           <p>Opravy údajov: <a href={`mailto:${correctionEmail}`}>{correctionEmail}</a>. Uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov a zmenu označíme dátumom pri príslušnej informácii.</p>
