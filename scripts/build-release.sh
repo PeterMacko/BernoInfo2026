@@ -9,10 +9,21 @@ for name in michal-bartok martin-cirbus filip-kandrac jaroslav-kostial peter-lak
   }
 done
 
-# Workers Builds sets WORKERS_CI_BRANCH. Non-main branches are review previews,
-# never indexable releases, even though they share the same npm build command.
+# Both CI platforms share this build command. Pages is preview-only, including
+# its main branch; only the existing Workers main path is an indexable release.
 site_mode=release
-if [[ -n "${WORKERS_CI_BRANCH:-}" && "${WORKERS_CI_BRANCH}" != main ]]; then
+if [[ -n "${CF_PAGES:-}" || -n "${CF_PAGES_BRANCH:-}" || -n "${CF_PAGES_URL:-}" ]]; then
+  if [[ "${CF_PAGES:-}" != 1 || -z "${CF_PAGES_BRANCH:-}" || -z "${CF_PAGES_URL:-}" || -n "${WORKERS_CI_BRANCH:-}" ]]; then
+    printf 'Incomplete or conflicting Cloudflare Pages build context.\n' >&2
+    exit 1
+  fi
+  if [[ -n "${SITE_ORIGIN:-}" && "${SITE_ORIGIN}" != "${CF_PAGES_URL}" ]]; then
+    printf 'SITE_ORIGIN must match CF_PAGES_URL in a Pages build.\n' >&2
+    exit 1
+  fi
+  site_mode=preview
+  export SITE_ORIGIN="$CF_PAGES_URL"
+elif [[ -n "${WORKERS_CI_BRANCH:-}" && "${WORKERS_CI_BRANCH}" != main ]]; then
   site_mode=preview
 fi
 SITE_BUILD_MODE="$site_mode" VITE_PRIVATE_PORTRAIT_PREVIEW=1 VITE_SITE_BUILD_MODE="$site_mode" npm run build:placeholder

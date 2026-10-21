@@ -5,6 +5,16 @@ const root = process.argv[2] || 'dist'
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
 const productionOrigin = 'https://bernoinfo2026.mr-petermacko.workers.dev'
 const ciBranch = process.env.WORKERS_CI_BRANCH || null
+const pagesContext = Boolean(process.env.CF_PAGES || process.env.CF_PAGES_BRANCH || process.env.CF_PAGES_URL)
+if (pagesContext) {
+  if (process.env.CF_PAGES !== '1' || !process.env.CF_PAGES_BRANCH || !process.env.CF_PAGES_URL || ciBranch) {
+    throw Error('Incomplete or conflicting Cloudflare Pages build context.')
+  }
+  if (mode !== 'preview') throw Error('Cloudflare Pages builds must use preview mode and remain noindex.')
+  if (process.env.SITE_ORIGIN !== process.env.CF_PAGES_URL) {
+    throw Error('SITE_ORIGIN must match CF_PAGES_URL in a Pages build.')
+  }
+}
 if (ciBranch && !/^[A-Za-z0-9][A-Za-z0-9._/-]*$/.test(ciBranch) && !process.env.SITE_ORIGIN) {
   throw Error('Unexpected WORKERS_CI_BRANCH; supply a verified SITE_ORIGIN or use a supported branch name.')
 }
