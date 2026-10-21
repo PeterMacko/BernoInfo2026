@@ -1,0 +1,9 @@
+# Issues #47–50 — UI follow-up review, 21 October 2026
+
+Peter requested a stronger blue selected-candidate highlight, Turenič-oriented labels with a team/users icon, consistent arrow/control alignment, and full-width responsive district columns for related candidates on PR #46. The analyst proposed acceptance criteria; the lead checked them against the charter, team contract, and existing relationship scope before opening issues #47–50.
+
+The independent reviewer inspected implementation commit `794634f`, source, CSS, generated markup, tests, charter, scope, and relationship evidence handoffs. **No blocking finding by code inspection.** The four Turenič introduction leads remain a separate review-only set from Peter's five-person report. Both controls visibly say “neoverené”; the report remains qualified in release mode. Blue selection, native buttons with `aria-pressed`, consistent terminal arrow position, and full-width three-column desktop / stacked mobile related-candidate layout are represented in code.
+
+The reviewer identified one source-precision improvement: the shared ZA BERnolákovo profile renderer described common campaign branding in five individual ads as an explicit team presentation. The evidence does not establish an exhaustive team roster. Developer commit `07d49a7` narrowed that phrase without changing membership or routes; this follow-up wording was not separately reviewed by the independent reviewer.
+
+The lead ran `npm test` on `794634f`: **26 passed, 0 failed**. The developer reported release and photo-review builds and Chrome checks for responsive layout, reduced motion, controls, links, highlighting, and arrow alignment. The independent reviewer had no shell runner or local browser and did **not** repeat builds/tests or keyboard, touch, screen-reader, responsive-rendering, external-link, or photo-identity checks. The Turenič five-person association remains unverified; the social-source sweep remains partial.
