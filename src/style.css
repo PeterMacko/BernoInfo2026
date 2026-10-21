@@ -208,6 +208,31 @@ h1 em {
   padding: clamp(42px, 5.5vw, 83px) clamp(24px, 5vw, 76px) clamp(55px, 7vw, 105px);
 }
 
+.election-resources {
+  padding: clamp(36px, 5vw, 64px) clamp(24px, 5vw, 76px);
+  background: #e5edf6;
+}
+
+.election-resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.election-resource-grid article {
+  padding: 1.2rem;
+  border-top: 3px solid #3564a7;
+  background: #f8f9fc;
+}
+
+.election-resource-grid h3 { margin: 0 0 .6rem; font-size: 1.1rem; }
+.election-resource-grid p { margin: 0 0 .8rem; line-height: 1.5; }
+.election-resource-grid small { color: #425f7e; line-height: 1.5; }
+
+@media (max-width: 700px) {
+  .election-resource-grid { grid-template-columns: 1fr; }
+}
+
 .preview-notice {
   display: inline-block;
   margin: 0 0 18px;

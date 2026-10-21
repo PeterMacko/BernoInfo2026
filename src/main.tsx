@@ -157,6 +157,25 @@ function App() {
         </div>
       </section>
 
+      <section className="election-resources" aria-labelledby="election-resources-title">
+        <div className="section-heading">
+          <h2 id="election-resources-title">Predvolebné zdroje</h2>
+          <p>Odkazy na pôvodné publikácie</p>
+        </div>
+        <div className="election-resource-grid">
+          <article>
+            <h3><a href="https://www.youtube.com/watch?v=EFM4W0tnZgE&t=8112s&pp=ygUdcHJlZHZvbGVibmEgZGViYXRhIGJlcm5sYWtvdm8%3D">Debata s kandidátmi ↗</a></h3>
+            <p>Video na YouTube. Účasť jednotlivých kandidátov ani obsah vystúpení tu nevyhodnocujeme.</p>
+            <small>Platforma: YouTube · Vydavateľ: neoverený · Dátum videa: neoverený · Odkaz dodal Peter 21. októbra 2026.</small>
+          </article>
+          <article>
+            <h3><a href="https://www.facebook.com/photo/?fbid=1038637972532175&set=a.131142839948364">Prvé výsledky predvolebných kontrol ↗</a></h3>
+            <p>Príspevok na Facebooku. Jeho zistenia tu nepreberáme ani neoverujeme.</p>
+            <small>Platforma: Facebook · Vydavateľ: neoverený · Dátum príspevku: neoverený · Odkaz dodal Peter 21. októbra 2026.</small>
+          </article>
+        </div>
+      </section>
+
       <section className="candidate-section" aria-labelledby="candidates-title">
         {photoReview && privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">

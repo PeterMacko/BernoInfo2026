@@ -89,6 +89,36 @@ a:focus-visible {
   line-height: 1.5;
 }
 
+.hero-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .55rem;
+  margin: 1rem 0;
+}
+
+.hero-channels > * {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  min-height: 2.65rem;
+  padding: .5rem .7rem;
+  border: 1px solid #9bb2cf;
+  border-radius: .3rem;
+  font-size: .8rem;
+  line-height: 1.2;
+}
+
+.hero-channels a {
+  background: #f8f9fc;
+  color: #183a64;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.hero-channels a:hover { text-decoration: underline; }
+.hero-channels a:focus-visible { outline-color: #f4d56a; }
+.hero-channels svg { width: 1.2rem; height: 1.2rem; flex: none; }
+
 .candidate-nav {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -178,7 +208,7 @@ a:focus-visible {
 
 .link-slots {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
   gap: 1.5rem;
 }
 
