@@ -55,7 +55,7 @@ try{
  assert.match(turenicButtons.at(-1),/Peter 21. októbra 2026 potvrdil/)
  if(initial.review) assert.match(turenicButtons[0],/Neoverený pracovný súpis/)
  const turenicVisible=await evaluate(`[...document.querySelectorAll('.candidate-card:last-child .connection-toggle span')].map(item=>item.textContent)`)
- assert.equal(turenicVisible.at(-1),'Tím Tureniča')
+ assert.equal(turenicVisible.at(-1),'KDH SaS')
  if(initial.review) assert.match(turenicVisible[0],/Tur súpis · neoverené/)
  if(initial.review) assert.notEqual(turenicVisible[0],turenicVisible[1])
  const turenicButton = index => `document.querySelectorAll('.candidate-card:last-child .connection-toggle')[${index}]`
