@@ -28,8 +28,8 @@ function link(url, label) {
   return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`
 }
 
-function source(url, publisher, date = 'dátum zverejnenia neuvedený') {
-  return `<small class="source">Zdroj: ${link(url, publisher)} · ${escapeHtml(date)} · naposledy overené ${escapeHtml(data.checked)}</small>`
+function source(url, publisher, date = 'dátum zverejnenia neuvedený', checked = data.checked) {
+  return `<small class="source">Zdroj: ${link(url, publisher)} · ${escapeHtml(date)} · ${escapeHtml(checked === data.checked ? `naposledy overené ${checked}` : checked)}</small>`
 }
 
 function indent(markup, depth = 1) {
@@ -125,19 +125,40 @@ function renderFunctions(candidate) {
   ]))
 }
 
-function renderChannel(url, note) {
+function renderChannel(url, note, publisher, supplied = false) {
   if (!url) return [empty]
   return [
     `<p>${link(url, 'Otvoriť zdroj')}${note ? ` — ${escapeHtml(note)}` : ''}</p>`,
-    source(url, url.includes('facebook.com') ? 'Facebook — kandidátsky označená alebo prepojená stránka' : 'Web kandidáta'),
+    source(url, publisher, 'dátum zverejnenia neuvedený', supplied ? 'odkaz dodal Peter 21. októbra 2026; obsah nebol nezávisle overený' : data.checked),
   ]
 }
 
 function renderChannels(candidate) {
   return [block('div', ' class="link-slots"', [
-    block('div', '', ['<h3>Facebook</h3>', ...renderChannel(candidate.facebook, candidate.facebookNote)]),
-    block('div', '', ['<h3>Web kandidáta</h3>', ...renderChannel(candidate.website)]),
+    block('div', '', ['<h3>Web kandidáta</h3>', ...renderChannel(candidate.website, null, 'Web kandidáta', candidate.id === 'bartok')]),
+    block('div', '', ['<h3>Facebook</h3>', ...renderChannel(candidate.facebook, candidate.facebookNote, 'Facebook — kandidátsky označená alebo prepojená stránka', candidate.id === 'cirbus')]),
+    block('div', '', ['<h3>Instagram</h3>', ...renderChannel(candidate.instagram, 'Odkaz dodal prevádzkovateľ projektu; prevádzkovateľ účtu nebol nezávisle overený.', 'Instagram — kandidátsky označený účet', true)]),
   ])]
+}
+
+const channelIcons = {
+  website: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-4 6-4 9s1 6 4 9M12 3c3 3 4 6 4 9s-1 6-4 9"/></svg>',
+  facebook: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path d="M14.4 21v-8h2.7l.4-3.1h-3.1V8c0-.9.3-1.5 1.6-1.5h1.7V3.7a22 22 0 0 0-2.5-.1c-2.5 0-4.2 1.5-4.2 4.3v2H8.2V13H11v8h3.4Z"/></svg>',
+  instagram: '<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>',
+}
+
+function renderTopChannels(candidate) {
+  const slots = [['website', 'Web', candidate.website], ['facebook', 'Facebook', candidate.facebook], ['instagram', 'Instagram', candidate.instagram]]
+  return block('div', ' class="hero-channels" aria-label="Odkazy na kanály kandidáta"', slots.map(([kind, label, url]) =>
+    url ? `<a href="${escapeHtml(url)}" aria-label="${escapeHtml(label)} — ${escapeHtml(candidate.name)}">${channelIcons[kind]}<span>${escapeHtml(label)}</span></a>` :
+      `<span class="hero-channel-unavailable">${channelIcons[kind]}<span>${escapeHtml(label)}: odkaz nezistený</span></span>`))
+}
+
+function renderTenQuestions(candidate) {
+  return candidate.tenQuestions ? [
+    `<p>${link(candidate.tenQuestions, `10 otázok pre kandidáta — ${candidate.name}`)}. Rubrika Bernolákovo Online; odpovede tu nie sú zhrnuté ani nezávisle overené.</p>`,
+    source(candidate.tenQuestions, 'Bernolákovo Online — Facebook', 'dátum príspevku nezistený', 'odkaz dodal Peter 21. októbra 2026; obsah nebol nezávisle overený'),
+  ] : ['<p class="empty">V dodanej sade nebol odkaz na túto rubriku doložený. Neznamená to, že príspevok alebo odpovede neexistujú.</p>']
 }
 
 function renderCompanies() {
@@ -225,6 +246,7 @@ function renderSections(candidate) {
     ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
     section('companies', 'Firemné funkcie', renderCompanies()),
     section('interview', 'Rozhovor', renderInterview(candidate)),
+    section('ten-questions', '10 otázok — Bernolákovo Online', renderTenQuestions(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),
   ])
 }
@@ -257,6 +279,7 @@ function renderHero(candidate) {
       block('div', ' class="hero-copy"', [
         `<p class="kicker">Bernolákovo / ${councilRecord(candidate) ? 'kandidát na starostu aj poslanca obecného zastupiteľstva' : 'voľby starostu'} / ${number} z 08</p>`,
         `<h1>${escapeHtml(candidate.name)}${councilRecord(candidate) ? '<small class="office-label">Kandidát na starostu obce aj poslanca obecného zastupiteľstva</small>' : ''}</h1>`,
+        renderTopChannels(candidate),
         '<p>Rovnaké rubriky a pravidlá zdrojovania pre všetkých osem kandidátov.</p>',
       ]),
       renderPortrait(candidate),
