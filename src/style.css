@@ -588,6 +588,17 @@ h1 em {
   }
 }
 
+@media (max-width: 360px) {
+  .intro-aside {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .municipal-arms {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
