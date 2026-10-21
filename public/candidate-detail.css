@@ -414,3 +414,5 @@ footer p {
 
 .portrait-wrap .council-source-photo{object-fit:contain}
 .hero > .detail-portrait{width:min(100%,18rem);margin-top:1.25rem}
+
+.connection-district{margin-top:1.35rem}.connection-district h3{font-size:1.05rem;margin:0 0 .6rem}.connection-card a:focus-visible{outline:3px solid #a87800;outline-offset:2px}

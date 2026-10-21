@@ -1,0 +1,55 @@
+import assert from 'node:assert/strict'
+import {spawn} from 'node:child_process'
+import {existsSync,mkdtempSync,rmSync} from 'node:fs'
+import {tmpdir} from 'node:os'
+import {join} from 'node:path'
+import net from 'node:net'
+const chromeBin=process.env.CHROME_BIN||['/usr/bin/google-chrome','/usr/bin/chromium','/usr/bin/chromium-browser'].find(existsSync)
+if(!chromeBin) throw Error('Chrome/Chromium required')
+const port=()=>new Promise(resolve=>{const s=net.createServer();s.listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p))})})
+const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms))
+const sitePort=await port(), debugPort=await port(), profile=mkdtempSync(join(tmpdir(),'berno-connections-'))
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port',String(sitePort),'--strictPort'],{stdio:'ignore'})
+const chrome=spawn(chromeBin,['--headless=new','--no-sandbox','--disable-gpu',`--remote-debugging-port=${debugPort}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore'})
+async function ready(url){for(let i=0;i<80;i++){try{if((await fetch(url)).ok)return}catch{}await pause(100)}throw Error(`Timeout: ${url}`)}
+let ws
+try{
+ await ready(`http://127.0.0.1:${sitePort}/`)
+ await ready(`http://127.0.0.1:${debugPort}/json/version`)
+ const tab=await(await fetch(`http://127.0.0.1:${debugPort}/json/new?about:blank`,{method:'PUT'})).json()
+ ws=new WebSocket(tab.webSocketDebuggerUrl)
+ await new Promise((resolve,reject)=>{ws.onopen=resolve;ws.onerror=reject})
+ let serial=0;const pending=new Map()
+ ws.onmessage=event=>{const message=JSON.parse(event.data);if(pending.has(message.id)){pending.get(message.id)(message);pending.delete(message.id)}}
+ const command=(method,params={})=>new Promise(resolve=>{const id=++serial;pending.set(id,resolve);ws.send(JSON.stringify({id,method,params}))})
+ const evaluate=async expression=>{const response=await command('Runtime.evaluate',{expression,returnByValue:true});if(response.result?.exceptionDetails)throw Error(JSON.stringify(response.result.exceptionDetails));return response.result.result.value}
+ await command('Emulation.setDeviceMetricsOverride',{width:375,height:800,deviceScaleFactor:1,mobile:true})
+ await command('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]})
+ await command('Page.navigate',{url:`http://127.0.0.1:${sitePort}/`})
+ for(let i=0;i<40;i++){if(await evaluate(`Boolean(document.querySelector('.connection-toggle'))`))break;await pause(100)}
+ const initial=await evaluate(`(() => ({mayors:document.querySelectorAll('.candidate-card').length,council:document.querySelectorAll('.council-list li').length,overflow:document.documentElement.scrollWidth>innerWidth,buttons:document.querySelectorAll('.connection-toggle').length,review:document.querySelector('.preview-notice')!==null}))()`)
+ assert.deepEqual([initial.mayors,initial.council,initial.overflow],[8,44,false])
+ const click=async expression=>{await evaluate(`(() => {${expression}})()`);await pause(100);return evaluate(`document.querySelector('.connection-status').textContent`)}
+ let status=await click(`document.querySelector('.candidate-card .connection-toggle').click()`)
+ assert.match(status,/Tím Bartók/)
+ const selected=await evaluate(`(() => ({mayor:document.querySelectorAll('.candidate-card.is-selected').length,council:document.querySelectorAll('.council-list .is-selected').length,related:document.querySelectorAll('.council-list .is-related').length,pressed:document.querySelectorAll('.connection-toggle[aria-pressed="true"]').length,link:document.querySelector('.candidate-card.is-selected a').getAttribute('href')}))()`)
+ assert.deepEqual([selected.mayor,selected.council,selected.related,selected.pressed],[1,1,9,2])
+ assert.equal(selected.link,'/kandidati/bartok/')
+ status=await click(`document.querySelector('.council-list .is-selected .connection-toggle').click()`)
+ assert.match(status,/žiadne prepojenie/)
+ status=await click(`document.querySelector('.council-list .connection-toggle').click()`)
+ assert.match(status,/Tím Bartók/)
+ status=await click(`document.querySelector('.candidate-card .connection-toggle').click()`)
+ assert.match(status,/Tím Bartók/)
+ status=await click(`document.querySelector('.candidate-card .connection-toggle').click()`)
+ assert.match(status,/žiadne prepojenie/)
+ const turenic=await evaluate(`(() => ({button:document.querySelectorAll('.candidate-card .connection-toggle')[1]?.getAttribute('aria-label')||'',hasUnverified:[...document.querySelectorAll('.candidate-card .connection-toggle')].some(b=>b.textContent.includes('Možné prepojenia'))}))()`)
+ assert.equal(turenic.hasUnverified,initial.review)
+ await evaluate(`document.querySelector('.candidate-card .connection-toggle').focus()`)
+ await command('Input.dispatchKeyEvent',{type:'keyDown',key:' ',code:'Space',windowsVirtualKeyCode:32,nativeVirtualKeyCode:32})
+ await command('Input.dispatchKeyEvent',{type:'keyUp',key:' ',code:'Space',windowsVirtualKeyCode:32,nativeVirtualKeyCode:32})
+ await pause(100)
+ assert.match(await evaluate(`document.querySelector('.connection-status').textContent`),/Tím Bartók/)
+ assert.equal(await evaluate(`document.activeElement.classList.contains('connection-toggle')`),true)
+ console.log(`Connection browser checks passed (${initial.review?'photo-review':'release'}; mobile, reduced motion, buttons, dual office, links)`)
+}finally{ws?.close();server.kill();chrome.kill();rmSync(profile,{recursive:true,force:true,maxRetries:20,retryDelay:100})}

@@ -7,6 +7,7 @@ import issue24Photos from './issue24-photo-availability.json'
 import { checkedDate, districtSource, findStreet, precinctSource, suggestStreets, streetData, venues } from './street-lookup'
 import { CandidateSearch } from './CandidateSearch'
 import { dualRoutes } from './candidate-search'
+import { canonicalPerson, connectionFor } from './connections'
 import './style.css'
 
 const municipalityHome = 'https://www.bernolakovo.sk/'
@@ -24,6 +25,10 @@ const councilPhoto = (id:string) => {
 const correctionEmail = 'Mr.petermacko@gmail.com'
 
 function App() {
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null)
+  const activeConnection = selectedPerson ? connectionFor(selectedPerson, photoReview) : undefined
+  const connectionState = (id: string) => !activeConnection ? '' : activeConnection.members.some(member => canonicalPerson(member) === canonicalPerson(id)) ? (selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(id) ? 'is-selected' : 'is-related') : 'is-unrelated'
+  const toggleConnection = (id: string) => setSelectedPerson(current => current && canonicalPerson(current) === canonicalPerson(id) ? null : id)
   const [streetInput, setStreetInput] = useState('')
   const [searched, setSearched] = useState(false)
   const [suggestionsOpen, setSuggestionsOpen] = useState(false)
@@ -187,11 +192,16 @@ function App() {
           <h2 id="candidates-title">Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
+        <p className="connection-instructions">Prepojenia ukazujú iba doložené kampaňové predstavenia alebo výslovne označené neoverené podnety, nie oficiálne volebné listiny. Rohovým tlačidlom zvýrazníte súvisiace profily.</p>
+        <p className="connection-status" role="status" aria-live="polite">{activeConnection ? `Zvýraznené: ${activeConnection.title}. ${activeConnection.qualification}` : 'Nie je zvolené žiadne prepojenie.'}</p>
         <ol className="candidate-grid">
           {candidates.map((candidate) => {
             const portrait = portraits?.[candidate.id]
+            const councilId = Object.keys(dualRoutes).find(id => dualRoutes[id] === candidate.id)
+            const connection = councilId ? connectionFor(councilId, photoReview) : undefined
             return (
-              <li className="candidate-card" key={candidate.id}>
+              <li className={`candidate-card connection-item ${councilId ? connectionState(councilId) : activeConnection ? 'is-unrelated' : ''}`} key={candidate.id}>
+                {connection && <button className="connection-toggle" type="button" aria-pressed={Boolean(selectedPerson && councilId && canonicalPerson(selectedPerson) === canonicalPerson(councilId))} aria-label={`${Boolean(selectedPerson && councilId && canonicalPerson(selectedPerson) === canonicalPerson(councilId)) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${connection.title}. ${connection.qualification}`} onClick={() => toggleConnection(councilId!)} title={connection.title}>↔<span className="sr-only">{connection.title}</span></button>}
                 <a
                   className="candidate-card-link"
                   href={`/kandidati/${candidate.id}/`}
@@ -241,7 +251,8 @@ function App() {
             </div>
             <ol className="council-list">
               {district.candidates.map((candidate) => (
-                <li key={candidate.id}>
+                <li key={candidate.id} className={`connection-item ${connectionState(candidate.id)}`}>
+                  {connectionFor(candidate.id, photoReview) && <button className="connection-toggle" type="button" aria-pressed={Boolean(selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(candidate.id))} aria-label={`${Boolean(selectedPerson && canonicalPerson(selectedPerson) === canonicalPerson(candidate.id)) ? 'Zrušiť zvýraznenie' : 'Zvýrazniť prepojenie'}: ${connectionFor(candidate.id, photoReview)?.title}. ${connectionFor(candidate.id, photoReview)?.qualification}`} onClick={() => toggleConnection(candidate.id)} title={connectionFor(candidate.id, photoReview)?.title}>↔<span className="sr-only">{connectionFor(candidate.id, photoReview)?.title}</span></button>}
                   <a href={councilRoute(candidate.id)} aria-label={`Profil: ${candidate.name}, kandidát na ${dualRoutes[candidate.id] ? 'starostu aj ' : ''}poslanca obecného zastupiteľstva, obvod ${district.number}, číslo ${candidate.listNumber} v zozname, ${candidate.designation}`}>
                     <img className="council-thumb" src={councilPhoto(candidate.id)} alt="" width="48" height="57" loading="lazy" /><span className="council-number">{String(candidate.listNumber).padStart(2, '0')}</span>
                     <span className="council-name">{candidate.name}<small className="council-designation">{candidate.designation}</small></span>

@@ -34,14 +34,23 @@ export function connectionCards(id,withPhotos,review = false) {
  if (group.kind === 'presented_by' && !review) return ''
  const members=people.filter(p=>p.id!==id && evidence[p.id]?.connection===group.name)
  if (group.name==='Turenič – predstavenie v kampani' && id!=='c-bb232e32') members.unshift(people.find(p=>p.id==='c-bb232e32'))
- const cards=members.map(p=>{
-   const photo=photoFor(p.id,withPhotos)
-   return `<li class="connection-card"><a href="${personRoute(p.id)}"><img src="${photo?.src||'/images/portrait-placeholder.svg'}" alt="" width="80" height="95" loading="lazy"><span>${esc(p.name)}<small>Profil kandidáta${dualRoutes[p.id]?' na starostu aj poslanca':''}</small></span></a></li>`
- }).join('')
+ const cards=connectionDistricts(members,withPhotos)
  const uncertain = group.kind === 'presented_by'
  const source = group.name === 'ZA BERnolákovo'
    ? `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=21">Bernolák 2/2026, strana PDF 21</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=22">22</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=23">23</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=24">24</a> (individuálne pomenované zelené reklamy)`
    : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}">kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
    : `<a href="${esc(group.source)}">Zdroj predstavenia</a>`
- return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':'Typ: výslovné predstavenie tímu.'} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p><ul class="connection-grid">${cards}</ul></section>`
+ return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':'Typ: výslovné predstavenie tímu.'} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
+}
+
+export function connectionDistricts(members,withPhotos) {
+ return [1,2,3].map(number=>{
+   const rows=members.filter(p=>p.district===number).sort((a,b)=>a.listNumber-b.listNumber)
+   if (!rows.length) return ''
+   const cards=rows.map(p=>{
+     const photo=photoFor(p.id,withPhotos)
+     return `<li class="connection-card"><a href="${personRoute(p.id)}"><img src="${photo?.src||'/images/portrait-placeholder.svg'}" alt="" width="80" height="95" loading="lazy"><span>${esc(p.name)}<small>Profil kandidáta${dualRoutes[p.id]?' na starostu aj poslanca':''}</small></span></a></li>`
+   }).join('')
+   return `<div class="connection-district"><h3>Volebný obvod ${number}</h3><ul class="connection-grid">${cards}</ul></div>`
+ }).join('')
 }
