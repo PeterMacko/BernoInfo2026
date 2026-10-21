@@ -73,6 +73,9 @@ function validateInputs() {
         throw new Error(`Missing ${field} for ${candidate.id}`)
       }
     }
+    if (typeof candidate.transparencyProfile !== 'string' || !candidate.transparencyProfile.startsWith('https://volby.transparency.sk/samosprava2026/kandidati/')) {
+      throw new Error(`Missing Transparency profile for ${candidate.id}`)
+    }
     if (!reviewPortraits[candidate.id] || typeof reviewPortraits[candidate.id].src !== 'string' ||
         typeof reviewPortraits[candidate.id].sourceUrl !== 'string' || typeof reviewPortraits[candidate.id].credit !== 'string') {
       throw new Error(`Missing portrait-review record for ${candidate.id}`)
@@ -161,6 +164,26 @@ function renderTenQuestions(candidate) {
   ] : ['<p class="empty">V dodanej sade nebol odkaz na túto rubriku doložený. Neznamená to, že príspevok alebo odpovede neexistujú.</p>']
 }
 
+function renderTransparency(candidate) {
+  return [
+    `<p>${link(candidate.transparencyProfile, `Volebný finančný profil — ${candidate.name}`)}. Odkaz vedie na profil vo volebnom prehľade Transparency International Slovensko; sám osebe nepotvrdzuje vlastníctvo transparentného účtu, pohyby ani splnenie zákonných povinností.</p>`,
+    source(candidate.transparencyProfile, 'Transparency International Slovensko — profil kandidáta', 'dátum zverejnenia nezistený', 'odkaz dodal Peter 21. októbra 2026; adresa načítala aplikačnú stránku, obsah profilu nebol nezávisle overený'),
+  ]
+}
+
+function renderTurenicAssociation(candidate) {
+  if (candidate.id !== 'turenic') return []
+  const ids = ['c-a7eb4e22', 'c-6d9a5867', 'c-be773c61', 'c-a8a3f42b', 'c-73b7e5fe']
+  const people = ids.map(id => councilData.districts.flatMap(district => district.candidates.map(person => ({...person, district}))).find(person => person.id === id))
+  if (people.some(person => !person)) throw new Error('Missing council candidate in Turenič association')
+  return [section('reported-association', 'Nahlásené prepojenie na kandidátov do zastupiteľstva', [
+    '<p>Peter 21. októbra 2026 označil nasledujúcich piatich kandidátov za skupinu spojenú s Miroslavom Tureničom. Toto konkrétne prepojenie zatiaľ nebolo nezávisle doložené pomenovaným verejným zdrojom; neuvádzame ich preto ako overený Tureničov volebný tím.</p>',
+    block('ul', ' class="evidence-list"', people.map(person => `<li>${link(`/kandidati-na-poslancov/${person.id}/`, person.name)} — obvod ${person.district.number}, poradie ${person.listNumber} v opravenej listine.</li>`)),
+    `<p>V ${link(councilData.districts[0].sourceUrl, 'opravenej listine obvodu 1')}, ${link(councilData.districts[1].sourceUrl, 'obvodu 2')} a ${link(councilData.districts[2].sourceUrl, 'obvodu 3')} majú títo piati spoločnú oficiálnu nomináciu Demokrati, KDH, SaS. ${link(data.officialUrl, 'Turenič je v opravenom zozname kandidátov na starostu')} uvedený ako nezávislý kandidát. Spoločná oficiálna nominácia piatich sama osebe nedokladá ich spoločnú kampaň s Tureničom.</p>`,
+    '<small class="source">Podnet: Peter, 21. októbra 2026 · úradné listiny datované 2. septembra 2026 · prepojenie neoverené.</small>',
+  ])]
+}
+
 function renderInterview(candidate) {
   return candidate.interview ? [
     `<p>${link(candidate.interview, `Rozhovor s ${candidate.name} — LanCast Studio`)}. Vydavateľ: LanCast Studio. Účasť kandidáta podporujú úvodné titulky; celé odpovede ani identita podľa obrazu alebo hlasu neboli overené. Z rozhovoru tu nevyvodzujeme stanoviská.</p>`,
@@ -235,8 +258,10 @@ function renderSections(candidate) {
     section('programme', 'Programové návrhy', renderProgramme(candidate)),
     section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
+    section('transparency', 'Volebné financovanie — externý profil', renderTransparency(candidate)),
     ...renderCouncilLinks(candidate),
     ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
+    ...renderTurenicAssociation(candidate),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('ten-questions', '10 otázok — Bernolákovo Online', renderTenQuestions(candidate)),
     section('sources', 'Zdroje, pokrytie a opravy', renderSources()),

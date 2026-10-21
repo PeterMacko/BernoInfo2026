@@ -164,6 +164,11 @@ function App() {
         </div>
         <div className="election-resource-grid">
           <article>
+            <h3><a href="https://volby.transparency.sk/samosprava2026/vyhladavanie/bernolakovo">Volebné financovanie v Bernolákove ↗</a></h3>
+            <p>Vyhľadávanie kandidátov na stránke Transparency International Slovensko. Samotný odkaz nepotvrdzuje stav účtov ani financovania.</p>
+            <small>Vydavateľ: Transparency International Slovensko · Odkaz dodal Peter 21. októbra 2026 · Adresa sa načítala; údaje v aplikácii neboli nezávisle overené.</small>
+          </article>
+          <article>
             <h3><a href="https://www.youtube.com/watch?v=EFM4W0tnZgE&t=8112s&pp=ygUdcHJlZHZvbGVibmEgZGViYXRhIGJlcm5sYWtvdm8%3D">Debata s kandidátmi ↗</a></h3>
             <p>Video na YouTube. Účasť jednotlivých kandidátov ani obsah vystúpení tu nevyhodnocujeme.</p>
             <small>Platforma: YouTube · Vydavateľ: neoverený · Dátum videa: neoverený · Odkaz dodal Peter 21. októbra 2026.</small>

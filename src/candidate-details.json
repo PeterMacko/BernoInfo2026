@@ -5,6 +5,7 @@
   "candidates": [
     {
       "id": "bartok",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Michal.Bart%C3%B3k~Bernol%C3%A1kovo",
       "name": "Michal BARTÓK",
       "position": 1,
       "occupation": "právnik",
@@ -28,6 +29,7 @@
     },
     {
       "id": "cirbus",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Martin.Cirbus~Bernol%C3%A1kovo",
       "name": "Martin CIRBUS",
       "position": 2,
       "occupation": "vykonávateľ",
@@ -39,6 +41,7 @@
     },
     {
       "id": "kandrac",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Filip.Kandr%C3%A1%C4%8D~Bernol%C3%A1kovo",
       "name": "Filip KANDRÁČ",
       "position": 3,
       "occupation": "dispečer",
@@ -54,6 +57,7 @@
     },
     {
       "id": "kostial",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Jaroslav.Ko%C5%A1tial~Bernol%C3%A1kovo",
       "name": "Jaroslav KOŠTIAL",
       "position": 4,
       "occupation": "technický a prevádzkový manažér",
@@ -71,6 +75,7 @@
     },
     {
       "id": "lakota",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Peter.Lakota~Bernol%C3%A1kovo",
       "name": "Peter LAKOTA",
       "position": 5,
       "occupation": "právnik, odborník na verejné obstarávanie a eurofondy",
@@ -89,6 +94,7 @@
     },
     {
       "id": "rajter",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Milan.Rajter~Bernol%C3%A1kovo",
       "name": "Milan RAJTER",
       "position": 6,
       "occupation": "podnikateľ",
@@ -104,6 +110,7 @@
     },
     {
       "id": "sutka",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Roman.%C5%A0utka~Bernol%C3%A1kovo",
       "name": "Roman ŠUTKA",
       "position": 7,
       "occupation": "podnikateľ",
@@ -120,6 +127,7 @@
     },
     {
       "id": "turenic",
+      "transparencyProfile": "https://volby.transparency.sk/samosprava2026/kandidati/Miroslav.Tureni%C4%8D~Bernol%C3%A1kovo",
       "name": "Miroslav TURENIČ",
       "position": 8,
       "occupation": "starosta obce",
