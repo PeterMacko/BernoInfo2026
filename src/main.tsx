@@ -158,7 +158,7 @@ function App() {
               <ul className="intro-stats" aria-label="Počet kandidátov a volebných obvodov">
                 <li><span className="count">08</span><span>– Kandidátov na starostu</span></li>
                 <li><span className="count">44</span><span>– Kandidátov na poslanca</span></li>
-                <li><span className="count">3</span><span>– Obvody</span></li>
+                <li><span className="count">03</span><span>– Obvody</span></li>
               </ul>
             </div>
             <figure className="municipal-arms">

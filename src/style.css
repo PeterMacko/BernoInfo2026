@@ -177,7 +177,6 @@ h1 em {
 .intro-aside {
   width: min(250px, 100%);
   flex: none;
-  border-top: 1px solid #9bb2cf;
   padding-top: 22px;
 }
 
@@ -586,6 +585,17 @@ h1 em {
   }
   .colophon {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 360px) {
+  .intro-aside {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .municipal-arms {
+    padding-left: 0;
+    border-left: 0;
   }
 }
 
