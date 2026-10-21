@@ -24,6 +24,12 @@ const councilPhoto = (id:string) => {
   return dualRoutes[id] ? portraits?.[dualRoutes[id] as keyof typeof portraits]?.src ?? placeholderImage : placeholderImage
 }
 const correctionEmail = 'Mr.petermacko@gmail.com'
+const menuItems = [
+  { id: 'candidates-title', label: 'Primátori' },
+  { id: 'district-1', label: 'Obvod 01' },
+  { id: 'district-2', label: 'Obvod 02' },
+  { id: 'district-3', label: 'Obvod 03' },
+] as const
 
 function ConnectionIcon() {
   return <svg className="connection-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false"><circle cx="9" cy="8" r="3" /><path d="M2.5 19v-1.3a5.5 5.5 0 0 1 11 0V19H2.5Z" /><path d="M17 5.4a3 3 0 0 1 0 5.2M16 14a4.5 4.5 0 0 1 5.5 4.4V19h-5" /></svg>
@@ -35,6 +41,31 @@ function ConnectionButton({personId, group, pressed, onToggle}: ConnectionButton
 }
 
 function App() {
+  const [activeMenu, setActiveMenu] = useState<string | null>(null)
+  useEffect(() => {
+    let frameId = 0
+    const updateActiveMenu = () => {
+      cancelAnimationFrame(frameId)
+      frameId = requestAnimationFrame(() => {
+        const reached = menuItems.filter(item => {
+          const heading = document.getElementById(item.id)
+          if (!heading) return false
+          // Match the browser's anchor landing position at every breakpoint.
+          const anchorOffset = parseFloat(getComputedStyle(heading).scrollMarginTop)
+          return heading.getBoundingClientRect().top <= anchorOffset + 1
+        })
+        setActiveMenu(reached.at(-1)?.id ?? null)
+      })
+    }
+    updateActiveMenu()
+    window.addEventListener('scroll', updateActiveMenu, { passive: true })
+    window.addEventListener('resize', updateActiveMenu)
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('scroll', updateActiveMenu)
+      window.removeEventListener('resize', updateActiveMenu)
+    }
+  }, [])
   const [selection, setSelection] = useState<{personId: string; groupId: string} | null>(null)
   const activeConnection = selection ? connections.find(group => group.id === selection.groupId) : undefined
   const selectedPerson = selection?.personId
@@ -79,8 +110,8 @@ function App() {
 
   useEffect(() => {
     let frameId = 0
-    const navigateToDistrict = () => {
-      if (!/^#district-[1-3]$/.test(window.location.hash)) return
+    const navigateToSection = () => {
+      if (!/^#(?:candidates-title|district-[1-3])$/.test(window.location.hash)) return
       // The browser's initial fragment jump may run before React creates this heading.
       cancelAnimationFrame(frameId)
       frameId = requestAnimationFrame(() => {
@@ -90,11 +121,11 @@ function App() {
         heading.focus({ preventScroll: true })
       })
     }
-    navigateToDistrict()
-    window.addEventListener('hashchange', navigateToDistrict)
+    navigateToSection()
+    window.addEventListener('hashchange', navigateToSection)
     return () => {
       cancelAnimationFrame(frameId)
-      window.removeEventListener('hashchange', navigateToDistrict)
+      window.removeEventListener('hashchange', navigateToSection)
     }
   }, [])
 
@@ -104,7 +135,9 @@ function App() {
         <div className="brand" aria-label="BernoInfo 2026">
           BERNO<span>INFO</span><i>2026</i>
         </div>
-        <span className="masthead-note">Nezávislý projekt · nie je stránkou obce</span>
+        <nav className="section-menu" aria-label="Sekcie kandidátov">
+          {menuItems.map(item => <a key={item.id} href={`#${item.id}`} className={activeMenu === item.id ? 'is-active' : undefined} aria-current={activeMenu === item.id ? 'location' : undefined}>{item.label}</a>)}
+        </nav>
       </header>
 
       <section className="intro" aria-labelledby="page-title">
@@ -118,6 +151,7 @@ function App() {
             <h1 id="page-title">
               Voľby v<br /><em>Bernolákove.</em>
             </h1>
+            <p className="intro-note">Nezávislý projekt · nie je stránkou obce</p>
           </div>
           <div className="intro-aside">
             <div className="intro-count">
@@ -205,7 +239,7 @@ function App() {
       <section className="candidate-section" aria-labelledby="candidates-title">
         {photoReview && privatePreviewPortraits && !approvedPortraits && <p className="preview-notice">Vývojový náhľad zdrojových fotografií</p>}
         <div className="section-heading">
-          <h2 id="candidates-title">Kandidáti na starostu obce</h2>
+          <h2 id="candidates-title" tabIndex={-1}>Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
         <p className="connection-instructions">Prepojenia ukazujú iba doložené kampaňové predstavenia alebo výslovne označené neoverené podnety, nie oficiálne volebné listiny. Rohovým tlačidlom zvýrazníte súvisiace profily.</p>
