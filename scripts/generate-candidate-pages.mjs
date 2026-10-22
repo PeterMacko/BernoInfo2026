@@ -107,20 +107,6 @@ function renderEvidenceList(items, renderItem) {
   return items.length ? [block('ul', ' class="evidence-list"', items.map(renderItem))] : [empty]
 }
 
-function renderExperience(candidate) {
-  return renderEvidenceList(candidate.experience || [], (item) => block('li', '', [
-    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(item)}</p>`,
-    source(candidate.experienceSource, 'Web kandidáta'),
-  ]))
-}
-
-function renderProgramme(candidate) {
-  return candidate.proposals ? [
-    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(candidate.proposals)}</p>`,
-    source(candidate.proposalSource || candidate.website, candidate.proposalPublisher || 'Web kandidáta', candidate.proposalDate),
-  ] : [empty]
-}
-
 function renderFunctions(candidate) {
   return renderEvidenceList(candidate.priorTermFunctions || [], (item) => block('li', '', [
     `<p>${escapeHtml(item.text)}</p>`,
@@ -200,7 +186,7 @@ function correctionLink() {
 
 function renderSources() {
   return [
-    `<p>Spoločný dátum poslednej kontroly záznamov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja ani to, že kandidát odmietol odpovedať.</p>`,
+    `<p>Spoločný dátum poslednej kontroly záznamov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja ani to, že kandidát odmietol odpovedať.</p>`,
     '<p>Prvotné zhromaždenie podkladov pre údaje v profiloch sa uzavrelo 18. októbra 2026; 19. októbra nasledovala cielená kontrola známych zdrojov a 20. októbra kontrola záznamov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október je čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>',
     `<p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correctionLink()}</p>`,
     '<p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>',
@@ -255,8 +241,6 @@ function renderSections(candidate) {
     section('registration', 'Registrácia na starostu obce', renderRegistration(candidate)),
     ...renderCouncilRegistration(candidate),
     section('occupation', 'Povolanie', renderOccupation(candidate)),
-    section('experience', 'Skúsenosti a projekty', renderExperience(candidate)),
-    section('programme', 'Programové návrhy', renderProgramme(candidate)),
     section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
     section('transparency', 'Volebné financovanie — externý profil', renderTransparency(candidate)),
