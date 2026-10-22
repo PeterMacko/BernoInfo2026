@@ -38,7 +38,7 @@ export function photoFor(id, withPhotos) {
  if (item.kind==='archival PDF') return {src:`/images/council/${id}.jpg`,url:item.url,year:item.url.includes('2018')?'2018':'2022',kind:'Archívna fotografia v obecnom časopise'}
  return null
 }
-export function connectionCards(id,withPhotos,review = false) {
+export function connectionCards(id,withPhotos,review = false,externalNewTab = false) {
  const group=groups.find(g=>evidence[id]?.connection===g.name || (id==='c-bb232e32' && g.name==='Turenič – predstavenie v kampani'))
  if (!group) return ''
  if (group.kind === 'presented_by' && !review) return ''
@@ -47,10 +47,11 @@ export function connectionCards(id,withPhotos,review = false) {
  const cards=`<div class="connection-districts">${connectionDistricts(members,withPhotos)}</div>`
  const uncertain = group.kind === 'presented_by'
  const relationLabel = group.kind === 'campaign_branding' ? 'Typ: spoločné označenie kampane; členstvo v tíme ani úplnosť zoznamu nie sú potvrdené.' : 'Typ: výslovné predstavenie tímu.'
+ const externalAttributes = externalNewTab ? ' target="_blank" rel="noopener noreferrer"' : ''
  const source = group.name === 'ZA BERnolákovo'
-   ? `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=21">Bernolák 2/2026, strana PDF 21</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=22">22</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=23">23</a>; <a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=24">24</a> (individuálne pomenované zelené reklamy)`
-   : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}">kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
-   : `<a href="${esc(group.source)}">Zdroj predstavenia</a>`
+   ? [21,22,23,24].map(page => `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=${page}"${externalAttributes}>${page === 21 ? 'Bernolák 2/2026, strana PDF 21' : page}</a>`).join('; ') + ' (individuálne pomenované zelené reklamy)'
+   : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}"${externalAttributes}>kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
+   : `<a href="${esc(group.source)}"${externalAttributes}>Zdroj predstavenia</a>`
  return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':relationLabel} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
 }
 

@@ -2,12 +2,9 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import {assertKnownCouncilIds, connectionCards, connectionDistricts, people as councilPeople, turenicTeamIds} from './issue24-shared.mjs'
-import {alternateLinkLabel, alternateLinkNote} from './issue27-link-labels.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../src/candidate-details.json', import.meta.url), 'utf8'))
 const councilData = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url), 'utf8'))
-const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url), 'utf8'))
-const entityLinks = JSON.parse(readFileSync(new URL('../src/council-entity-links.json', import.meta.url), 'utf8'))
 const dualIds = {bartok:'c-f6b4af6c', cirbus:'c-a4b1db7c', kostial:'c-307ca828', turenic:'c-bb232e32'}
 const reviewPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url), 'utf8'))
 const mode = process.env.SITE_BUILD_MODE || 'placeholder'
@@ -25,7 +22,8 @@ function escapeHtml(value) {
 }
 
 function link(url, label) {
-  return `<a href="${escapeHtml(url)}">${escapeHtml(label)}</a>`
+  const external = /^https?:\/\//i.test(url)
+  return `<a href="${escapeHtml(url)}"${external ? ' target="_blank" rel="noopener noreferrer"' : ''}>${escapeHtml(label)}</a>`
 }
 
 function source(url, publisher, date = 'dátum zverejnenia neuvedený', checked = data.checked) {
@@ -107,20 +105,6 @@ function renderEvidenceList(items, renderItem) {
   return items.length ? [block('ul', ' class="evidence-list"', items.map(renderItem))] : [empty]
 }
 
-function renderExperience(candidate) {
-  return renderEvidenceList(candidate.experience || [], (item) => block('li', '', [
-    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(item)}</p>`,
-    source(candidate.experienceSource, 'Web kandidáta'),
-  ]))
-}
-
-function renderProgramme(candidate) {
-  return candidate.proposals ? [
-    `<p><strong>Kandidát uvádza:</strong> ${escapeHtml(candidate.proposals)}</p>`,
-    source(candidate.proposalSource || candidate.website, candidate.proposalPublisher || 'Web kandidáta', candidate.proposalDate),
-  ] : [empty]
-}
-
 function renderFunctions(candidate) {
   return renderEvidenceList(candidate.priorTermFunctions || [], (item) => block('li', '', [
     `<p>${escapeHtml(item.text)}</p>`,
@@ -154,7 +138,7 @@ const channelIcons = {
 function renderTopChannels(candidate) {
   const slots = [['website', 'Web', candidate.website], ['facebook', 'Facebook', candidate.facebook], ['instagram', 'Instagram', candidate.instagram]]
   return block('div', ' class="hero-channels" aria-label="Odkazy na kanály kandidáta"', slots.filter(([, , url]) => url).map(([kind, label, url]) =>
-    `<a href="${escapeHtml(url)}" aria-label="${escapeHtml(label)} — ${escapeHtml(candidate.name)}">${channelIcons[kind]}<span>${escapeHtml(label)}</span></a>`))
+    `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="${escapeHtml(label)} — ${escapeHtml(candidate.name)}">${channelIcons[kind]}<span>${escapeHtml(label)}</span></a>`))
 }
 
 function renderTenQuestions(candidate) {
@@ -200,7 +184,7 @@ function correctionLink() {
 
 function renderSources() {
   return [
-    `<p>Spoločný dátum poslednej kontroly záznamov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Programové návrhy a skúsenosti z kandidátskych zdrojov sú pripísané kandidátovi, nie nezávisle potvrdené. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja ani to, že kandidát odmietol odpovedať.</p>`,
+    `<p>Spoločný dátum poslednej kontroly záznamov: ${escapeHtml(data.checked)}. Registrácia a povolanie vychádzajú z opravenej listiny obce. Výskum verejných zdrojov a sociálnych sietí je čiastočný; neúplné položky neznamenajú absenciu stanoviska či zdroja ani to, že kandidát odmietol odpovedať.</p>`,
     '<p>Prvotné zhromaždenie podkladov pre údaje v profiloch sa uzavrelo 18. októbra 2026; 19. októbra nasledovala cielená kontrola známych zdrojov a 20. októbra kontrola záznamov, nie úplné opakovanie rešerše. Prehľad facebookových zdrojov za 16. júl – 16. október je čiastočný; neboli preskúmané všetky príspevky, videá ani odpovede v rozhovoroch. Pri zdrojoch rozlišujeme dátum zverejnenia, ak je známy, a dátum kontroly.</p>',
     `<p>${link(data.officialUrl, 'Opravený zoznam kandidátov (PDF)')} · ${correctionLink()}</p>`,
     '<p>Pri hlásení chyby uveďte dotknutý údaj a odkaz na zdroj. Doložené opravy posúdime podľa rovnakých pravidiel pre všetkých kandidátov; zmenu označíme dátumom pri príslušnej informácii.</p>',
@@ -228,40 +212,15 @@ function renderCouncilRegistration(candidate) {
   ])]
 }
 
-function renderCouncilLinks(candidate) {
-  const record = councilRecord(candidate)
-  if (!record) return []
-  const item = evidence[record.candidate.id]
-  if (!item) return []
-  const kind = item.link.kind
-  const url = item.link.url
-  const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane (nie osobný profil)' :
-    kind === 'post/appearance' ? 'Príspevok o kandidátovi (nie jeho účet)' :
-    kind === 'self-labelled candidate page/profile' ? 'Kandidátsky označená stránka/profil — prevádzkovateľ neoverený' :
-    kind === 'campaign-used profile' ? 'Profil použitý v kampani — prevádzkovateľ neoverený' :
-    kind === 'probable/unverified profile' ? 'Možný profil — nepotvrdené' :
-    kind === 'historical page (2018)' ? 'Historická stránka kampane (2018) — nie dôkaz súčasnej aktivity' :
-    kind === 'mention only' ? 'Príspevok so zmienkou o kandidátovi — nie profil' : null
-  const alternateUrl = entityLinks.urls[item.key]
-  const links = []
-  const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
-  if (label && url && (!reviewOnlyLead || photoReview)) links.push(`<p>${link(url,label)}</p><small class="source">${escapeHtml(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Vlastníctvo účtu nie je nezávisle overené.</small>`)
-  if (photoReview && alternateUrl && alternateUrl !== url) links.push(`<p>${link(alternateUrl, alternateLinkLabel(item.key))}</p><small class="source">${escapeHtml(alternateLinkNote)}</small>`)
-  return links.length ? [section('council-source', 'Odkazy ku kandidatúre na poslanca', links)] : []
-}
-
 function renderSections(candidate) {
   return block('div', ' class="content"', [
     section('registration', 'Registrácia na starostu obce', renderRegistration(candidate)),
     ...renderCouncilRegistration(candidate),
     section('occupation', 'Povolanie', renderOccupation(candidate)),
-    section('experience', 'Skúsenosti a projekty', renderExperience(candidate)),
-    section('programme', 'Programové návrhy', renderProgramme(candidate)),
     section('functions', 'Verejné funkcie v období 2022 – 2026', renderFunctions(candidate)),
     section('channels', 'Kanály kandidáta', renderChannels(candidate)),
     section('transparency', 'Volebné financovanie — externý profil', renderTransparency(candidate)),
-    ...renderCouncilLinks(candidate),
-    ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview)].filter(Boolean),
+    ...[connectionCards(dualIds[candidate.id],withPhotos,photoReview,true)].filter(Boolean),
     ...renderTurenicAssociation(candidate),
     section('interview', 'Rozhovor', renderInterview(candidate)),
     section('ten-questions', '10 otázok — Bernolákovo Online', renderTenQuestions(candidate)),
