@@ -158,14 +158,14 @@ function renderTransparency(candidate) {
 function renderTurenicAssociation(candidate) {
   if (candidate.id !== 'turenic') return []
   const ids = turenicTeamIds
-  assertKnownCouncilIds(ids,'Turenič five-person report')
+  assertKnownCouncilIds(ids,'Turenič team')
   const people = councilPeople.filter(person => ids.includes(person.id))
   if (people.length !== ids.length) throw new Error('Missing council candidate in Turenič association')
-  return [section('reported-association', 'KDH SaS – prepojenie podľa Petra', [
-    '<p>Peter 21. októbra 2026 potvrdil prepojenie nasledujúcich piatich kandidátov s Miroslavom Tureničom. Ide o Petrovo redakčné potvrdenie; nejde o oficiálnu spoločnú volebnú listinu ani nezávislé overenie pomenovaným verejným zdrojom.</p>',
+  return [section('turenic-team', 'Tím Turenič', [
+    '<p>Kandidátsky web Miroslava Tureniča predstavuje nasledujúcich sedem kandidátov v sekcii Môj tím. Peter túto zostavu potvrdil 23. októbra 2026. Nejde o spoločnú oficiálnu volebnú listinu.</p>',
     `<div class="connection-districts">${connectionDistricts(people,withPhotos)}</div>`,
-    `<p>V ${link(councilData.districts[0].sourceUrl, 'opravenej listine obvodu 1')}, ${link(councilData.districts[1].sourceUrl, 'obvodu 2')} a ${link(councilData.districts[2].sourceUrl, 'obvodu 3')} majú títo piati spoločnú oficiálnu nomináciu Demokrati, KDH, SaS. ${link(data.officialUrl, 'Turenič je v opravenom zozname kandidátov na starostu')} uvedený ako nezávislý kandidát. Spoločná oficiálna nominácia piatich sama osebe nedokladá ich spoločnú kampaň s Tureničom.</p>`,
-    '<small class="source">Zdroj prepojenia: Peter, 21. októbra 2026 · mená, obvody a poradie: úradné listiny datované 2. septembra 2026.</small>',
+    `<p>Mená a poradie sme porovnali s ${link(councilData.districts[0].sourceUrl, 'opravenou listinou obvodu 1')}, ${link(councilData.districts[1].sourceUrl, 'obvodu 2')} a ${link(councilData.districts[2].sourceUrl, 'obvodu 3')}. ${link(data.officialUrl, 'Turenič je v opravenom zozname kandidátov na starostu')} uvedený ako nezávislý kandidát. Oficiálne nominácie členov tímu sa môžu líšiť.</p>`,
+    `<small class="source">Zdroj tímu: ${link('https://www.turenic.sk/moj-tim/', 'Miroslav Turenič — Môj tím')} · pozorované 23. októbra 2026; Peter potvrdil zostavu 23. októbra 2026 · mená, obvody a poradie: úradné listiny datované 2. septembra 2026.</small>`,
   ])]
 }
 

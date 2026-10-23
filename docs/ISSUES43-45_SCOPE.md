@@ -2,6 +2,8 @@
 
 ## Editorial rule
 
+**Superseded for Turenič relationships by [issue #76](research/ISSUE76_TURENIC_TEAM_CORRECTION_2026-10-23.md), 23 October:** the earlier five-person association and separate four-person preview-only introduction set are not current display guidance. Turenič is absent from the five-person KDH/SaS nomination group; his seven-person campaign team is separately named on his campaign site. The historical scope below remains for provenance.
+
 Use only relationships already represented in the source-qualified profile evidence. A common nominator, independent registration, or a shared source link is not itself a mayoral alliance. Distinguish campaign-presented team membership from a reported or unverified association in visible copy. Do not enlarge the relationship graph from roster labels. Retain existing preview-only treatment for the four Turenič campaign-introduction leads from the working compilation. **Superseded by #51 (21 October):** the prior instruction to label Peter's separate five-person report “explicitly unverified” no longer applies to its team control or profile heading after Peter confirmed the grouping. Attribute it to Peter and do not imply independent public-source verification or official-list status.
 
 ## Profile acceptance

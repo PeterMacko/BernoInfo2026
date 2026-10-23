@@ -1,16 +1,19 @@
 import {readFileSync} from 'node:fs'
 const roster = JSON.parse(readFileSync(new URL('../src/council-candidates.json', import.meta.url)))
 const mayorPortraits = JSON.parse(readFileSync(new URL('../src/portrait-review.json', import.meta.url)))
+const turenicTeam = JSON.parse(readFileSync(new URL('../src/turenic-team.json', import.meta.url)))
 export const evidence = JSON.parse(readFileSync(new URL('../src/issue24-evidence.json', import.meta.url)))
 export const dualRoutes = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial','c-bb232e32':'turenic'}
 export const people = roster.districts.flatMap(d=>d.candidates.map(c=>({...c,district:d.number,officialUrl:d.sourceUrl})))
-export const turenicTeamIds = ['c-a7eb4e22','c-6d9a5867','c-be773c61','c-a8a3f42b','c-73b7e5fe']
+export const turenicTeamIds = turenicTeam.council
+export const kdhSasIds = ['c-a7eb4e22','c-6d9a5867','c-be773c61','c-a8a3f42b','c-73b7e5fe']
 const rosterIds = new Set(people.map(person=>person.id))
 export function assertKnownCouncilIds(ids,context='relationship') {
  for (const id of ids) if (!rosterIds.has(id)) throw new Error(`${context}: council ID ${id} is absent from official roster`)
 }
 assertKnownCouncilIds(Object.keys(evidence),'issue24 evidence')
 assertKnownCouncilIds(turenicTeamIds,'Turenič team')
+assertKnownCouncilIds(kdhSasIds,'KDH/SaS nomination')
 assertKnownCouncilIds(Object.keys(dualRoutes),'dual-office routes')
 for (const person of people) if (!evidence[person.id]) throw new Error(`issue24 evidence: missing official roster ID ${person.id}`)
 
@@ -19,7 +22,6 @@ export const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<
 const groups = [
  {name:'Tím Bartók',source:'https://michalbartok.sk/kandidati',kind:'explicit_team_membership',description:'Kandidátsky web predstavuje tento tím.'},
  {name:'ZA BERnolákovo',source:'https://www.facebook.com/zabernolakovo/',kind:'campaign_branding',description:'Päť individuálne pomenovaných reklám nesie spoločné označenie kampane ZA BERnolákovo; spoločná stránka kampane nie je osobný účet.'},
- {name:'Turenič – predstavenie v kampani',source:'https://www.facebook.com/100063832401156/',kind:'presented_by',description:'Pracovná kompilácia pripisuje tieto predstavenia stránke kampane Miroslava Tureniča. Konkrétne pomenované príspevky a dátumy zatiaľ neboli zachytené; členstvo v tíme nie je potvrdené.'},
 ]
 const availablePhotos = new Set(JSON.parse(readFileSync(new URL('../src/issue24-photo-availability.json', import.meta.url))))
 export function photoFor(id, withPhotos) {
@@ -40,26 +42,29 @@ export function photoFor(id, withPhotos) {
  return null
 }
 export function connectionCards(id,withPhotos,review = false,externalNewTab = false) {
- const group=groups.find(g=>evidence[id]?.connection===g.name || (id==='c-bb232e32' && g.name==='Turenič – predstavenie v kampani'))
+ const group=groups.find(g=>evidence[id]?.connection===g.name)
  if (!group) return ''
- if (group.kind === 'presented_by' && !review) return ''
  const members=people.filter(p=>p.id!==id && evidence[p.id]?.connection===group.name)
- if (group.name==='Turenič – predstavenie v kampani' && id!=='c-bb232e32') members.unshift(people.find(p=>p.id==='c-bb232e32'))
  const cards=`<div class="connection-districts">${connectionDistricts(members,withPhotos)}</div>`
- const uncertain = group.kind === 'presented_by'
  const relationLabel = group.kind === 'campaign_branding' ? 'Typ: spoločné označenie kampane; členstvo v tíme ani úplnosť zoznamu nie sú potvrdené.' : 'Typ: výslovné predstavenie tímu.'
  const externalAttributes = externalNewTab ? ' target="_blank" rel="noopener noreferrer"' : ''
  const source = group.name === 'ZA BERnolákovo'
    ? [21,22,23,24].map(page => `<a href="https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=${page}"${externalAttributes}>${page === 21 ? 'Bernolák 2/2026, strana PDF 21' : page}</a>`).join('; ') + ' (individuálne pomenované zelené reklamy)'
-   : uncertain ? `pracovný súpis priložený Petrom 20. októbra 2026; <a href="${esc(group.source)}"${externalAttributes}>kampaňová stránka</a> sama o sebe nedokladá konkrétne predstavenia`
    : `<a href="${esc(group.source)}"${externalAttributes}>Zdroj predstavenia</a>`
- return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">${uncertain?'Možné prepojenia na overenie':'Doložené prepojenia'}</h2><p>${esc(group.description)} ${uncertain?'Tieto väzby sú iba podnetom z pracovného súpisu, nie overeným predstavením ani členstvom v tíme.':relationLabel} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
+ return `<section class="detail-section connections" aria-labelledby="connections"><h2 id="connections">Doložené prepojenia</h2><p>${esc(group.description)} ${relationLabel} Zdroj: ${source} · pôvodný dátum nezistený · skontrolované 20. októbra 2026. Spoločná oficiálna nominácia sama osebe toto prepojenie nedokazuje.</p>${cards}</section>`
 }
 
 export function turenicTeamCards(id,withPhotos) {
  if (!turenicTeamIds.includes(id)) return ''
- const members=people.filter(person=>person.id!==id && (turenicTeamIds.includes(person.id) || person.id==='c-bb232e32'))
- return `<section class="detail-section connections" aria-labelledby="turenic-team"><h2 id="turenic-team">KDH SaS – prepojenie podľa Petra</h2><p>Peter 21. októbra 2026 potvrdil prepojenie týchto piatich kandidátov s Miroslavom Tureničom. Piati majú oficiálnu nomináciu Demokrati, KDH, SaS; Turenič kandiduje ako nezávislý. Zdrojom prepojenia je Petrovo redakčné potvrdenie, nie spoločná oficiálna volebná listina ani nezávislé overenie verejným zdrojom. Na tejto stránke sú odkazy na ostatných kandidátov a Miroslava Tureniča.</p><div class="connection-districts">${connectionDistricts(members,withPhotos)}</div><small class="source">Zdroj prepojenia: Peter, 21. októbra 2026 · mená, obvody a poradie: opravené úradné listiny datované 2. septembra 2026.</small></section>`
+ const members=people.filter(person=>person.id!==id && (turenicTeamIds.includes(person.id) || person.id===turenicTeam.mayor))
+ return `<section class="detail-section connections" aria-labelledby="turenic-team"><h2 id="turenic-team">Tím Turenič</h2><p>Kandidátsky web Miroslava Tureniča predstavuje týchto sedem kandidátov v sekcii Môj tím. Nejde o spoločnú oficiálnu volebnú listinu; mená a poradie sú porovnané s opravenými zoznamami obce. Na tejto stránke sú odkazy na ostatných členov vrátane Miroslava Tureniča.</p><div class="connection-districts">${connectionDistricts(members,withPhotos)}</div><small class="source">Zdroj tímu: <a href="${esc(turenicTeam.source)}" target="_blank" rel="noopener noreferrer">Miroslav Turenič — Môj tím</a> · pozorované ${esc(turenicTeam.observed)} · mená, obvody a poradie: opravené úradné listiny datované 2. septembra 2026.</small></section>`
+}
+
+export function kdhSasCards(id,withPhotos) {
+ if (!kdhSasIds.includes(id)) return ''
+ const members=people.filter(person=>person.id!==id && kdhSasIds.includes(person.id))
+ const sources=roster.districts.map(district=>`<a href="${esc(district.sourceUrl)}" target="_blank" rel="noopener noreferrer">obvod ${district.number}</a>`).join(', ')
+ return `<section class="detail-section connections" aria-labelledby="kdh-sas"><h2 id="kdh-sas">KDH SaS – spoločná nominácia</h2><p>Títo piati kandidáti majú v opravených úradných zoznamoch uvedenú spoločnú nomináciu Demokrati, KDH, SaS. Spoločná nominácia sama osebe nedokazuje spoločný tím ani kampaň. Miroslav Turenič je vedený ako nezávislý kandidát a do tejto skupiny nepatrí.</p><div class="connection-districts">${connectionDistricts(members,withPhotos)}</div><small class="source">Zdroj nominácie: opravené úradné zoznamy ${sources}, datované 2. septembra 2026 · úprava prepojenia podľa Petra, 23. októbra 2026.</small></section>`
 }
 
 export function connectionDistricts(members,withPhotos) {

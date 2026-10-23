@@ -243,7 +243,7 @@ function App() {
           <h2 id="candidates-title" tabIndex={-1}>Kandidáti na starostu obce</h2>
           <p>Poradie podľa opraveného zoznamu obce</p>
         </div>
-        <p className="connection-instructions">Prepojenia ukazujú iba doložené kampaňové predstavenia alebo výslovne označené neoverené podnety, nie oficiálne volebné listiny. Rohovým tlačidlom zvýrazníte súvisiace profily.</p>
+        <p className="connection-instructions">Prepojenia rozlišujú kandidátskym webom predstavený tím, spoločné označenie kampane a spoločnú úradnú nomináciu. Neznamenajú jednu spoločnú volebnú listinu. Rohovým tlačidlom zvýrazníte príslušnú skupinu.</p>
         <p className="connection-status" role="status" aria-live="polite">{activeConnection ? `Zvýraznené od kandidáta ${selectedName ?? ""}: ${activeConnection.title}. ${activeConnection.qualification}` : 'Nie je zvolené žiadne prepojenie.'}</p>
         <ol className="candidate-grid">
           {candidates.map((candidate) => {
