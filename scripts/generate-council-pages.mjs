@@ -14,7 +14,7 @@ const home = fileURLToPath(new URL('../index.html', import.meta.url))
 const councilUrl = 'https://www.bernolakovo.sk/19033/obecne-zastupitelstvo'
 
 const esc = (value) => String(value).replace(/[&<>"']/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
-const link = (url, label) => `<a href="${esc(url)}">${esc(label)}</a>`
+const link = (url, label) => `<a href="${esc(url)}"${/^https?:\/\//i.test(url) ? ' target="_blank" rel="noopener noreferrer"' : ''}>${esc(label)}</a>`
 
 function validate() {
   if (data.districts.length !== 3 || data.districts.reduce((n,d) => n+d.candidates.length,0) !== 44) throw Error('Expected 44 candidates in three districts')
@@ -42,6 +42,7 @@ function render(candidate, district) {
   if (!item || item.key !== `D${district.number}/${candidate.listNumber}`) throw Error(`Evidence mismatch: ${candidate.id}`)
   const {kind,url} = item.link
   const label = kind === 'shared campaign page' ? 'Spoločná stránka kampane — nie osobný účet' :
+    kind === 'owner-supplied candidate page' ? 'Facebooková stránka kandidáta — odkaz dodal Peter' :
     kind === 'post/appearance' ? 'Príspevok o kandidátovi — nie jeho účet' :
     kind === 'self-labelled candidate page/profile' ? 'Kandidátsky označená stránka alebo profil — prevádzkovateľ neoverený' :
     kind === 'campaign-used profile' ? 'Profil používaný v kampani — prevádzkovateľ neoverený' :
@@ -52,13 +53,15 @@ function render(candidate, district) {
   const alternateUrl = entityLinks.urls[key]
   const channelItems = []
   const reviewOnlyLead = ['probable/unverified profile','historical page (2018)','mention only'].includes(kind)
-  if (label && url && (!reviewOnlyLead || photoReview)) channelItems.push(`<p>${link(url,label)}</p><small class="source">${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.</small>`)
+  if (label && url && (!reviewOnlyLead || photoReview)) channelItems.push(`<p>${link(url,label)}</p><small class="source">${kind === 'owner-supplied candidate page' ? 'Odkaz dodal Peter 23. októbra 2026; stránka a prevádzkovateľ účtu neboli nezávisle overení.' : `${esc(kind)} · pôvodný dátum neznámy · uvedené v pracovnej kompilácii k 20. októbru 2026. Označenie profilu je podľa kompilácie; vlastníctvo účtu nie je nezávisle overené.`}</small>`)
   if (photoReview && alternateUrl && alternateUrl !== url) channelItems.push(`<p>${link(alternateUrl,alternateLinkLabel(key))}</p><small class="source">${esc(alternateLinkNote)}</small>`)
   const channel = channelItems.length ? channelItems.join('') : gap
   const portrait = photoFor(candidate.id,withPhotos)
   const photo = `<figure class="detail-portrait"><div class="portrait-wrap"><img class="council-source-photo" src="${portrait?.src||'/images/portrait-placeholder.svg'}" alt="${portrait?`Fotografia kandidáta ${esc(candidate.name)}`:''}" width="640" height="760"></div><figcaption>${portrait?`${esc(portrait.kind)} · ${esc(portrait.year)} · ${link(portrait.url,'zdroj fotografie')}.`: 'Fotografia v preskúmaných podkladoch nebola potvrdená alebo ešte nebola spracovaná.'} ${portrait ? (photoReview ? 'Len kontrolný náhľad.' : '') : 'Jednotná zástupná plocha.'}</figcaption></figure>`
-  const photoEvidence = item.photo.url ? `<p>Obrazový podklad: ${link(item.photo.url,'Zdrojová stránka fotografie')} · ${esc(item.photo.kind)} · rok podľa publikácie ${item.photo.kind==='archival PDF'?(item.photo.url.includes('2018')?'2018':'2022'):'2026'}; dátum vzniku záberu neznámy. Fotografia nie je dôkazom vlastníctva účtu.</p>` : '<p>V preskúmanej kompilácii nie je potvrdená fotografia tejto osoby.</p>'
-  const connection = connectionCards(candidate.id,withPhotos,photoReview)
+  const photoEvidence = item.photo.kind === 'owner-supplied Facebook image'
+    ? `<p>Obrazový podklad: ${link(item.photo.url,'Facebooková stránka dodaná Petrom')} · obrázok dodal Peter 23. októbra 2026 a uviedol povolenie na použitie. Stabilný odkaz na konkrétnu fotografiu a autor záberu nie sú zistení; podobu sme porovnali s menovkou v obecnom časopise. Dátum vzniku záberu a vlastníctvo účtu nie sú nezávisle overené.</p>`
+    : item.photo.url ? `<p>Obrazový podklad: ${link(item.photo.url,'Zdrojová stránka fotografie')} · ${esc(item.photo.kind)} · rok podľa publikácie ${item.photo.kind==='archival PDF'?(item.photo.url.includes('2018')?'2018':'2022'):'2026'}; dátum vzniku záberu neznámy. Fotografia nie je dôkazom vlastníctva účtu.</p>` : '<p>V preskúmanej kompilácii nie je potvrdená fotografia tejto osoby.</p>'
+  const connection = connectionCards(candidate.id,withPhotos,photoReview,true)
   const turenicTeam = turenicTeamCards(candidate.id,withPhotos)
   return `<!doctype html>
 <html lang="sk"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">${mode === 'release' ? '' : '<meta name="robots" content="noindex, nofollow">'}<meta name="theme-color" content="#183a64"><link rel="icon" type="image/webp" href="/images/bernolakovo-coat-of-arms.webp"><link rel="canonical" href="/kandidati-na-poslancov/${candidate.id}/"><title>${esc(candidate.name)} — kandidatúra na poslanca obecného zastupiteľstva — BernoInfo 2026</title><meta name="description" content="Kandidatúra na poslanca obecného zastupiteľstva obce Bernolákovo: ${esc(candidate.name)}."><link rel="stylesheet" href="/candidate-detail.css"></head>
@@ -68,12 +71,11 @@ function render(candidate, district) {
 ${section('registration','Registrácia',`<p><strong>${esc(candidate.name)}</strong> · volebný obvod ${district.number}, číslo ${number} v opravenom zozname. Obvod má ${district.seats} ${district.seats === 3 ? 'mandáty' : 'mandátov'} a ${district.candidates.length} zaregistrovaných kandidátov. Oficiálne uvedená príslušnosť: <strong>${esc(candidate.designation)}</strong>.</p>${citation}`)}
 ${section('occupation','Vek a povolanie',`<p>Vek uvedený v zozname: <strong>${candidate.age}</strong>. Povolanie uvedené v zozname: <strong>${esc(candidate.occupation)}</strong>. Zápis sám osebe nepotvrdzuje dnešný vek, zamestnávateľa ani aktuálny pracovný pomer.</p>${citation}`)}
 ${section('functions','Verejné funkcie v období 2022 – 2026',council)}
-${section('programme','Programové návrhy',gap)}
 ${section('interview','Rozhovor alebo video',gap)}
 ${section('channels','Odkazy na kandidáta',channel)}
 ${section('photo-source','Obrazový zdroj',photoEvidence)}
 ${connection}${turenicTeam ? '\n' + turenicTeam : ''}
-${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Pre program a rozhovory nebol v čiastočnej rešerši doložený priamy datovaný stabilný zdroj pre každého kandidáta. Odkazy sú prenesené z 44-riadkovej pracovnej kompilácie a rozlišujú zdieľané stránky, príspevky a kandidátsky označené účty. Pravdepodobné, historické a iba spomínajúce odkazy nie sú prezentované ako účty kandidátov. Prázdne rubriky neznamenajú neprítomnosť stanoviska či zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
+${section('sources','Zdroje, pokrytie a opravy',`<p>Údaje o registrácii sú prevzaté z ${link(district.sourceUrl,'opraveného zoznamu kandidátov pre obvod '+district.number+' (PDF)')} obce Bernolákovo, datovaného ${esc(data.officialDate)} a skontrolovaného ${esc(data.checked)}. Staršie listiny boli nahradené po chybe zoradenia. Neskoršie odstúpenia, zmeny a konečný hlasovací lístok neboli overené.</p><p>Rozhovory neboli doložené priamym datovaným stabilným zdrojom pre každého kandidáta. Odkazy sú prenesené z 44-riadkovej pracovnej kompilácie a rozlišujú zdieľané stránky, príspevky a kandidátsky označené účty; výnimky dodané Petrom sú označené priamo pri odkaze. Pravdepodobné, historické a iba spomínajúce odkazy nie sú prezentované ako účty kandidátov. Prázdna rubrika neznamená neprítomnosť zdroja. Sľuby z kandidatúry na starostu tu nie sú prenesené na kandidatúru do zastupiteľstva.</p><p>Opravy údajov: ${link('mailto:Mr.petermacko@gmail.com','Mr.petermacko@gmail.com')}. Uveďte údaj a odkaz na zdroj.</p>`)}
 </div></main><footer><a href="/#council-title">← Späť na kandidátov na poslancov obecného zastupiteľstva</a><p>BernoInfo 2026 · nezávislý informačný projekt</p></footer></div></body></html>\n`
 }
 
