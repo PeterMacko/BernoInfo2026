@@ -17,15 +17,15 @@ test('eight generated profiles have one equal-placement election-finance link ea
   }
 })
 
-test('homepage modes link municipality search; Turenič association is attributed and routed', () => {
+test('homepage modes link municipality search; superseded Turenič association is replaced', () => {
   assert.ok(read('../src/main.tsx').includes(generalUrl))
   assert.ok(read('../index.html').includes(generalUrl))
-  // The qualified five-person report remains present in every build mode.
   const generator = read('../scripts/generate-candidate-pages.mjs')
   assert.match(generator, /\.\.\.renderTurenicAssociation\(candidate\)/)
-  assert.match(generator, /Petrovo redakčné potvrdenie/)
-  const teamIds = read('../scripts/issue24-shared.mjs')
-  for (const id of ['c-a7eb4e22', 'c-6d9a5867', 'c-be773c61', 'c-a8a3f42b', 'c-73b7e5fe']) {
-    assert.ok(teamIds.includes(id), id)
-  }
+  assert.match(generator, /www\.turenic\.sk\/moj-tim\//)
+  const team = JSON.parse(read('../src/turenic-team.json'))
+  assert.equal(team.council.length, 7)
+  const connections = read('../src/connections.ts')
+  assert.match(connections, /controlLabel: 'Tím Turenič'/)
+  assert.doesNotMatch(connections, /members: \['c-bb232e32', \.\.\.kdhSasIds\]/)
 })

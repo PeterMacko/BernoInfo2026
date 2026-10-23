@@ -2,11 +2,13 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
 import {execFileSync} from 'node:child_process'
-import {assertKnownCouncilIds, connectionCards, connectionDistricts, evidence, people, personRoute, turenicTeamCards} from '../scripts/issue24-shared.mjs'
+import {assertKnownCouncilIds, connectionCards, connectionDistricts, evidence, people, personRoute, turenicTeamCards, kdhSasCards} from '../scripts/issue24-shared.mjs'
+import turenicTeam from '../src/turenic-team.json' with {type:'json'}
 
 const read = file => readFileSync(file,'utf8')
 const section = (html,id) => html.match(new RegExp(`<section class="detail-section(?: connections)?" aria-labelledby="${id}">[\\s\\S]*?<\\/section>`))?.[0]
-const reported = ['c-a7eb4e22','c-6d9a5867','c-be773c61','c-a8a3f42b','c-73b7e5fe']
+const kdhSas = ['c-a7eb4e22','c-6d9a5867','c-be773c61','c-a8a3f42b','c-73b7e5fe']
+const team = turenicTeam.council
 
 test('district cards follow corrected official order and preserve one canonical route per person',()=>{
  const members=people.filter(person=>evidence[person.id].connection==='Tím Bartók')
@@ -26,7 +28,8 @@ test('district cards follow corrected official order and preserve one canonical 
 test('relationship references fail fast when an ID is absent from official roster',()=>{
  assert.throws(()=>assertKnownCouncilIds(['c-missing'],'test relationship'),/test relationship: council ID c-missing is absent from official roster/)
  assert.throws(()=>connectionDistricts([{id:'c-missing',district:1,listNumber:1,name:'Invalid'}],false),/connection cards: council ID c-missing is absent from official roster/)
- assertKnownCouncilIds(reported,'Turenič five-person report')
+ assertKnownCouncilIds(kdhSas,'KDH/SaS nomination')
+ assertKnownCouncilIds(team,'Turenič team')
 })
 
 test('unrelated presentation preserves WCAG AA text contrast without fading',()=>{
@@ -52,28 +55,28 @@ test('unrelated presentation preserves WCAG AA text contrast without fading',()=
  assert.ok(contrast(text,mayorBg)>=4.5)
 })
 
-test('unverified campaign-introduction connections remain review-only',()=>{
+test('superseded introduction set is not rendered separately',()=>{
  assert.equal(connectionCards('c-bb232e32',false,false),'')
- const review=connectionCards('c-bb232e32',false,true)
- assert.match(review,/Možné prepojenia na overenie/)
- assert.match(review,/nie overeným predstavením ani členstvom v tíme/)
- assert.doesNotMatch(review,/src="\/images\/council\//)
+ assert.equal(connectionCards('c-bb232e32',false,true),'')
+ assert.equal(connectionCards('c-5e9ee486',false,true),'')
 })
 
-test('all builds retain qualified five-person report and gate source portraits consistently',()=>{
+test('all builds show distinct seven-person team and five-person nomination',()=>{
  for(const [command,review] of [['build:placeholder',false],['build:photo-review',true],['build:release',false]]){
-  execFileSync('npm',['run',command],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
+  const origin=command==='build:release'?'https://bernoinfo2026.mr-petermacko.workers.dev':'https://issue-76-review.example.org'
+  execFileSync('npm',['run',command],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:origin,RELEASE_ORIGIN_VERIFIED:'1'}})
   const turenic=read('dist/kandidati/turenic/index.html')
-  const association=section(turenic,'reported-association')
+  const association=section(turenic,'turenic-team')
   assert.ok(association,command)
   {
-   assert.match(association,/Peter 21. októbra 2026 potvrdil/)
-   assert.match(association,/nejde o oficiálnu spoločnú volebnú listinu ani nezávislé overenie/)
+   assert.match(association,/Môj tím/)
+   assert.match(association,/Nejde o spoločnú oficiálnu volebnú listinu/)
    assert.deepEqual([...association.matchAll(/<h3>Volebný obvod (\d)<\/h3>/g)].map(match=>Number(match[1])),[1,2,3])
-   for(const id of reported) assert.ok(association.includes(`/kandidati-na-poslancov/${id}/`),id)
+   for(const id of team) assert.ok(association.includes(`/kandidati-na-poslancov/${id}/`),id)
+   for(const id of kdhSas) assert.ok(!association.includes(`/kandidati-na-poslancov/${id}/`),id)
    assert.equal(association.includes('/images/council/'),command!=='build:placeholder')
   }
-  assert.equal(Boolean(section(turenic,'connections')),review,`four introduction leads: ${command}`)
+  assert.equal(Boolean(section(turenic,'connections')),false,`old introduction leads: ${command}`)
   const bartok=section(read('dist/kandidati/bartok/index.html'),'connections')
   assert.ok(bartok)
   assert.match(bartok,/Volebný obvod 1/)
@@ -82,24 +85,33 @@ test('all builds retain qualified five-person report and gate source portraits c
   const council=section(read('dist/kandidati-na-poslancov/c-9fd006a7/index.html'),'connections')
   assert.ok(council)
   assert.match(council,/Volebný obvod/)
-  for (const id of reported) {
+  for (const id of team) {
    const team=section(read(`dist/kandidati-na-poslancov/${id}/index.html`),'turenic-team')
    assert.ok(team,`${command}: ${id}`)
    assert.ok(team.includes('/kandidati/turenic/'))
    assert.ok(!team.includes(`/kandidati-na-poslancov/${id}/`))
-   for (const peer of reported.filter(peer=>peer!==id)) assert.ok(team.includes(`/kandidati-na-poslancov/${peer}/`),peer)
+   for (const peer of turenicTeam.council.filter(peer=>peer!==id)) assert.ok(team.includes(`/kandidati-na-poslancov/${peer}/`),peer)
+  }
+  for (const id of kdhSas) {
+   const nomination=section(read(`dist/kandidati-na-poslancov/${id}/index.html`),'kdh-sas')
+   assert.ok(nomination,`${command}: ${id}`)
+   assert.ok(!nomination.includes('/kandidati/turenic/'))
+   for (const peer of kdhSas.filter(peer=>peer!==id)) assert.ok(nomination.includes(`/kandidati-na-poslancov/${peer}/`),peer)
   }
  }
 })
 
-test('Turenič team cards retain right-column alignment and owner attribution',()=>{
+test('Turenič and KDH/SaS cards retain right-column alignment and distinct sourcing',()=>{
  const css=read('public/candidate-detail.css')
  assert.match(css,/\.detail-section > \.connection-districts\{grid-column:2;/)
- const html=turenicTeamCards(reported[0],false)
- assert.match(html,/Zdroj prepojenia: Peter/)
- assert.match(html,/KDH SaS – prepojenie podľa Petra/)
- assert.doesNotMatch(html,/neoverené/)
+ const html=turenicTeamCards(team[0],false)
+ assert.match(html,/www.turenic.sk\/moj-tim\//)
+ assert.match(html,/Tím Turenič/)
+ assert.doesNotMatch(html,/KDH SaS/)
+ const other=kdhSasCards(kdhSas[0],false)
+ assert.match(other,/KDH SaS – spoločná nominácia/)
+ assert.ok(!other.includes('/kandidati/turenic/'))
  const source=read('src/connections.ts')
  assert.match(source,/controlLabel: 'KDH SaS'/)
- assert.doesNotMatch(source,/id: 'turenic-reported', controlLabel: '[^']*neoverené/)
+ assert.match(source,/controlLabel: 'Tím Turenič'/)
 })

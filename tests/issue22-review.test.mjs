@@ -27,9 +27,6 @@ test('review preview includes source photos while placeholder build keeps them o
   const page=readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8')
   assert.ok(page.includes(`href="${item.link.url}"`),`${item.key} review lead missing`)
  }
- for(const [id,item] of Object.entries(evidence)) if(item.connection==='Turenič – predstavenie v kampani'){
-  assert.ok(readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes('Možné prepojenia na overenie'))
- }
  execFileSync('npm',['run','build:placeholder'],{stdio:'pipe'})
  assert.ok(!existsSync('dist/images/council'))
  assert.ok(!existsSync('dist/images/candidates'))
@@ -37,10 +34,7 @@ test('review preview includes source photos while placeholder build keeps them o
  for(const [id,item] of Object.entries(evidence)) if(['probable/unverified profile','mention only','historical page (2018)'].includes(item.link.kind)) {
   assert.ok(!readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes(`href="${item.link.url}"`),`${item.key} review lead leaked`)
  }
- for(const [id,item] of Object.entries(evidence)) if(item.connection==='Turenič – predstavenie v kampani'){
-  assert.ok(!readFileSync(`dist/kandidati-na-poslancov/${id}/index.html`,'utf8').includes('Možné prepojenia na overenie'))
- }
- execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
+ execFileSync('npm',['run','build'],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://bernoinfo2026.mr-petermacko.workers.dev',RELEASE_ORIGIN_VERIFIED:'1'}})
  assert.equal(readdirSync('dist/images/candidates').length,8)
  assert.equal(readdirSync('dist/images/council').length,available.length)
  assert.ok(!existsSync('dist/issue22-review'))

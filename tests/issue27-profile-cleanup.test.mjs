@@ -12,7 +12,7 @@ const dual = {'c-f6b4af6c':'bartok','c-a4b1db7c':'cirbus','c-307ca828':'kostial'
 const rows = districts.flatMap(d=>d.candidates.map(c=>({...c,key:`D${d.number}/${c.listNumber}`})))
 const path = c => `dist/${dual[c.id] ? `kandidati/${dual[c.id]}` : `kandidati-na-poslancov/${c.id}`}/index.html`
 const page = c => readFileSync(path(c),'utf8')
-const run = script => execFileSync('npm',['run',script],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:'https://release.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
+const run = script => execFileSync('npm',['run',script],{stdio:'pipe',env:{...process.env,WORKERS_CI_BRANCH:'',SITE_ORIGIN:script==='build:release'?'https://bernoinfo2026.mr-petermacko.workers.dev':'https://issue-76-review.example.org',RELEASE_ORIGIN_VERIFIED:'1'}})
 const removed = /Čo je doložené — a čo zostáva otvorené|Ako čítať tento profil|Facebookový odkaz priradený Petrom|Peter priradil tento odkaz/
 
 function checkCommon() {
@@ -45,11 +45,12 @@ test('issue 27 labels and gates hold across placeholder, photo-review and releas
    const html=page(c)
    const item=evidence[c.id]
    const reviewOnly=['probable/unverified profile','historical page (2018)','mention only'].includes(item.link.kind)
-   if(item.link.url)assert.equal(html.includes(`href="${item.link.url}"`),review||!reviewOnly,`${mode} primary ${c.key}`)
+   if(item.link.url && !dual[c.id])assert.equal(html.includes(`href="${item.link.url}"`),review||!reviewOnly,`${mode} primary ${c.key}`)
    const alt=alternates[c.key]
-   if(alt && alt!==item.link.url) {
-    if(!dual[c.id]) assert.equal(html.includes(`href="${alt}"`),review,`${mode} alternate ${c.key}`)
-    assert.equal(html.includes(`<a href="${alt}">${alternateLinkLabel(c.key)}</a>`),review,`${mode} alternate label ${c.key}`)
+   if(alt && alt!==item.link.url && !dual[c.id]) {
+    assert.equal(html.includes(`href="${alt}"`),review,`${mode} alternate ${c.key}`)
+    const alternateAnchor=new RegExp(`<a href="${alt.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}"[^>]*>${alternateLinkLabel(c.key)}</a>`)
+    assert.equal(alternateAnchor.test(html),review,`${mode} alternate label ${c.key}`)
     if(review) {
      assert.ok(html.includes(alternateLinkLabel(c.key)),c.key)
      assert.ok(html.includes('Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.'),c.key)

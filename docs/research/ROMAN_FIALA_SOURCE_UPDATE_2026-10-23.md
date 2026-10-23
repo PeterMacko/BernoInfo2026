@@ -1,0 +1,8 @@
+# Roman Fiala source update — 23 October 2026
+
+- Official roster: Roman FIALA, Bc., district 2, list position 5 (`c-df02bb77`); registration remains sourced to the corrected municipality list.
+- Peter supplied `https://www.facebook.com/RomanFialaBernolakovo` as the candidate Facebook page on 23 October 2026. Page operator and account ownership were not independently verified; this is not a review of its posts.
+- Peter supplied a signed Facebook CDN JPG and stated that he has permission to use it. The downloaded 1254×1254 image is stored as `preview-assets/council/c-df02bb77.jpg`, SHA-256 `cf7722f9c76dcf8fd19e2388301ace3b044acb8ab292840e0b7afd97af91306d`. The signed URL is ephemeral and is not used on the site. A stable photo-page URL, photographer, and capture date were not obtained.
+- Visual identity cross-check: the image appears to depict the person in the Roman Fiala-named medallion in [Bernolák 2/2026, viewer page 22](https://www.bernolakovo.sk/data/page/bernolakovo.sk/23117/bernolak_2_2026_web.pdf#page=22). This does not independently establish biometric identity or the Facebook page's operator.
+- The former [third-party group appearance](https://www.facebook.com/groups/782471106155569/posts/1734150714320932/) was not a candidate-owned account and is no longer the primary channel link. The PDF medallion remains a cross-check, not the displayed image source.
+- Coverage limit: this is one Peter-provided page and image, not a Facebook feed sweep or a claim that all candidate sources were covered. Portrait size, section structure, and source uncertainty use the same site-wide council profile pattern.
