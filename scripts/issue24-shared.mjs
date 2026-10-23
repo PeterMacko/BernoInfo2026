@@ -34,6 +34,7 @@ export function photoFor(id, withPhotos) {
  if (!withPhotos) return null
  const item=evidence[id]?.photo
  if (!item?.url || item.kind==='none confirmed') return null
+ if (item.kind==='campaign-site processed portrait') return {src:`/images/council/${id}.jpg`,url:item.url,year:'dátum záberu nezistený',kind:'Portrét z kandidátskeho webu; zdrojový súbor označený ChatGPT-Image, rozsah úprav nezistený'}
  if (item.kind==='owner-supplied Facebook image') return {src:`/images/council/${id}.jpg`,url:item.url,year:'dátum záberu nezistený',kind:'Obrázok dodaný Petrom; konkrétna stránka fotografie a autor nezistení'}
  if (item.kind==='post photo') return {src:`/images/council/${id}.jpg`,url:item.url,year:'dátum nezistený',kind:'Fotografia v príspevku tretej strany'}
  if (item.url.endsWith('.jpg')) return {src:`/images/council/${id}.jpg`,url:item.url,year:'2026',kind:'Fotografia z kandidátskeho webu'}
