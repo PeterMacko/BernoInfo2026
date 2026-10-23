@@ -49,7 +49,8 @@ test('issue 27 labels and gates hold across placeholder, photo-review and releas
    const alt=alternates[c.key]
    if(alt && alt!==item.link.url && !dual[c.id]) {
     assert.equal(html.includes(`href="${alt}"`),review,`${mode} alternate ${c.key}`)
-    assert.equal(html.includes(`<a href="${alt}">${alternateLinkLabel(c.key)}</a>`),review,`${mode} alternate label ${c.key}`)
+    const alternateAnchor=new RegExp(`<a href="${alt.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}"[^>]*>${alternateLinkLabel(c.key)}</a>`)
+    assert.equal(alternateAnchor.test(html),review,`${mode} alternate label ${c.key}`)
     if(review) {
      assert.ok(html.includes(alternateLinkLabel(c.key)),c.key)
      assert.ok(html.includes('Zhoda osoby a vlastníctvo účtu nie sú nezávisle overené.'),c.key)
